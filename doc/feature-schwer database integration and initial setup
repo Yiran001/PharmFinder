@@ -3,6 +3,11 @@
 Abgabe des Schweren Features von Florian Korch:
  - Integration der Datenbank sowie aufsetzten der allgemeinen Projektstruktur als dual-module-project mit Spring und Angular über maven und npm
  - Getestet wurde mit Postman (siehe: pharmfinder-backend/src/main/resources/PharmFinder Database Testsuite.postman_collection.json)
+ - Folgende Testfälle sind enthalten:
+        - add user-entry
+        - delete user-entry
+        - conflict while adding user-entry
+        - add address-entry
  - Das Feature umfasste die Ausarbeitung der Datenbank, sowie der Schittstellen zu PharmacyUser und PharmFinderAddress, die Sicherheitsstruktur wird in einem seperaten Feature durch Carl Conrad umgesetzt
  - Letztes Deployment ist zu finden unter: https://github.com/Yiran001?tab=packages&repo_name=PharmFinder
  - ER Modell und Datenbank-Abbildung unter ./img
