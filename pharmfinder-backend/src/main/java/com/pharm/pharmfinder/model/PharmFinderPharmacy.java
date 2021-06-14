@@ -1,5 +1,6 @@
 package com.pharm.pharmfinder.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.springframework.http.converter.json.SpringHandlerInstantiator;
 
 import javax.persistence.*;

@@ -1,5 +1,6 @@
-package com.pharm.pharmfinder.controller.repositories;
+package com.pharm.pharmfinder.controller;
 
+import com.pharm.pharmfinder.controller.repositories.PharmFinderMedicineRepository;
 import com.pharm.pharmfinder.model.PharmFinderMedicine;
 import com.pharm.pharmfinder.model.PharmFinderMedicineForm;
 import org.springframework.beans.factory.annotation.Autowired;

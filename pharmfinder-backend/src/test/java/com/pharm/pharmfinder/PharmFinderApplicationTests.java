@@ -10,6 +10,7 @@ class PharmFinderApplicationTests {
     @Ignore
     @Test
     void contextLoads() {
+
     }
 
 }

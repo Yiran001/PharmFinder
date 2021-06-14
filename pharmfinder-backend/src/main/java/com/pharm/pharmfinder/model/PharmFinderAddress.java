@@ -1,6 +1,8 @@
 package com.pharm.pharmfinder.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -14,7 +16,8 @@ public class PharmFinderAddress {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int addressID;
 
-    @OneToMany(fetch = FetchType.LAZY,mappedBy = "userAddress")
+    @OneToMany(mappedBy = "userAddress", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private Set<PharmacyUser> addressUsers;
     
     private String street;
@@ -78,7 +81,7 @@ public class PharmFinderAddress {
         this.postcode = postcode;
     }
 
-    @Override
+   /* @Override
     public String toString() {
         return "PharmFinderAddress{" +
                 "addressID=" + addressID +
@@ -86,5 +89,5 @@ public class PharmFinderAddress {
                 ", houseNumber='" + houseNumber + '\'' +
                 ", postcode='" + postcode + '\'' +
                 '}';
-    }
+    }*/
 }

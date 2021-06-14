@@ -1,6 +1,8 @@
 package com.pharm.pharmfinder.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 import javax.persistence.*;
@@ -13,8 +15,9 @@ public class PharmacyUser {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int userID;
 
-    @ManyToOne
-    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name="user_fk")
+    @JsonBackReference
     private PharmFinderAddress userAddress;
 
     private String username;
@@ -72,7 +75,7 @@ public class PharmacyUser {
         isPharmacist = pharmacist;
     }
 
-    @Override
+/*    @Override
     public String toString() {
         return "PharmacyUser{" +
                 "userID=" + userID +
@@ -81,5 +84,5 @@ public class PharmacyUser {
                 ", passwordHash='" + passwordHash + '\'' +
                 ", isPharmacist=" + isPharmacist +
                 '}';
-    }
+    }*/
 }
