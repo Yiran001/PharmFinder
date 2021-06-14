@@ -70,14 +70,4 @@
         </pluginManagement>
     </build>
 
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>GitHub Yiran001 Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/Yiran001/Apothekenfinder</url>
-        </repository>
-    </distributionManagement>
-
-    <packaging>pom</packaging>
-
 </project>

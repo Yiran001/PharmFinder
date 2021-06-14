@@ -6,12 +6,14 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="pharmfinder-backend" />
         <module name="pharmfinder-frontend" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="pharmfinder-backend" options="-parameters" />
       <module name="pharmfinder-frontend" options="-parameters" />
     </option>
   </component>

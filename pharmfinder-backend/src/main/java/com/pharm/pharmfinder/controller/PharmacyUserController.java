@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.Query;
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping(path = "/user")
@@ -45,6 +46,21 @@ public class PharmacyUserController {
 
             return "Saved";
 
+    }
+    @PostMapping(path = "/delete")
+    public @ResponseBody
+    String registerNewUser(@RequestParam String username, @RequestParam String password) throws UsernameAlreadyTakenException {
+        PharmacyUser pharmacyUser = new PharmacyUser();
+
+        pharmacyUser.setUsername(username);
+        ArrayList<PharmacyUser> pharmacyUsers = (ArrayList<PharmacyUser>) pharmacyUserRepository.findAll();
+        PharmacyUser certainUser = new PharmacyUser();
+        for(PharmacyUser p : pharmacyUsers){
+            if(p.getUsername().equals(username) && p.getPasswordHash().equals(password))
+                certainUser = p;
+        }
+        pharmacyUserRepository.deleteById(certainUser.getUserID());
+        return "Deleted";
     }
 
     @GetMapping(path = "/all")
