@@ -1,0 +1,31 @@
+h1 {
+  text-align: center;
+  font: bold 4.5em Rockwell;
+  margin-bottom: 0;
+}
+h2 {
+  text-align: center;
+  font: bold 1.7em Rockwell;
+  margin-top: 0.5em;
+}
+h3 {
+  font: 1.5em Rockwell;
+  text-align: center;
+  margin-bottom: 0;
+}
+section {
+  margin-top: 1em;
+  text-align: justify;
+  font: large georgia;
+}
+article {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  font-family: Arial;
+}
+.link-primary:link {
+  text-decoration: none;
+}
+.link-primary:hover {
+  text-decoration: underline;
+}
