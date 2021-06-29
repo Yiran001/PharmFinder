@@ -1,4 +1,5 @@
 import {AfterViewInit, Component, ElementRef} from '@angular/core';
+import {Title} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-root',
@@ -10,8 +11,10 @@ export class AppComponent implements AfterViewInit{
   page1 = 'Suchen';
   page2 = 'Bestand';
 
-  constructor(private elementRef: ElementRef){
+  websiteTitel='Apothekenfinder';
 
+  constructor(private elementRef: ElementRef, private titleService: Title){
+    this.titleService.setTitle(this.websiteTitel);
 
   }
   ngAfterViewInit(){
@@ -19,3 +22,4 @@ export class AppComponent implements AfterViewInit{
   }
 
 }
+
