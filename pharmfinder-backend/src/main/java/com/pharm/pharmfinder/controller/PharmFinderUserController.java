@@ -1,7 +1,7 @@
 package com.pharm.pharmfinder.controller;
 
 import com.pharm.pharmfinder.controller.repositories.PharmFinderAddressRepository;
-import com.pharm.pharmfinder.controller.repositories.PharmacyUserRepository;
+import com.pharm.pharmfinder.controller.repositories.PharmFinderUserRepository;
 import com.pharm.pharmfinder.model.PharmFinderAddress;
 import com.pharm.pharmfinder.model.PharmacyUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +13,10 @@ import java.util.ArrayList;
 
 @Controller
 @RequestMapping(path = "/user")
-public class PharmacyUserController {
+public class PharmFinderUserController {
 
     @Autowired
-    private PharmacyUserRepository pharmacyUserRepository;
+    private PharmFinderUserRepository pharmFinderUserRepository;
     @Autowired
     private PharmFinderAddressRepository pharmFinderAddressRepository;
 
@@ -37,11 +37,11 @@ public class PharmacyUserController {
             pharmacyUser.setEmail(email);
             pharmacyUser.setPharmacist(isPharmacist);
             pharmacyUser.setPasswordHash(passwordHash);
-            pharmacyUserRepository.save(pharmacyUser);
+            pharmFinderUserRepository.save(pharmacyUser);
             PharmFinderAddress userAddress = new PharmFinderAddress(pharmacyUser,addressStreet,addressHouseNumber,addressPostcode);
             pharmFinderAddressRepository.save(userAddress);
             pharmacyUser.setUserAddress(userAddress);
-            pharmacyUserRepository.save(pharmacyUser);
+            pharmFinderUserRepository.save(pharmacyUser);
 
             return "Saved";
 
@@ -52,13 +52,13 @@ public class PharmacyUserController {
         PharmacyUser pharmacyUser = new PharmacyUser();
 
         pharmacyUser.setUsername(username);
-        ArrayList<PharmacyUser> pharmacyUsers = (ArrayList<PharmacyUser>) pharmacyUserRepository.findAll();
+        ArrayList<PharmacyUser> pharmacyUsers = (ArrayList<PharmacyUser>) pharmFinderUserRepository.findAll();
         PharmacyUser certainUser = new PharmacyUser();
         for(PharmacyUser p : pharmacyUsers){
             if(p.getUsername().equals(username) && p.getPasswordHash().equals(password))
                 certainUser = p;
         }
-        pharmacyUserRepository.deleteById(certainUser.getUserID());
+        pharmFinderUserRepository.deleteById(certainUser.getUserID());
         return "Deleted";
     }
 
@@ -66,12 +66,12 @@ public class PharmacyUserController {
     public @ResponseBody
     Iterable<PharmacyUser> getAllPharmacyUsers() {
         // This returns a JSON or XML with the users
-        return pharmacyUserRepository.findAll();
+        return pharmFinderUserRepository.findAll();
     }
 
 
     private void checkUsernameExistence(String username) throws UsernameAlreadyTakenException {
-        Iterable<PharmacyUser> users = pharmacyUserRepository.findAll();
+        Iterable<PharmacyUser> users = pharmFinderUserRepository.findAll();
         for (PharmacyUser u : users) {
             if (u.getUsername().equals(username))
                 throw new UsernameAlreadyTakenException("Username was already taken by someone, please try another.");
