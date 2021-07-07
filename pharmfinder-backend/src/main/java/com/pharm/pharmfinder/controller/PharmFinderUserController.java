@@ -22,40 +22,72 @@ public class PharmFinderUserController {
 
     @ResponseStatus(value = HttpStatus.CONFLICT, reason = "Username was already taken")
     @ExceptionHandler(UsernameAlreadyTakenException.class)
-    public void usernameAlreadyTakenExceptionHandler(){
+    public void usernameAlreadyTakenExceptionHandler() {
+    }
 
+    @ResponseStatus(value = HttpStatus.CONFLICT, reason = "No such username")
+    @ExceptionHandler(NoSuchUsernameException.class)
+    public void noSuchUsernameExceptionHandler() {
     }
 
 
     @PostMapping(path = "/register")
     public @ResponseBody
-    String registerNewUser(@RequestParam String username, @RequestParam String email, @RequestParam boolean isPharmacist, @RequestParam String passwordHash, @RequestParam String addressStreet, @RequestParam String addressHouseNumber, @RequestParam String addressPostcode) throws UsernameAlreadyTakenException {
+    String registerUser(@RequestParam String username, @RequestParam String email, @RequestParam boolean isPharmacist, @RequestParam String passwordHash, @RequestParam String addressStreet, @RequestParam String addressHouseNumber, @RequestParam String addressPostcode) throws UsernameAlreadyTakenException {
         PharmFinderUser pharmFinderUser = new PharmFinderUser();
 
-            checkUsernameExistence(username);
-            pharmFinderUser.setUsername(username);
-            pharmFinderUser.setEmail(email);
-            pharmFinderUser.setPharmacist(isPharmacist);
-            pharmFinderUser.setPasswordHash(passwordHash);
-            pharmFinderUserRepository.save(pharmFinderUser);
-            PharmFinderAddress userAddress = new PharmFinderAddress(pharmFinderUser,addressStreet,addressHouseNumber,addressPostcode);
-            pharmFinderAddressRepository.save(userAddress);
-            pharmFinderUser.setUserAddress(userAddress);
-            pharmFinderUserRepository.save(pharmFinderUser);
+        checkUsernameExistence(username);
+        pharmFinderUser.setUsername(username);
+        pharmFinderUser.setEmail(email);
+        pharmFinderUser.setPharmacist(isPharmacist);
+        pharmFinderUser.setPasswordHash(passwordHash);
+        pharmFinderUserRepository.save(pharmFinderUser);
+        PharmFinderAddress userAddress = new PharmFinderAddress(pharmFinderUser, addressStreet, addressHouseNumber, addressPostcode);
+        pharmFinderAddressRepository.save(userAddress);
+        pharmFinderUser.setUserAddress(userAddress);
+        pharmFinderUserRepository.save(pharmFinderUser);
 
-            return "Saved";
+        return "Saved";
 
     }
+
+    @PostMapping(path = "/update")
+    public @ResponseBody
+    String updateUser(@RequestParam String originalUsername, @RequestParam String originalPassword, @RequestParam String username, @RequestParam String email, @RequestParam boolean isPharmacist, @RequestParam String passwordHash, @RequestParam String addressStreet, @RequestParam String addressHouseNumber, @RequestParam String addressPostcode) throws UsernameAlreadyTakenException, NoSuchUsernameException {
+
+        if (originalUsername != username)
+            checkUsernameExistence(username);
+        
+        ArrayList<PharmFinderUser> pharmFinderUsers = (ArrayList<PharmFinderUser>) pharmFinderUserRepository.findAll();
+
+        for (PharmFinderUser certainUser : pharmFinderUsers) {
+            if (certainUser.getUsername().equals(originalUsername) && certainUser.getPasswordHash().equals(originalPassword)) {
+                certainUser.setUsername(username);
+                certainUser.setEmail(email);
+                certainUser.setPharmacist(isPharmacist);
+                certainUser.setPasswordHash(passwordHash);
+                pharmFinderUserRepository.save(certainUser);
+                PharmFinderAddress userAddress = new PharmFinderAddress(certainUser, addressStreet, addressHouseNumber, addressPostcode);
+                pharmFinderAddressRepository.save(userAddress);
+                certainUser.setUserAddress(userAddress);
+                pharmFinderUserRepository.save(certainUser);
+                return "Updated";
+            }
+        }
+
+        throw new NoSuchUsernameException();
+
+    }
+
     @PostMapping(path = "/delete")
     public @ResponseBody
-    String registerNewUser(@RequestParam String username, @RequestParam String password) throws UsernameAlreadyTakenException {
+    String deleteUser(@RequestParam String username, @RequestParam String password) throws UsernameAlreadyTakenException {
         PharmFinderUser pharmFinderUser = new PharmFinderUser();
-
         pharmFinderUser.setUsername(username);
         ArrayList<PharmFinderUser> pharmFinderUsers = (ArrayList<PharmFinderUser>) pharmFinderUserRepository.findAll();
         PharmFinderUser certainUser = new PharmFinderUser();
-        for(PharmFinderUser p : pharmFinderUsers){
-            if(p.getUsername().equals(username) && p.getPasswordHash().equals(password))
+        for (PharmFinderUser p : pharmFinderUsers) {
+            if (p.getUsername().equals(username) && p.getPasswordHash().equals(password))
                 certainUser = p;
         }
         pharmFinderUserRepository.deleteById(certainUser.getUserID());
@@ -64,7 +96,7 @@ public class PharmFinderUserController {
 
     @GetMapping(path = "/all")
     public @ResponseBody
-    Iterable<PharmFinderUser> getAllPharmacyUsers() {
+    Iterable<PharmFinderUser> getAllUsers() {
         // This returns a JSON or XML with the users
         return pharmFinderUserRepository.findAll();
     }

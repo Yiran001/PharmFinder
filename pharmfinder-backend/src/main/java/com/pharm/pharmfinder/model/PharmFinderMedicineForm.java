@@ -10,6 +10,7 @@ public enum PharmFinderMedicineForm {
     VAGINAL,
     RECTAL,
     URETHRAL,
-    NASAL
+    NASAL,
+    OTHER
 
 }
