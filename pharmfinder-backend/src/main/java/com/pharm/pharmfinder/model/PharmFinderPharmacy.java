@@ -15,14 +15,14 @@ public class PharmFinderPharmacy {
     private PharmFinderAddress pharmacyAddress;
 
     @OneToOne
-    private PharmacyUser owner;
+    private PharmFinderUser owner;
 
     @OneToMany(mappedBy = "pharmacy", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PharmFinderPharmacyMedicine> pharmacyMedicines = new HashSet<>();
 
     private String pharmacyName;
 
-    public PharmFinderPharmacy(int pharmacyID, PharmFinderAddress pharmacyAddress, PharmacyUser owner, String pharmacyName) {
+    public PharmFinderPharmacy(int pharmacyID, PharmFinderAddress pharmacyAddress, PharmFinderUser owner, String pharmacyName) {
         this.pharmacyID = pharmacyID;
         this.pharmacyAddress = pharmacyAddress;
         this.owner = owner;
@@ -33,7 +33,7 @@ public class PharmFinderPharmacy {
         return pharmacyID;
     }
 
-    public PharmacyUser getOwner() {
+    public PharmFinderUser getOwner() {
         return owner;
     }
 
@@ -56,7 +56,7 @@ public class PharmFinderPharmacy {
         this.pharmacyAddress = pharmacyAddress;
     }
 
-    public void setOwner(PharmacyUser owner) {
+    public void setOwner(PharmFinderUser owner) {
         this.owner = owner;
     }
 

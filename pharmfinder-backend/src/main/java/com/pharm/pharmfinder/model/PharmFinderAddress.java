@@ -16,7 +16,7 @@ public class PharmFinderAddress {
 
     @OneToMany(mappedBy = "userAddress", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
-    private Set<PharmacyUser> addressUsers;
+    private Set<PharmFinderUser> addressUsers;
     
     private String street;
     private String houseNumber;
@@ -24,13 +24,13 @@ public class PharmFinderAddress {
 
     public PharmFinderAddress(){}
 
-    public PharmFinderAddress(Set<PharmacyUser> addressUsers, String street, String houseNumber, String postcode) {
+    public PharmFinderAddress(Set<PharmFinderUser> addressUsers, String street, String houseNumber, String postcode) {
         this.addressUsers = addressUsers;
         this.street = street;
         this.houseNumber = houseNumber;
         this.postcode = postcode;
     }
-    public PharmFinderAddress(PharmacyUser addressUser, String street, String houseNumber, String postcode) {
+    public PharmFinderAddress(PharmFinderUser addressUser, String street, String houseNumber, String postcode) {
         if(addressUsers == null)
             this.addressUsers = new HashSet<>();
         this.addressUsers.add(addressUser);
@@ -47,11 +47,11 @@ public class PharmFinderAddress {
         this.addressID = addressID;
     }
 
-    public Set<PharmacyUser> getAddressUsers() {
+    public Set<PharmFinderUser> getAddressUsers() {
         return addressUsers;
     }
 
-    public void setAddressUsers(Set<PharmacyUser> addressUsers) {
+    public void setAddressUsers(Set<PharmFinderUser> addressUsers) {
         this.addressUsers = addressUsers;
     }
 

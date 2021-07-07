@@ -34,7 +34,7 @@ public class TestOnly{
         transactionTemplate.execute(transactionStatus -> {
             try {
 
-                Query q1 = em.createQuery("DELETE FROM PharmacyUser");
+                Query q1 = em.createQuery("DELETE FROM PharmFinderUser");
                 Query q2 = em.createQuery("DELETE FROM PharmFinderAddress");
 //                Query q3 = em.createQuery("DELETE FROM PharmFinderMedicine ");
 //                Query q4 = em.createQuery("DELETE FROM PharmFinderPharmacy ");

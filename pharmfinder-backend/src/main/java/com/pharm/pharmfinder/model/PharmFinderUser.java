@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="pharmacy_user")
-public class PharmacyUser {
+public class PharmFinderUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,7 +24,7 @@ public class PharmacyUser {
     private String passwordHash;
     private boolean isPharmacist;
 
-    public PharmacyUser(){}
+    public PharmFinderUser(){}
 
     public PharmFinderAddress getUserAddress() {
         return userAddress;
