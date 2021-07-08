@@ -4,10 +4,7 @@ import com.pharm.pharmfinder.controller.repositories.PharmFinderAddressRepositor
 import com.pharm.pharmfinder.controller.repositories.PharmFinderMedicineRepository;
 import com.pharm.pharmfinder.controller.repositories.PharmFinderPharmacyRepository;
 import com.pharm.pharmfinder.controller.repositories.PharmFinderUserRepository;
-import org.apache.tomcat.jni.Address;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,8 +15,8 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 
@@ -59,7 +56,7 @@ class PharmFinderUserControllerTest {
     //TESTS//
     @Test
     void registerNewUserTest1() throws Exception {
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/user/register")
+        MockHttpServletRequestBuilder builder1 = MockMvcRequestBuilders.put("/user/register")
                 .param("username", tu1Username)
                 .param("email", tu1Email)
                 .param("isPharmacist", String.valueOf(tu1IsPharmacist))
@@ -69,14 +66,14 @@ class PharmFinderUserControllerTest {
                 .param("addressPostcode", tu1Postcode)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE);
-        this.mockMvc.perform(builder)
+        this.mockMvc.perform(builder1)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().string(equalTo("Saved")));
     }
 
     @Test
     void registerNewUserTest2() throws Exception {
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/user/register")
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put("/user/register")
                 .param("username", tu2Username)
                 .param("email", tu2Email)
                 .param("isPharmacist", String.valueOf(tu2IsPharmacist))
@@ -93,11 +90,12 @@ class PharmFinderUserControllerTest {
 
     /**
      * Tests if an Exception is thrown when a username is already taken.
+     *
      * @throws Exception
      */
     @Test
     void registerNewUserTest3() throws Exception {
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/user/register")
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put("/user/register")
                 .param("username", tu1Username)
                 .param("email", tu1Email)
                 .param("isPharmacist", String.valueOf(tu1IsPharmacist))
@@ -108,7 +106,7 @@ class PharmFinderUserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE);
         this.mockMvc.perform(builder);
-        MockHttpServletRequestBuilder builder2 = MockMvcRequestBuilders.post("/user/register")
+        MockHttpServletRequestBuilder builder2 = MockMvcRequestBuilders.put("/user/register")
                 .param("username", tu1Username)
                 .param("email", tu1Email)
                 .param("isPharmacist", String.valueOf(tu1IsPharmacist))
@@ -122,9 +120,10 @@ class PharmFinderUserControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isConflict());
 
     }
+
     @Test
     void getAllUsersTest() throws Exception {
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/user/register")
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put("/user/register")
                 .param("username", tu1Username)
                 .param("email", tu1Email)
                 .param("isPharmacist", String.valueOf(tu1IsPharmacist))
@@ -139,12 +138,12 @@ class PharmFinderUserControllerTest {
                 .accept(MediaType.APPLICATION_JSON_VALUE);
         this.mockMvc.perform(builder2)
                 .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(content().string(containsString("\"username\":\"marry25\",\"email\":\"marryberry@exampssleproivider.com\",\"pharmacist\":true}]")));
+                .andExpect(content().string(containsString("\"username\":\"marry25\",\"email\":\"marryberry@exampssleproivider.com\",\"pharmacist\":true}]")));
     }
 
     @Test
     void updateUsernameTest() throws Exception {
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/user/register")
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put("/user/register")
                 .param("username", tu1Username)
                 .param("email", tu1Email)
                 .param("isPharmacist", String.valueOf(tu1IsPharmacist))
@@ -181,14 +180,14 @@ class PharmFinderUserControllerTest {
         MockHttpServletRequestBuilder builder4 = MockMvcRequestBuilders.get("/user/all")
                 .accept(MediaType.APPLICATION_JSON_VALUE);
         this.mockMvc.perform(builder4)
-        .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().string(containsString("\"username\":\"testname1\",\"email\":\"marryberry@exampssleproivider.com\",\"pharmacist\":true}]")));
 
     }
 
     @Test
     void updateEmailTest() throws Exception {
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/user/register")
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put("/user/register")
                 .param("username", tu1Username)
                 .param("email", tu1Email)
                 .param("isPharmacist", String.valueOf(tu1IsPharmacist))
@@ -231,7 +230,7 @@ class PharmFinderUserControllerTest {
 
     @Test
     void updateIsPharmacistTest() throws Exception {
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/user/register")
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put("/user/register")
                 .param("username", tu1Username)
                 .param("email", tu1Email)
                 .param("isPharmacist", String.valueOf(tu1IsPharmacist))

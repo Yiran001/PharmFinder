@@ -31,7 +31,7 @@ public class PharmFinderUserController {
     }
 
 
-    @PostMapping(path = "/register")
+    @PutMapping(path = "/register")
     public @ResponseBody
     String registerUser(@RequestParam String username, @RequestParam String email, @RequestParam boolean isPharmacist, @RequestParam String passwordHash, @RequestParam String addressStreet, @RequestParam String addressHouseNumber, @RequestParam String addressPostcode) throws UsernameAlreadyTakenException {
         PharmFinderUser pharmFinderUser = new PharmFinderUser();
@@ -57,7 +57,7 @@ public class PharmFinderUserController {
 
         if (originalUsername != username)
             checkUsernameExistence(username);
-        
+
         ArrayList<PharmFinderUser> pharmFinderUsers = (ArrayList<PharmFinderUser>) pharmFinderUserRepository.findAll();
 
         for (PharmFinderUser certainUser : pharmFinderUsers) {
@@ -79,9 +79,9 @@ public class PharmFinderUserController {
 
     }
 
-    @PostMapping(path = "/delete")
+    @DeleteMapping(path = "/delete")
     public @ResponseBody
-    String deleteUser(@RequestParam String username, @RequestParam String password) throws UsernameAlreadyTakenException {
+    String deleteUser(@RequestParam String username, @RequestParam String password) throws NoSuchUsernameException {
         PharmFinderUser pharmFinderUser = new PharmFinderUser();
         pharmFinderUser.setUsername(username);
         ArrayList<PharmFinderUser> pharmFinderUsers = (ArrayList<PharmFinderUser>) pharmFinderUserRepository.findAll();
@@ -89,9 +89,10 @@ public class PharmFinderUserController {
         for (PharmFinderUser p : pharmFinderUsers) {
             if (p.getUsername().equals(username) && p.getPasswordHash().equals(password))
                 certainUser = p;
+            pharmFinderUserRepository.deleteById(certainUser.getUserID());
+            return "Deleted";
         }
-        pharmFinderUserRepository.deleteById(certainUser.getUserID());
-        return "Deleted";
+        throw new NoSuchUsernameException();
     }
 
     @GetMapping(path = "/all")
