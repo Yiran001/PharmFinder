@@ -5,23 +5,23 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name="medicine")
-public class PharmFinderMedicine {
+@Table(name = "medicine")
+public class Medicine {
 
     @Id
     private String pzn;
 
-    @OneToMany(mappedBy = "medicine", cascade = CascadeType.ALL,orphanRemoval = true)
-    private Set<PharmFinderPharmacyMedicine> pharmacyMedicines = new HashSet<>();
+    @OneToMany(mappedBy = "medicine", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PharmacyMedicine> pharmacyMedicines = new HashSet<>();
 
     private String friendlyName;
 
-    private PharmFinderMedicineForm medicineForm;
+    private MedicineForm medicineForm;
 
-    public PharmFinderMedicine() {
+    public Medicine() {
     }
 
-    public PharmFinderMedicine(String pzn, Set<PharmFinderPharmacyMedicine> pharmacyMedicines, String friendlyName, PharmFinderMedicineForm medicineForm) {
+    public Medicine(String pzn, Set<PharmacyMedicine> pharmacyMedicines, String friendlyName, MedicineForm medicineForm) {
         this.pzn = pzn;
         this.pharmacyMedicines = pharmacyMedicines;
         this.friendlyName = friendlyName;
@@ -36,11 +36,11 @@ public class PharmFinderMedicine {
         this.pzn = pzn;
     }
 
-    public Set<PharmFinderPharmacyMedicine> getPharmacyMedicines() {
+    public Set<PharmacyMedicine> getPharmacyMedicines() {
         return pharmacyMedicines;
     }
 
-    public void setPharmacyMedicines(Set<PharmFinderPharmacyMedicine> pharmacyMedicines) {
+    public void setPharmacyMedicines(Set<PharmacyMedicine> pharmacyMedicines) {
         this.pharmacyMedicines = pharmacyMedicines;
     }
 
@@ -52,11 +52,11 @@ public class PharmFinderMedicine {
         this.friendlyName = friendlyName;
     }
 
-    public PharmFinderMedicineForm getMedicineForm() {
+    public MedicineForm getMedicineForm() {
         return medicineForm;
     }
 
-    public void setMedicineForm(PharmFinderMedicineForm medicineForm) {
+    public void setMedicineForm(MedicineForm medicineForm) {
         this.medicineForm = medicineForm;
     }
 }

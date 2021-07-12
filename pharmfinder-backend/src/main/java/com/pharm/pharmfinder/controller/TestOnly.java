@@ -14,8 +14,8 @@ import javax.persistence.PersistenceContextType;
 import javax.persistence.Query;
 
 @Controller
-@RequestMapping(path="/test_only")
-public class TestOnly{
+@RequestMapping(path = "/test_only")
+public class TestOnly {
 
     @PersistenceContext(type = PersistenceContextType.EXTENDED)
     public EntityManager em;
@@ -34,8 +34,8 @@ public class TestOnly{
         transactionTemplate.execute(transactionStatus -> {
             try {
 
-                Query q1 = em.createQuery("DELETE FROM PharmFinderUser");
-                Query q2 = em.createQuery("DELETE FROM PharmFinderAddress");
+                Query q1 = em.createQuery("DELETE FROM User");
+                Query q2 = em.createQuery("DELETE FROM Address");
 //                Query q3 = em.createQuery("DELETE FROM PharmFinderMedicine ");
 //                Query q4 = em.createQuery("DELETE FROM PharmFinderPharmacy ");
 //                Query q5 = em.createQuery("DELETE FROM PharmFinderPharmacyMedicine ");

@@ -7,8 +7,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name="address")
-public class PharmFinderAddress {
+@Table(name = "address")
+public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -16,22 +16,24 @@ public class PharmFinderAddress {
 
     @OneToMany(mappedBy = "userAddress", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
-    private Set<PharmFinderUser> addressUsers;
-    
+    private Set<User> addressUsers;
+
     private String street;
     private String houseNumber;
     private String postcode;
 
-    public PharmFinderAddress(){}
+    public Address() {
+    }
 
-    public PharmFinderAddress(Set<PharmFinderUser> addressUsers, String street, String houseNumber, String postcode) {
+    public Address(Set<User> addressUsers, String street, String houseNumber, String postcode) {
         this.addressUsers = addressUsers;
         this.street = street;
         this.houseNumber = houseNumber;
         this.postcode = postcode;
     }
-    public PharmFinderAddress(PharmFinderUser addressUser, String street, String houseNumber, String postcode) {
-        if(addressUsers == null)
+
+    public Address(User addressUser, String street, String houseNumber, String postcode) {
+        if (addressUsers == null)
             this.addressUsers = new HashSet<>();
         this.addressUsers.add(addressUser);
         this.street = street;
@@ -47,11 +49,11 @@ public class PharmFinderAddress {
         this.addressID = addressID;
     }
 
-    public Set<PharmFinderUser> getAddressUsers() {
+    public Set<User> getAddressUsers() {
         return addressUsers;
     }
 
-    public void setAddressUsers(Set<PharmFinderUser> addressUsers) {
+    public void setAddressUsers(Set<User> addressUsers) {
         this.addressUsers = addressUsers;
     }
 
@@ -78,14 +80,5 @@ public class PharmFinderAddress {
     public void setPostcode(String postcode) {
         this.postcode = postcode;
     }
-
-   /* @Override
-    public String toString() {
-        return "PharmFinderAddress{" +
-                "addressID=" + addressID +
-                ", street='" + street + '\'' +
-                ", houseNumber='" + houseNumber + '\'' +
-                ", postcode='" + postcode + '\'' +
-                '}';
-    }*/
+    
 }

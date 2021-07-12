@@ -5,24 +5,24 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name="pharmacy")
-public class PharmFinderPharmacy {
+@Table(name = "pharmacy")
+public class Pharmacy {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int pharmacyID;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private PharmFinderAddress pharmacyAddress;
+    private Address pharmacyAddress;
 
     @OneToOne
-    private PharmFinderUser owner;
+    private User owner;
 
     @OneToMany(mappedBy = "pharmacy", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PharmFinderPharmacyMedicine> pharmacyMedicines = new HashSet<>();
+    private Set<PharmacyMedicine> pharmacyMedicines = new HashSet<>();
 
     private String pharmacyName;
 
-    public PharmFinderPharmacy(int pharmacyID, PharmFinderAddress pharmacyAddress, PharmFinderUser owner, String pharmacyName) {
+    public Pharmacy(int pharmacyID, Address pharmacyAddress, User owner, String pharmacyName) {
         this.pharmacyID = pharmacyID;
         this.pharmacyAddress = pharmacyAddress;
         this.owner = owner;
@@ -33,7 +33,7 @@ public class PharmFinderPharmacy {
         return pharmacyID;
     }
 
-    public PharmFinderUser getOwner() {
+    public User getOwner() {
         return owner;
     }
 
@@ -41,22 +41,22 @@ public class PharmFinderPharmacy {
         return pharmacyName;
     }
 
-    public PharmFinderPharmacy() {
+    public Pharmacy() {
     }
 
     public void setPharmacyID(int pharmacyID) {
         this.pharmacyID = pharmacyID;
     }
 
-    public PharmFinderAddress getPharmacyAddress() {
+    public Address getPharmacyAddress() {
         return pharmacyAddress;
     }
 
-    public void setPharmacyAddress(PharmFinderAddress pharmacyAddress) {
+    public void setPharmacyAddress(Address pharmacyAddress) {
         this.pharmacyAddress = pharmacyAddress;
     }
 
-    public void setOwner(PharmFinderUser owner) {
+    public void setOwner(User owner) {
         this.owner = owner;
     }
 

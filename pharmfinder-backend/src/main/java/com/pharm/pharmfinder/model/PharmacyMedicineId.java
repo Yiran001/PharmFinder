@@ -4,15 +4,15 @@ import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 @Embeddable
-public class PharmFinderPharmacyMedicineId implements Serializable {
+public class PharmacyMedicineId implements Serializable {
 
     private int pharmacyId;
     private String pzn;
 
-    public PharmFinderPharmacyMedicineId() {
+    public PharmacyMedicineId() {
     }
 
-    public PharmFinderPharmacyMedicineId(int pharmacyId, String pzn) {
+    public PharmacyMedicineId(int pharmacyId, String pzn) {
         this.pharmacyId = pharmacyId;
         this.pzn = pzn;
     }

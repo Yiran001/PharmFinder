@@ -1,9 +1,9 @@
 package com.pharm.pharmfinder.controller;
 
-import com.pharm.pharmfinder.controller.repositories.PharmFinderAddressRepository;
-import com.pharm.pharmfinder.controller.repositories.PharmFinderMedicineRepository;
-import com.pharm.pharmfinder.controller.repositories.PharmFinderPharmacyRepository;
-import com.pharm.pharmfinder.controller.repositories.PharmFinderUserRepository;
+import com.pharm.pharmfinder.controller.repositories.AddressRepository;
+import com.pharm.pharmfinder.controller.repositories.MedicineRepository;
+import com.pharm.pharmfinder.controller.repositories.PharmacyRepository;
+import com.pharm.pharmfinder.controller.repositories.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class PharmFinderUserControllerTest {
+class UserControllerTest {
 
     //test-user1
     private String tu1Username = "marry25";
@@ -45,13 +45,13 @@ class PharmFinderUserControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private PharmFinderUserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    private PharmFinderAddressRepository addressRepository;
+    private AddressRepository addressRepository;
     @Autowired
-    private PharmFinderPharmacyRepository pharmacyRepository;
+    private PharmacyRepository pharmacyRepository;
     @Autowired
-    private PharmFinderMedicineRepository medicineRepository;
+    private MedicineRepository medicineRepository;
 
     //TESTS//
     @Test

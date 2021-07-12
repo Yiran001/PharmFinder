@@ -5,18 +5,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
+
 @Entity
-@Table(name="pharmacy_user")
-public class PharmFinderUser {
+@Table(name = "pharmacy_user")
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int userID;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name="user_fk")
+    @JoinColumn(name = "user_fk")
     @JsonBackReference
-    private PharmFinderAddress userAddress;
+    private Address userAddress;
 
     private String username;
     private String email;
@@ -24,13 +25,14 @@ public class PharmFinderUser {
     private String passwordHash;
     private boolean isPharmacist;
 
-    public PharmFinderUser(){}
+    public User() {
+    }
 
-    public PharmFinderAddress getUserAddress() {
+    public Address getUserAddress() {
         return userAddress;
     }
 
-    public void setUserAddress(PharmFinderAddress userAddress) {
+    public void setUserAddress(Address userAddress) {
         this.userAddress = userAddress;
     }
 

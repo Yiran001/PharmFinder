@@ -1,7 +1,7 @@
 package com.pharm.pharmfinder.controller;
 
-import com.pharm.pharmfinder.controller.repositories.PharmFinderAddressRepository;
-import com.pharm.pharmfinder.model.PharmFinderAddress;
+import com.pharm.pharmfinder.controller.repositories.AddressRepository;
+import com.pharm.pharmfinder.model.Address;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -10,66 +10,69 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 
 @Controller
-@RequestMapping(path = "/address")
-public class PharmFinderAddressController {
+@RequestMapping(path = "/addresses")
+public class AddressController {
 
     @Autowired
-    private PharmFinderAddressRepository pharmFinderAddressRepository;
+    private AddressRepository addressRepository;
 
+    /**
+     * handles exception, that occurs when someone tries to access an address which is non existent
+     */
     @ResponseStatus(value = HttpStatus.CONFLICT, reason = "There is no such address")
     @ExceptionHandler(NoSuchAddressException.class)
     public void noSuchAddressExceptionHandler() {
     }
 
-    @PutMapping(path = "/add")
+    @PostMapping(path = "/create")
     public @ResponseBody
-    String addAddress(@RequestParam String street, @RequestParam String houseNumber, @RequestParam String postcode) {
-        PharmFinderAddress address = new PharmFinderAddress();
+    String create(@RequestParam String street, @RequestParam String houseNumber, @RequestParam String postcode) {
+        Address address = new Address();
 
         address.setStreet(street);
         address.setHouseNumber(houseNumber);
         address.setPostcode(postcode);
 
-        pharmFinderAddressRepository.save(address);
+        addressRepository.save(address);
 
         return "Saved";
     }
 
     @DeleteMapping(path = "/delete")
     public @ResponseBody
-    String deleteAddress(@RequestParam String street, @RequestParam String houseNumber, @RequestParam String postcode) throws NoSuchAddressException {
-        ArrayList<PharmFinderAddress> pharmFinderAddresses = (ArrayList<PharmFinderAddress>) pharmFinderAddressRepository.findAll();
+    String delete(@RequestParam String street, @RequestParam String houseNumber, @RequestParam String postcode) throws NoSuchAddressException {
+        ArrayList<Address> addresses = (ArrayList<Address>) addressRepository.findAll();
 
-        for (PharmFinderAddress p : pharmFinderAddresses) {
+        for (Address p : addresses) {
             if (p.getStreet().equals(street) && p.getHouseNumber().equals(houseNumber) && p.getPostcode().equals(postcode)) {
-                pharmFinderAddressRepository.deleteById(p.getAddressID());
+                addressRepository.deleteById(p.getAddressID());
                 return "Deleted";
             }
         }
         throw new NoSuchAddressException();
     }
 
-    @PostMapping(path = "/update")
+    @PutMapping(path = "/update")
     public @ResponseBody
     String updateAddress(@RequestParam String street, @RequestParam String houseNumber, @RequestParam String postcode, @RequestParam String newStreet, @RequestParam String newHouseNumber, @RequestParam String newPostcode) throws NoSuchAddressException {
-        ArrayList<PharmFinderAddress> pharmFinderAddresses = (ArrayList<PharmFinderAddress>) pharmFinderAddressRepository.findAll();
+        ArrayList<Address> addresses = (ArrayList<Address>) addressRepository.findAll();
 
-        for (PharmFinderAddress p : pharmFinderAddresses) {
+        for (Address p : addresses) {
             if (p.getStreet().equals(street) && p.getHouseNumber().equals(houseNumber) && p.getPostcode().equals(postcode)) {
                 p.setStreet(newStreet);
                 p.setHouseNumber(newHouseNumber);
                 p.setPostcode(newPostcode);
-                pharmFinderAddressRepository.save(p);
+                addressRepository.save(p);
                 return "Updated";
             }
         }
         throw new NoSuchAddressException();
     }
 
-    @GetMapping(path = "/all")
+    @GetMapping(path = "/index")
     public @ResponseBody
-    Iterable<PharmFinderAddress> getAllPharmFinderAddresses() {
-        return pharmFinderAddressRepository.findAll();
+    Iterable<Address> getAllAddresses() {
+        return addressRepository.findAll();
     }
 
 

@@ -1,6 +1,6 @@
 package com.pharm.pharmfinder.model;
 
-public enum PharmFinderMedicineForm {
+public enum MedicineForm {
     PILL,
     SYRUP,
     SOLUTION,
