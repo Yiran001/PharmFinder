@@ -77,14 +77,14 @@ public class User {
         isPharmacist = pharmacist;
     }
 
-/*    @Override
+    @Override
     public String toString() {
-        return "PharmacyUser{" +
+        return "User{" +
                 "userID=" + userID +
+                ", userAddress=" + userAddress +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
-                ", passwordHash='" + passwordHash + '\'' +
                 ", isPharmacist=" + isPharmacist +
                 '}';
-    }*/
+    }
 }

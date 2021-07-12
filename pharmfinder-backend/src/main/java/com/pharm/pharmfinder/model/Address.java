@@ -80,5 +80,14 @@ public class Address {
     public void setPostcode(String postcode) {
         this.postcode = postcode;
     }
-    
+
+    @Override
+    public String toString() {
+        return "Address{" +
+                "addressID=" + addressID +
+                ", street='" + street + '\'' +
+                ", houseNumber='" + houseNumber + '\'' +
+                ", postcode='" + postcode + '\'' +
+                '}';
+    }
 }

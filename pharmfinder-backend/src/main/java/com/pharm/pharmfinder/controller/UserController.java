@@ -52,7 +52,7 @@ public class UserController {
      */
     @PostMapping(path = "/create")
     public @ResponseBody
-    String register(@RequestParam String username, @RequestParam String email, @RequestParam boolean isPharmacist, @RequestParam String passwordHash, @RequestParam String addressStreet, @RequestParam String addressHouseNumber, @RequestParam String addressPostcode) throws UsernameAlreadyTakenException {
+    String create(@RequestParam String username, @RequestParam String email, @RequestParam boolean isPharmacist, @RequestParam String passwordHash, @RequestParam String addressStreet, @RequestParam String addressHouseNumber, @RequestParam String addressPostcode) throws UsernameAlreadyTakenException {
         User user = new User();
 
         checkUsernameExistence(username);
@@ -116,8 +116,7 @@ public class UserController {
 
     @GetMapping(path = "/index")
     public @ResponseBody
-    Iterable<User> getAllUsers() {
-        // This returns a JSON or XML with the users
+    Iterable<User> index() {
         return userRepository.findAll();
     }
 

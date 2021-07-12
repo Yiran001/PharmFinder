@@ -54,7 +54,7 @@ public class AddressController {
 
     @PutMapping(path = "/update")
     public @ResponseBody
-    String updateAddress(@RequestParam String street, @RequestParam String houseNumber, @RequestParam String postcode, @RequestParam String newStreet, @RequestParam String newHouseNumber, @RequestParam String newPostcode) throws NoSuchAddressException {
+    String update(@RequestParam String street, @RequestParam String houseNumber, @RequestParam String postcode, @RequestParam String newStreet, @RequestParam String newHouseNumber, @RequestParam String newPostcode) throws NoSuchAddressException {
         ArrayList<Address> addresses = (ArrayList<Address>) addressRepository.findAll();
 
         for (Address p : addresses) {
@@ -71,7 +71,7 @@ public class AddressController {
 
     @GetMapping(path = "/index")
     public @ResponseBody
-    Iterable<Address> getAllAddresses() {
+    Iterable<Address> index() {
         return addressRepository.findAll();
     }
 
