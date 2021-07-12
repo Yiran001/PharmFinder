@@ -1,0 +1,38 @@
+.navBarTitle {
+  color: #7eef6f;
+  font: bold x-large sans-serif;
+}
+
+span {
+  margin-right: 20px;
+}
+
+.link-secondary:link {
+  text-decoration: none;
+}
+.link-secondary:hover {
+  text-decoration: underline;
+}
+
+.bd-placeholder-img {
+  font-size: 1.125rem;
+  text-anchor: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+@media (min-width: 768px) {
+  .bd-placeholder-img-lg {
+    font-size: 3.5rem;
+  }
+}
+.content {
+  min-height: calc(100vh - 50px);
+}
+.footer {
+  height: 50px;
+}
+
+
+
