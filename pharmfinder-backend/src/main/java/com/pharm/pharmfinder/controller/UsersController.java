@@ -43,7 +43,7 @@ public class UsersController {
      * @param username
      * @param email
      * @param isPharmacist
-     * @param passwordHash
+     * @param password
      * @param addressStreet
      * @param addressHouseNumber
      * @param addressPostcode
@@ -52,14 +52,14 @@ public class UsersController {
      */
     @PostMapping(path = "/create")
     public @ResponseBody
-    String create(@RequestParam String username, @RequestParam String email, @RequestParam boolean isPharmacist, @RequestParam String passwordHash, @RequestParam String addressStreet, @RequestParam String addressHouseNumber, @RequestParam String addressPostcode) throws UsernameAlreadyTakenException {
+    String create(@RequestParam String username, @RequestParam String email, @RequestParam boolean isPharmacist, @RequestParam String password, @RequestParam String addressStreet, @RequestParam String addressHouseNumber, @RequestParam String addressPostcode) throws UsernameAlreadyTakenException {
         User user = new User();
 
         checkUsernameExistence(username);
         user.setUsername(username);
         user.setEmail(email);
         user.setPharmacist(isPharmacist);
-        user.setPasswordHash(passwordHash);
+        user.setPasswordHash(password);
         userRepository.save(user);
         Address userAddress = new Address(user, addressStreet, addressHouseNumber, addressPostcode);
         addressRepository.save(userAddress);

@@ -59,6 +59,16 @@ public class Medicine {
     public void setMedicineForm(MedicineForm medicineForm) {
         this.medicineForm = medicineForm;
     }
+
+    @Override
+    public String toString() {
+        return "Medicine{" +
+                "pzn='" + pzn + '\'' +
+                ", pharmacyMedicines=" + pharmacyMedicines +
+                ", friendlyName='" + friendlyName + '\'' +
+                ", medicineForm=" + medicineForm +
+                '}';
+    }
 }
 
 

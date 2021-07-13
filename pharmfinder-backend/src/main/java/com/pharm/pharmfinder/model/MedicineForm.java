@@ -10,7 +10,6 @@ public enum MedicineForm {
     VAGINAL,
     RECTAL,
     URETHRAL,
-    NASAL,
-    OTHER
+    NASAL
 
 }
