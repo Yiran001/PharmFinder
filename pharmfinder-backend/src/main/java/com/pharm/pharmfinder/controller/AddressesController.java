@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 @Controller
 @RequestMapping(path = "/addresses")
-public class AddressController {
+public class AddressesController {
 
     @Autowired
     private AddressRepository addressRepository;

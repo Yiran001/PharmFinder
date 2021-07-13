@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 @Controller
 @RequestMapping(path = "/users")
-public class UserController {
+public class UsersController {
 
     @Autowired
     private UserRepository userRepository;

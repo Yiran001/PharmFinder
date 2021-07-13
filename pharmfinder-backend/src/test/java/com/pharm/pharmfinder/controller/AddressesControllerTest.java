@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class AddressControllerTest {
+public class AddressesControllerTest {
 
     //test-user1
     private String tu1Username = "marry25";
