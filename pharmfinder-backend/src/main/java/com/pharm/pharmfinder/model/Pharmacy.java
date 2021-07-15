@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+
 @Entity
 @Table(name = "pharmacy")
 public class Pharmacy {
@@ -63,4 +64,13 @@ public class Pharmacy {
     public void setPharmacyName(String pharmacyName) {
         this.pharmacyName = pharmacyName;
     }
+
+    public Set<PharmacyMedicine> getPharmacyMedicines() {
+        return pharmacyMedicines;
+    }
+
+    public void setPharmacyMedicines(Set<PharmacyMedicine> pharmacyMedicines) {
+        this.pharmacyMedicines = pharmacyMedicines;
+    }
 }
+

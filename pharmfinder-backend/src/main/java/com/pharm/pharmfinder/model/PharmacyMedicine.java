@@ -6,13 +6,14 @@ import javax.persistence.*;
 @Table(name = "pharmacy_medicine")
 public class PharmacyMedicine {
 
-    @EmbeddedId
-    private PharmacyMedicineId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Pharmacy pharmacy;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.ALL )
     private Medicine medicine;
 
     private long amount;
@@ -24,14 +25,6 @@ public class PharmacyMedicine {
         this.pharmacy = pharmacy;
         this.medicine = medicine;
         this.amount = amount;
-    }
-
-    public PharmacyMedicineId getId() {
-        return id;
-    }
-
-    public void setId(PharmacyMedicineId id) {
-        this.id = id;
     }
 
     public Pharmacy getPharmacy() {
@@ -58,3 +51,4 @@ public class PharmacyMedicine {
         this.amount = amount;
     }
 }
+
