@@ -3,6 +3,7 @@ import { AuthService } from '../services/auth.service';
 import {Observable, throwError} from "rxjs";
 import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from "@angular/common/http";
 import {NgForm} from "@angular/forms";
+import {Router} from "@angular/router";
 
 /**
  * This component binds form data (username, email, password) from template to
@@ -34,7 +35,7 @@ export class RegisterComponent implements OnInit {
   usernameAlreadyGiven = false;
   errorCode: any = null;
 
-  constructor(private authService: AuthService,private http: HttpClient) { }
+  constructor(private authService: AuthService,private router: Router) { }
 
 
   ngOnInit(): void {
@@ -48,6 +49,8 @@ export class RegisterComponent implements OnInit {
         console.log(data);
         this.isSuccessful = true;
         this.isSignUpFailed = false;
+        this.router.navigate(['/login']);
+
       },
       error => {
         console.log(error)
@@ -85,6 +88,4 @@ export class RegisterComponent implements OnInit {
       }
     );
   }
-
-
 }

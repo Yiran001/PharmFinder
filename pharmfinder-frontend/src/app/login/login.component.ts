@@ -3,6 +3,7 @@ import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {throwError} from "rxjs";
 import {AuthService} from "../services/auth.service";
 import {TokenStorageService} from "../services/token-storage.service";
+import {Router} from "@angular/router";
 
 
 @Component({
@@ -24,7 +25,7 @@ export class LoginComponent implements OnInit {
 
 
 
-  constructor(private authService: AuthService,private tokenStorage: TokenStorageService) {
+  constructor(private authService: AuthService,private tokenStorage: TokenStorageService,private router:Router) {
 
   }
   ngOnInit(): void {
@@ -39,12 +40,12 @@ export class LoginComponent implements OnInit {
       data => {
         console.log(data);
         this.tokenStorage.saveToken(data.token);
-        this.tokenStorage.saveUser(data);
-        //this.reloadPage()
+        this.tokenStorage.saveUser(username);
         console.log(this.tokenStorage.getToken());
         this.isLoginFailed = false;
         this.isLoggedIn = true;
         this.isSuccessful = true;
+        this.router.navigate(['/home']);
 
       },
       error => {
