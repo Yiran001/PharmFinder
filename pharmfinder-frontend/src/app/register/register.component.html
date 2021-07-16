@@ -1,0 +1,184 @@
+<div class="row">
+  <div class="col">
+  </div>
+  <div class="col-md-4">
+    <h1>Registrierung</h1>
+    <form
+      *ngIf="!isSuccessful"
+      name="form"
+      (ngSubmit)="f.form.valid && onSubmit()"
+      #f="ngForm"
+      novalidate
+    >
+      <div class="form-group">
+        <label [htmlFor]="username">Nutzername</label>
+        <input
+          type="text"
+          class="form-control"
+          name="username"
+          [(ngModel)]="form.username"
+          required
+          minlength="3"
+          maxlength="20"
+          #username="ngModel"
+        />
+        <div class="alert-danger" *ngIf="(username.errors && f.submitted)">
+          <div *ngIf="username.errors.required">Nutzername wird benötigt</div>
+          <div *ngIf="usernameAlreadyGiven">Nutzername bereits vergeben</div>
+          <div *ngIf="username.errors.minlength">
+            Nutzername muss mindestens aus 3 Zeichen bestehen
+          </div>
+          <div *ngIf="username.errors.maxlength">
+            Nutzername darf maximal 20 Zeichen beinhalten
+          </div>
+        </div>
+        <div class="alert-danger" *ngIf="usernameAlreadyGiven">
+          <div>Nutzername bereits vergeben</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label [htmlFor]="email">Email</label>
+        <input
+          type="email"
+          class="form-control"
+          name="email"
+          [(ngModel)]="form.email"
+          required
+          email
+          #email="ngModel"
+        />
+        <div class="alert-danger" *ngIf="email.errors && f.submitted">
+          <div *ngIf="email.errors.required">Email wird benötigt</div>
+          <div *ngIf="email.errors.email">
+            Email muss gültig sein
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label [htmlFor]="password">Passwort</label>
+        <input
+          type="password"
+          class="form-control"
+          name="password"
+          [(ngModel)]="form.password"
+          required
+          minlength="6"
+          #password="ngModel"
+        />
+        <div class="alert-danger" *ngIf="password.errors && f.submitted">
+          <div *ngIf="password.errors.required">Passwort wird benötigt</div>
+          <div *ngIf="password.errors.minlength">
+            Passwort muss mindestens aus 6 Zeichen bestehen
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="form-group col-md-8">
+          <label [htmlFor]="street">Straße</label>
+          <input
+            type="text"
+            class="form-control"
+            name="street"
+            [(ngModel)]="form.street"
+            required
+            pattern="^[a-zA-Zß ]*$"
+            #street="ngModel"
+          />
+          <div class="alert-danger" *ngIf="street.errors && f.submitted">
+            <div *ngIf="street.errors.required">Straße angeben</div>
+            <div *ngIf="street.errors.pattern">Nur Buchstaben verwenden</div>
+          </div>
+        </div>
+
+        <div class="form-group col">
+          <label [htmlFor]="housenumber">Hausnummer</label>
+          <input
+            type="number"
+            class="form-control"
+            name="housenumber"
+            [(ngModel)]="form.housenumber"
+            max="9999"
+            required
+            #housenumber="ngModel"
+          />
+          <div class="alert-danger" *ngIf="housenumber.errors && f.submitted">
+            <div *ngIf="housenumber.errors.required">Hausnummer angeben</div>
+            <div *ngIf="housenumber.errors.max">
+              Hausnummer darf höchstens "9999" betragen
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label [htmlFor]="postcode">Postleitzahl</label>
+        <input
+          type="number"
+          class="form-control"
+          name="postcode"
+          [(ngModel)]="form.postcode"
+          max="100000"
+          required
+          #postcode="ngModel"
+        />
+        <div class="alert-danger" *ngIf="postcode.errors && f.submitted">
+          <div *ngIf="postcode.errors.required">Hausnummer angeben</div>
+          <div *ngIf="postcode.errors.max">
+            Postleitzahl darf höchstens "100000" betragen
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group form-check">
+        <input type="checkbox"
+
+               name="isPharmacist"
+               id="isPharmacist"
+               class="form-check-input"
+               [(ngModel)]="form.isPharmacist"
+               #isPharmacist="ngModel"
+               (change)=" this.registerPharmacy=!this.registerPharmacy;"
+               [ngClass]="{ 'is-invalid': f.submitted && isPharmacist.invalid }"
+        />
+        <label
+          for="isPharmacist"
+          class="form-check-label">Apotheker/in
+        </label>
+        <div *ngIf="f.submitted && isPharmacist.invalid">hallo</div>
+        <div *ngIf="this.registerPharmacy">
+          <!--
+          falls pharm registrierung, dann hier
+          -->
+
+        </div>
+      </div>
+
+      <div class="form-group">
+        <button class="btn btn-primary btn-block">registrieren</button>
+      </div>
+
+      <div class="alert alert-warning" *ngIf="f.submitted && isSignUpFailed">
+        Reqistrierung fehlgeschlagen!<br />{{ errorMessage }}
+      </div>
+    </form>
+
+    <div class="alert alert-success" *ngIf="isSuccessful">
+      Registrierung erfolgreich!
+    </div>
+  </div>
+  <div class="col">
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+

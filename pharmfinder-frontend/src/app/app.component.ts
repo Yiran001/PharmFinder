@@ -12,6 +12,7 @@ export class AppComponent implements AfterViewInit{
   page2 = 'Bestand';
 
   websiteTitel='Apothekenfinder';
+  isLoggedIn = false;
 
   constructor(private elementRef: ElementRef, private titleService: Title){
     this.titleService.setTitle(this.websiteTitel);
