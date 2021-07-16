@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {throwError} from "rxjs";
 import {AuthService} from "../services/auth.service";
+import {TokenStorageService} from "../services/token-storage.service";
 
 
 @Component({
@@ -17,11 +18,13 @@ export class LoginComponent implements OnInit {
     password: null,
   };
   isSuccessful = false;
-  isSignUpFailed = false;
+  isLoginFailed = false;
   errorMessage = '';
+  isLoggedIn = false;
 
 
-  constructor(private authService: AuthService,private http: HttpClient) {
+
+  constructor(private authService: AuthService,private tokenStorage: TokenStorageService) {
 
   }
   ngOnInit(): void {
@@ -35,13 +38,19 @@ export class LoginComponent implements OnInit {
     this.authService.login(username, password ).subscribe(
       data => {
         console.log(data);
+        this.tokenStorage.saveToken(data.token);
+        this.tokenStorage.saveUser(data);
+        //this.reloadPage()
+        console.log(this.tokenStorage.getToken());
+        this.isLoginFailed = false;
+        this.isLoggedIn = true;
         this.isSuccessful = true;
-        this.isSignUpFailed = false;
+
       },
       error => {
         console.log(error)
         this.errorMessage = error.error.message;
-        this.isSignUpFailed = true;
+        this.isLoginFailed = true;
 
 
         if (error instanceof HttpErrorResponse) {
@@ -57,7 +66,7 @@ export class LoginComponent implements OnInit {
                 console.error("access denied")
                 break;
               case 200:
-                this.isSignUpFailed=false;
+                this.isLoginFailed=false;
                 this.isSuccessful=true;
                 break;
             }
@@ -68,6 +77,9 @@ export class LoginComponent implements OnInit {
         return throwError(error);
       }
     );
+  }
+  reloadPage(): void {
+    window.location.reload();
   }
 
 }

@@ -15,8 +15,6 @@ export class AuthService {
 
 
   login(username: string, password: string): Observable<any> {
-    console.log(username);
-    console.log(password);
     let user = {
       username: username,
       password: password
