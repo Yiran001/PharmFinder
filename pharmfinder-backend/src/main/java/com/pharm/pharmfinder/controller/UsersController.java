@@ -1,11 +1,14 @@
 package com.pharm.pharmfinder.controller;
 
 import com.pharm.pharmfinder.controller.repositories.AddressRepository;
+import com.pharm.pharmfinder.controller.repositories.PharmacyRepository;
 import com.pharm.pharmfinder.controller.repositories.UserRepository;
 import com.pharm.pharmfinder.model.Address;
+import com.pharm.pharmfinder.model.Pharmacy;
 import com.pharm.pharmfinder.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +22,10 @@ public class UsersController {
     private UserRepository userRepository;
     @Autowired
     private AddressRepository addressRepository;
+    @Autowired
+    private PharmacyRepository pharmacyRepository;
+    @Autowired
+    private PasswordEncoder bcryptEncoder;
 
     /**
      * handles exception, that occurs when someone wants to take the same user that someone else has already took
@@ -53,21 +60,38 @@ public class UsersController {
     @PostMapping(path = "/create")
     public @ResponseBody
     String create(@RequestParam String username, @RequestParam String email, @RequestParam boolean isPharmacist, @RequestParam String password, @RequestParam String addressStreet, @RequestParam String addressHouseNumber, @RequestParam String addressPostcode) throws UsernameAlreadyTakenException {
-        User user = new User();
+//        User user = new User();
+//
+//        checkUsernameExistence(username);
+//        user.setUsername(username);
+//        user.setEmail(email);
+//        user.setPharmacist(isPharmacist);
+//        user.setPasswordHash(password);
+//        userRepository.save(user);
+//        Address userAddress = new Address(user, addressStreet, addressHouseNumber, addressPostcode);
+//        addressRepository.save(userAddress);
+//        user.setUserAddress(userAddress);
+//        userRepository.save(user);
+//
+//        return "Saved";
+            User user = new User();
 
-        checkUsernameExistence(username);
-        user.setUsername(username);
-        user.setEmail(email);
-        user.setPharmacist(isPharmacist);
-        user.setPasswordHash(password);
-        userRepository.save(user);
-        Address userAddress = new Address(user, addressStreet, addressHouseNumber, addressPostcode);
-        addressRepository.save(userAddress);
-        user.setUserAddress(userAddress);
-        userRepository.save(user);
-
-        return "Saved";
-
+            checkUsernameExistence(username);
+            user.setUsername(username);
+            user.setEmail(email);
+            user.setPharmacist(isPharmacist);
+            user.setPasswordHash(bcryptEncoder.encode(password));
+            userRepository.save(user);
+            Address userAddress = new Address(user,addressStreet,addressHouseNumber,addressPostcode);
+            addressRepository.save(userAddress);
+            user.setUserAddress(userAddress);
+            userRepository.save(user);
+            Pharmacy pharmacy = new Pharmacy();
+            pharmacy.setPharmacyAddress(userAddress);
+            pharmacy.setPharmacyName(username);
+            pharmacy.setOwner(user);
+            pharmacyRepository.save(pharmacy);
+            return "Saved";
     }
 
     @PutMapping(path = "/update")

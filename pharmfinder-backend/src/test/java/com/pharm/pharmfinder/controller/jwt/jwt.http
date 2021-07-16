@@ -1,0 +1,42 @@
+POST http://localhost:8080/medicines/create
+Content-Type: application/x-www-form-urlencoded
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqYXZhaW51c2UiLCJleHAiOjE2MjY0MTkxMjksImlhdCI6MTYyNjQwMTEyOX0.9Wnk-KVBtv4UD0Fvoi0cOICUkRdUN9hSJi1xxwUay5yMmFdcAO_HePb-IaHkYCafdKbH3KpBiBpzNNNbM7R3TA
+
+pzn=123&friendlyName=name&medicineForm=PILL&amount=2&username=javainuse
+
+
+
+###
+POST http://localhost:8080/users/create
+Content-Type: application/x-www-form-urlencoded
+
+username=javainuse&password=password&email=gil@hro.de&isPharmacist=true&addressStreet=mystreet&addressHouseNumber=42&addressPostcode=12345
+
+
+
+###
+POST http://localhost:8080/register
+Content-Type: application/json
+
+{
+  "username": "javainuse",
+  "password": "password"
+}
+
+
+
+###
+POST http://localhost:8080/authenticate
+Content-Type: application/json
+
+{
+  "username": "javainuse",
+  "password": "password"
+}
+
+###
+POST http://localhost:8080/hello
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqYXZhaW51c2UiLCJleHAiOjE2MjY0MTkxMjksImlhdCI6MTYyNjQwMTEyOX0.9Wnk-KVBtv4UD0Fvoi0cOICUkRdUN9hSJi1xxwUay5yMmFdcAO_HePb-IaHkYCafdKbH3KpBiBpzNNNbM7R3TA
+
+

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/pharmfinder.iml" filepath="$PROJECT_DIR$/pharmfinder.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pharmfinder-backend/pharmfinder-backend.iml" filepath="$PROJECT_DIR$/pharmfinder-backend/pharmfinder-backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pharmfinder-frontend/pharmfinder-frontend.iml" filepath="$PROJECT_DIR$/pharmfinder-frontend/pharmfinder-frontend.iml" />
+    </modules>
+  </component>
+</project>
