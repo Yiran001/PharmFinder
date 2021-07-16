@@ -2,7 +2,7 @@ export interface User {
   username : string;
   email : string,
   isPharmacist : boolean,
-  passwordHash : string,
+  password : string,
   addressStreet : string,
   addressHouseNumber : string,
   addressPostcode : string

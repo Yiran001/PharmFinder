@@ -4,4 +4,4 @@
 .alert-success {
   margin-top: 1em;
 }
-
+.row {overflow-x: hidden; overflow-y: auto;}

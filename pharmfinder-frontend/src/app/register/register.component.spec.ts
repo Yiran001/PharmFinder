@@ -1,6 +1,10 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, TestBed,async} from '@angular/core/testing';
+import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 
 import { RegisterComponent } from './register.component';
+import {FormsModule} from "@angular/forms";
+import {HttpClient, HttpClientModule} from "@angular/common/http";
+import {AuthService} from "../services/auth.service";
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
@@ -8,7 +12,8 @@ describe('RegisterComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RegisterComponent ]
+      declarations: [ RegisterComponent],
+      imports: [FormsModule]
     })
     .compileComponents();
   });
@@ -19,7 +24,32 @@ describe('RegisterComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  /**
+  it('should be created', () => {
     expect(component).toBeTruthy();
   });
+  it('should update the favorite color in the component', fakeAsync(() => {
+    const input = fixture.nativeElement.querySelector('input');
+    //const event = createNewEvent('input');
+
+    input.value = 'Red';
+    input.dispatchEvent(event);
+
+    fixture.detectChanges();
+
+      //expect(component.favoriteColor).toEqual('Red');
+  }));
+
+
+  it('[Email - Check - Invalid] Should check email field is not valid',async(()=>{
+    fixture.whenStable().then(()=>{
+      let email = component.form.form.controls['email'];
+      expect(email.valid).toBeFalsy();
+      expect(component.form.valid).toBeFalsy();
+      email.setValue('abc');
+      expect(email.errors['email']).toBeTruthy();
+    });
+
+  }));
+*/
 });

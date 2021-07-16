@@ -7,7 +7,7 @@ import {HttpClient, HttpHeaders, HttpParams, HttpResponse} from "@angular/common
 import {User} from "../user";
 
 
-describe('#AuthService.register()', () => {
+describe('#AuthService', () => {
   let httpClient: HttpClient;
   let httpTestingController: HttpTestingController;
   let authService: AuthService;
@@ -39,48 +39,49 @@ describe('#AuthService.register()', () => {
     msg = 'Hello';
     expect(msg).toEqual('Hello');
   });
-  fdescribe('important test',()=>{
-    it("should register user and return username",() => {
+
+    it("good: should register user with POST and with valid http options  ",() => {
         const user: User = {
           username: "Max",
           email: "maxmusterman@gmail.com",
           isPharmacist: false,
-          passwordHash: "123456",
+          password: "123456",
           addressStreet: "Musterstraße",
           addressHouseNumber: "1",
           addressPostcode: "1111"
         }
 
-        const parameters = new HttpParams().set("username",user.username).set("email", user.email).set("isPharmacist",user.isPharmacist).set("passwordHash",user.passwordHash).set("addressStreet",user.addressStreet).set("addressHouseNumber",user.addressHouseNumber).set("addressPostcode",user.addressPostcode); //Create new HttpParams
+        const parameters = new HttpParams().set("username",user.username).set("email", user.email).set("isPharmacist",user.isPharmacist).set("password",user.password).set("addressStreet",user.addressStreet).set("addressHouseNumber",user.addressHouseNumber).set("addressPostcode",user.addressPostcode); //Create new HttpParams
+
 
         const httpOptions = {
           headers: new HttpHeaders({
-            'Content-Type': 'application/x-www-form-urlencoded',
-            //'Content-Type': 'application/json',
+            //'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/json',
             responseType:'text'
           }),
           params: parameters,
         };
 
-        authService.register(user.username,user.email,user.isPharmacist,user.passwordHash,user.addressStreet,user.addressHouseNumber,user.addressPostcode).subscribe(
-          data=> expect(data).toEqual(user.username, 'should return the observable'),
+        authService.registerPost(user.username,user.email,user.isPharmacist,user.password,user.addressStreet,user.addressHouseNumber,user.addressPostcode).subscribe(
+          data=> expect(data).toEqual(null, 'should return the observable'),
           fail
         );
 
-        //register should have made one request to PUT user
+
+        //register should have made one request to POST user
         const req = httpTestingController.expectOne(authService.registerUrl+'?'+httpOptions.params);
-        expect(req.request.method).toEqual('PUT');
+        expect(req.request.method).toEqual('POST');
         expect(req.request.body).toEqual({});
         expect(req.request.params).toEqual(httpOptions.params);
 
-        //const expectedResponse = new HttpResponse({ status: 200, statusText: 'saved',  });
-        //req.event(expectedResponse);
+        const expectedResponse = new HttpResponse({ status: 200, statusText: 'saved',  });
+        req.event(expectedResponse);
         //req.flush({ status: 200, statusText: 'Not Found' });
       }
-    );});
-
-
+    );
 });
+
 
 
 

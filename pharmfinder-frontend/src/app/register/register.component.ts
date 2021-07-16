@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import {Observable, throwError} from "rxjs";
 import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from "@angular/common/http";
+import {NgForm} from "@angular/forms";
 
 /**
  * This component binds form data (username, email, password) from template to
@@ -16,6 +17,7 @@ import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from "@angular/c
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
+  //@ViewChild('form',{static: true}) form2: NgForm;
   form: any = {
     username: null,
     email: null,
@@ -34,18 +36,16 @@ export class RegisterComponent implements OnInit {
 
   constructor(private authService: AuthService,private http: HttpClient) { }
 
+
   ngOnInit(): void {
   }
 
   onSubmit(): void {
     const { username, email, password, street, housenumber, postcode, isPharmacist } = this.form;
 
-
-
     this.authService.registerPost(username, email, isPharmacist, password, street,housenumber,postcode).subscribe(
       data => {
         console.log(data);
-        console.log('hallo es klappt');
         this.isSuccessful = true;
         this.isSignUpFailed = false;
       },
@@ -53,6 +53,7 @@ export class RegisterComponent implements OnInit {
         console.log(error)
         this.errorMessage = error.error.message;
         this.isSignUpFailed = true;
+        this.usernameAlreadyGiven=false;
 
         if (error instanceof HttpErrorResponse) {
           if (error.error instanceof ErrorEvent) {

@@ -3,21 +3,32 @@ import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/c
 import {Observable, of} from 'rxjs';
 import {catchError, tap} from "rxjs/operators";
 
-const DEV_URL = 'http://localhost:8080/users/create';
-const AUTH_TEST = 'http://localhost:5000/user/register';
+const DEV_URL_REGISTER = 'http://localhost:8083/users/create';
+const DEV_URL_LOGIN = 'http://localhost:8083/authenticate';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  registerUrl=AUTH_TEST;
+  registerUrl=DEV_URL_REGISTER;
   constructor(private http: HttpClient) { }
 
+
   login(username: string, password: string): Observable<any> {
-    return this.http.post('' + 'signin', {
-      username,
-      password
-    }, );
+    console.log(username);
+    console.log(password);
+    let user = {
+      username: username,
+      password: password
+    }
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    return this.http.post(DEV_URL_LOGIN, user,httpOptions );
+
   }
 
   registerPost(username: string, email: string, isPharmacist: boolean, password: string, addressStreet: string, addressHouseNumber: string, addressPostcode: string): Observable<any> {
@@ -40,26 +51,9 @@ export class AuthService {
       params: parameters,
       responseType: 'text'
     };
-    return this.http.post(DEV_URL, {
+    return this.http.post(DEV_URL_REGISTER, {
     }, options).pipe(
     );
-  }
-
-  register2(): Observable<any> {
-
-    const parameters = new HttpParams().set("pzn","1").set("friendlyName", "Paracetamol").set("medicineForm","flüssig").set("username","justin"); //Create new HttpParams
-
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/x-www-form-urlencoded',
-        //'Content-Type': 'application/json',
-      }),
-      params: parameters,
-    };
-
-    return this.http.post(AUTH_TEST, {
-
-    }, httpOptions);
   }
 
 }

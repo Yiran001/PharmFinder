@@ -7,8 +7,8 @@ import { FrontPageComponent } from './front-page/front-page.component';
 import { AboutPageComponent } from './about-page/about-page.component';
 import { DatenschutzerklaerungComponent } from './datenschutzerklaerung/datenschutzerklaerung.component';
 import { RegisterComponent } from './register/register.component';
-import {FormsModule} from "@angular/forms";
-import { HttpClientModule } from '@angular/common/http';
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import { HttpClientModule,HttpClient } from '@angular/common/http';
 import { LoginComponent } from './login/login.component';
 
 @NgModule({
@@ -25,7 +25,9 @@ import { LoginComponent } from './login/login.component';
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule,
+    FormsModule
 
   ],
   providers: [],
