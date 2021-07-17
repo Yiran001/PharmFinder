@@ -19,12 +19,14 @@
           name="username"
           [(ngModel)]="form.username"
           required
+          pattern="^[\S]+$"
           minlength="3"
           maxlength="20"
           #username="ngModel"
         />
         <div class="alert-danger" *ngIf="(username.errors && f.submitted)">
           <div *ngIf="username.errors.required">Nutzername wird benötigt</div>
+          <div *ngIf="username.errors.pattern">Gültigen Nutzernamen eingeben: Keine Leerzeichen</div>
           <div *ngIf="username.errors.minlength">
             Nutzername muss mindestens aus 3 Zeichen bestehen
           </div>
@@ -83,7 +85,7 @@
             name="street"
             [(ngModel)]="form.street"
             required
-            pattern="^[a-zA-Zß ]*$"
+            pattern="^[a-zA-Zß]*$"
             #street="ngModel"
           />
           <div class="alert-danger" *ngIf="street.errors && f.submitted">

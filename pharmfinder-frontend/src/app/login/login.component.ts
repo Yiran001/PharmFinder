@@ -41,11 +41,10 @@ export class LoginComponent implements OnInit {
         console.log(data);
         this.tokenStorage.saveToken(data.token);
         this.tokenStorage.saveUser(username);
-        console.log(this.tokenStorage.getToken());
         this.isLoginFailed = false;
         this.isLoggedIn = true;
         this.isSuccessful = true;
-        this.router.navigate(['/home']);
+        this.router.navigate(['/home']).then();
 
       },
       error => {
@@ -78,9 +77,6 @@ export class LoginComponent implements OnInit {
         return throwError(error);
       }
     );
-  }
-  reloadPage(): void {
-    window.location.reload();
   }
 
 }

@@ -19,12 +19,14 @@
             name="username"
             [(ngModel)]="form.username"
             required
+            pattern="^[\S]+$"
             minlength="3"
             maxlength="20"
             #username="ngModel"
           />
           <div class="alert-danger" *ngIf="(username.errors && f.submitted)">
             <div *ngIf="username.errors.required">Nutzername wird benötigt</div>
+            <div *ngIf="username.errors.pattern">Gültigen Nutzernamen eingeben</div>
             <div *ngIf="username.errors.minlength">
               Nutzername muss mindestens aus 3 Zeichen bestehen
             </div>
@@ -50,7 +52,7 @@
         </div>
 
         <div class="form-group">
-          <button class="btn btn-primary btn-block">einloggen</button>
+          <button class="btn btn-primary btn-block">anmelden</button>
         </div>
 
         <div class="alert alert-warning" *ngIf="f.submitted && isLoginFailed">
