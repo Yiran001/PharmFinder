@@ -5,7 +5,7 @@ const USER_KEY = 'auth-user';
 
 
 /**
- * manage tokens and user information (username,email,roles) in browser session storage
+ * manage tokens and user information (username) in browser session storage
  * when logout out clear storage
  */
 

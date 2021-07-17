@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/common/http';
-import {Observable, of} from 'rxjs';
-import {catchError, tap} from "rxjs/operators";
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {Observable} from 'rxjs';
 
-const DEV_URL_REGISTER = 'http://localhost:8083/users/create';
-const DEV_URL_LOGIN = 'http://localhost:8083/authenticate';
+const DEV_URL_REGISTER = 'http://localhost:8080/users/create';
+const DEV_URL_LOGIN = 'http://localhost:8080/authenticate';
 
 @Injectable({
   providedIn: 'root'
@@ -43,7 +42,6 @@ export class AuthService {
       withCredentials?: boolean
     } = {
       headers: new HttpHeaders({
-        //'Content-Type': 'application/x-www-form-urlencoded',
         'Content-Type': 'application/json',
       }),
       params: parameters,

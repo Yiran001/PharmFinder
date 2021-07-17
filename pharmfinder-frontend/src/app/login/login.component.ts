@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {HttpClient, HttpErrorResponse} from "@angular/common/http";
+import {HttpErrorResponse} from "@angular/common/http";
 import {throwError} from "rxjs";
 import {AuthService} from "../services/auth.service";
 import {TokenStorageService} from "../services/token-storage.service";
@@ -18,10 +18,10 @@ export class LoginComponent implements OnInit {
     username: null,
     password: null,
   };
+
   isSuccessful = false;
   isLoginFailed = false;
   errorMessage = '';
-  isLoggedIn = false;
 
 
 
@@ -29,6 +29,9 @@ export class LoginComponent implements OnInit {
 
   }
   ngOnInit(): void {
+    if(this.tokenStorage.getToken()!=null){
+      this.router.navigate(['/home']).then();
+    }
 
   }
 
@@ -42,17 +45,13 @@ export class LoginComponent implements OnInit {
         this.tokenStorage.saveToken(data.token);
         this.tokenStorage.saveUser(username);
         this.isLoginFailed = false;
-        this.isLoggedIn = true;
         this.isSuccessful = true;
-        this.router.navigate(['/home']).then();
-
+        window.location.reload();
       },
       error => {
         console.log(error)
         this.errorMessage = error.error.message;
         this.isLoginFailed = true;
-
-
         if (error instanceof HttpErrorResponse) {
           if (error.error instanceof ErrorEvent) {
             console.error("Error Event");

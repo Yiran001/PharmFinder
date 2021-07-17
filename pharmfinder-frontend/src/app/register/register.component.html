@@ -103,10 +103,12 @@
             [(ngModel)]="form.housenumber"
             max="9999"
             required
+            pattern="^\d+$"
             #housenumber="ngModel"
           />
           <div class="alert-danger" *ngIf="housenumber.errors && f.submitted">
             <div *ngIf="housenumber.errors.required">Hausnummer angeben</div>
+            <div *ngIf="housenumber.errors.pattern">positive Zahl</div>
             <div *ngIf="housenumber.errors.max">
               Hausnummer darf höchstens "9999" betragen
             </div>
