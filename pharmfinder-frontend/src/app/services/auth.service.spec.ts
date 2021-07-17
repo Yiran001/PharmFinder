@@ -64,14 +64,14 @@ describe('#AuthService', () => {
         };
 
         authService.registerPost(user.username,user.email,user.isPharmacist,user.password,user.addressStreet,user.addressHouseNumber,user.addressPostcode).subscribe(
-          data=> expect(data).toEqual(null, 'should return the observable'),
+          data=> expect(data).toEqual(null, 'should return observable'),
           fail
         );
-
 
         //register should have made one request to POST user
         const req = httpTestingController.expectOne(authService.registerUrl+'?'+httpOptions.params);
         expect(req.request.method).toEqual('POST');
+        expect(req.request.responseType).toEqual('text');
         expect(req.request.body).toEqual({});
         expect(req.request.params).toEqual(httpOptions.params);
 
@@ -80,6 +80,34 @@ describe('#AuthService', () => {
         //req.flush({ status: 200, statusText: 'Not Found' });
       }
     );
+  it("good: should login user with POST request with username and password  ",() => {
+      const user = {
+        username: "Max",
+        password: "123456",
+
+      }
+      const httpOptions = {
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json',
+        }),
+      };
+
+      authService.login(user.username,user.password).subscribe(
+        data=> expect(data).toEqual(null, 'should return the observable token'),
+        fail
+      );
+
+
+      //register should have made one request to POST user
+      const req = httpTestingController.expectOne(authService.loginURL);
+      expect(req.request.method).toEqual('POST');
+      expect(req.request.body).toEqual({username: 'Max',password: '123456'});
+
+      const expectedResponse = new HttpResponse({ status: 200, statusText: 'saved',  });
+      req.event(expectedResponse);
+      //req.flush({ status: 200, statusText: 'Not Found' });
+    }
+  );
 });
 
 

@@ -1,8 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import {Observable, throwError} from "rxjs";
-import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from "@angular/common/http";
-import {NgForm} from "@angular/forms";
+import {HttpErrorResponse} from "@angular/common/http";
 import {Router} from "@angular/router";
 
 /**
@@ -33,7 +32,6 @@ export class RegisterComponent implements OnInit {
   errorMessage = '';
   registerPharmacy = false;
   usernameAlreadyGiven = false;
-  errorCode: any = null;
 
   constructor(private authService: AuthService,private router: Router) { }
 
@@ -74,15 +72,10 @@ export class RegisterComponent implements OnInit {
                 this.usernameAlreadyGiven=true;
                 console.log('Username vergeben')
                 break;
-              case 200:
-                console.log('hi');
-                this.isSignUpFailed=false;
-                this.isSuccessful=true;
-                break;
             }
           }
         } else {
-          console.error("some thing else happened");
+          console.error("undefined error status");
         }
         return throwError(error);
       }

@@ -1,10 +1,8 @@
 import {ComponentFixture, fakeAsync, TestBed,async} from '@angular/core/testing';
-import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 
 import { RegisterComponent } from './register.component';
 import {FormsModule} from "@angular/forms";
-import {HttpClient, HttpClientModule} from "@angular/common/http";
-import {AuthService} from "../services/auth.service";
+
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;

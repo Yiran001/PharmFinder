@@ -10,6 +10,7 @@ const DEV_URL_LOGIN = 'http://localhost:8080/authenticate';
 })
 export class AuthService {
   registerUrl=DEV_URL_REGISTER;
+  loginURL=DEV_URL_LOGIN;
   constructor(private http: HttpClient) { }
 
 
@@ -23,9 +24,7 @@ export class AuthService {
         'Content-Type': 'application/json',
       }),
     };
-
     return this.http.post(DEV_URL_LOGIN, user,httpOptions );
-
   }
 
   registerPost(username: string, email: string, isPharmacist: boolean, password: string, addressStreet: string, addressHouseNumber: string, addressPostcode: string): Observable<any> {

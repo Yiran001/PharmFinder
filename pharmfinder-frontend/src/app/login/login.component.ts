@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {HttpErrorResponse} from "@angular/common/http";
 import {throwError} from "rxjs";
 import {AuthService} from "../services/auth.service";
 import {TokenStorageService} from "../services/token-storage.service";
 import {Router} from "@angular/router";
+import {NgForm} from "@angular/forms";
 
 
 @Component({
@@ -12,6 +13,8 @@ import {Router} from "@angular/router";
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
+
+//  @ViewChild('form',{static: true}) form: NgForm;
 
   //template driven form
   form: any = {
@@ -25,7 +28,9 @@ export class LoginComponent implements OnInit {
 
 
 
-  constructor(private authService: AuthService,private tokenStorage: TokenStorageService,private router:Router) {
+  constructor(
+    private authService: AuthService,
+    private tokenStorage: TokenStorageService, private router:Router) {
 
   }
   ngOnInit(): void {
@@ -59,7 +64,6 @@ export class LoginComponent implements OnInit {
             console.log(`error status : ${error.status} ${error.statusText}`);
             switch (error.status) {
               case 401:      //login
-
                 break;
               case 403:     //forbidden
                 console.error("access denied")

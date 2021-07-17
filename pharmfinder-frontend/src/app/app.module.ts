@@ -11,7 +11,7 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './login/login.component';
 import { authInterceptorProviders } from './auth.interceptor';
-
+import {RouterModule, Routes} from "@angular/router";
 
 @NgModule({
   declarations: [
@@ -29,7 +29,8 @@ import { authInterceptorProviders } from './auth.interceptor';
     FormsModule,
     HttpClientModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    RouterModule
 
   ],
   providers: [authInterceptorProviders],
