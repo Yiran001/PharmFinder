@@ -1,3 +1,6 @@
 .idea
 target
 jwt.http
+
+pharmfinder-backend/target
+pharmfinder-backend/src/test/java/com/pharm/pharmfinder/controller/jwt/jwt.http
