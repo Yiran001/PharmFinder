@@ -42,7 +42,6 @@ export class LoginComponent implements OnInit {
   onSubmit(): void {
 
     const { username, password } = this.form;
-
     this.login(username,password);
   }
   public login(username:string,password:string){
@@ -59,8 +58,9 @@ export class LoginComponent implements OnInit {
       error => {
         console.log('error'+error);
         this.isLoginFailed = true;
-        this.errorMessage = error.error.message;
+
         if (error instanceof HttpErrorResponse) {
+          this.errorMessage = error.error.message;
           if (error.error instanceof ErrorEvent) {
             console.error("Error Event");
           } else {

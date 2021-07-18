@@ -61,8 +61,9 @@ export class RegisterComponent implements OnInit {
 
         this.isSignUpFailed = true;
         this.usernameAlreadyGiven=false;
-        this.errorMessage = error.error.message;
+
         if (error instanceof HttpErrorResponse) {
+          this.errorMessage = error.error.message;
           if (error.error instanceof ErrorEvent) {
             console.error("Error Event");
           } else {

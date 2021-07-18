@@ -56,10 +56,13 @@ describe('LoginComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  
+  /**
+   * spying reload() and ngOnInit() because this leads to errors in karma and jasmine
+   */
    it('user is logged in when calling login()', fakeAsync(() => {
      expect(component.isSuccessful).toBeFalse();
      let spy= spyOn(component, 'reload');
+     spyOn(component, 'ngOnInit');
      component.login(username,password);
      fixture.detectChanges();
      expect(spy).toHaveBeenCalled();
@@ -68,6 +71,7 @@ describe('LoginComponent', () => {
    }));
 
   it('login error occured -> loginFailed=true, isSucessful=false', () => {
+    spyOn(component, 'ngOnInit');
     expect(component.isSuccessful).toBeFalse();
     component.login(longUsername,password);
     fixture.detectChanges();
