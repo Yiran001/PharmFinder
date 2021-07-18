@@ -3,6 +3,7 @@ package com.pharm.pharmfinder.controller;
 import com.pharm.pharmfinder.controller.repositories.MedicineRepository;
 import com.pharm.pharmfinder.controller.repositories.PharmacyMedicineRepository;
 import com.pharm.pharmfinder.controller.repositories.PharmacyRepository;
+import com.pharm.pharmfinder.jwt.JwtTokenUtil;
 import com.pharm.pharmfinder.model.Medicine;
 import com.pharm.pharmfinder.model.MedicineForm;
 import com.pharm.pharmfinder.model.Pharmacy;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -22,7 +24,6 @@ import java.util.Set;
 @RequestMapping(path = "/medicines")
 public class MedicinesController {
 
-    //    For now, pharmacy is identified directly via name(username = name of pharmacy); later replaced by jwt
     @Autowired
     private MedicineRepository medicineRepository;
     @Autowired
@@ -30,15 +31,21 @@ public class MedicinesController {
     @Autowired
     private PharmacyRepository pharmacyRepository;
 
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
 
     @PostMapping(path = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
-    String create(@RequestParam String pzn,
-                          @RequestParam String friendlyName,
-                          @RequestParam String medicineForm,
-                          @RequestParam int amount,
-                          @RequestParam String username
-    ){
+    String create(HttpServletRequest request){
+        String pzn = request.getParameter("pzn");
+        String friendlyName = request.getParameter("friendlyName");
+        String medicineForm = request.getParameter("medicineForm");
+        String username = request.getParameter("username");
+        String amountString = request.getParameter("amount");
+        int amount = Integer.parseInt(amountString);
+        checkAuthorization(request, username);
+
         Medicine medicine = getOrCreateMedicine(pzn, friendlyName, MedicineForm.valueOf(medicineForm));
         Pharmacy pharmacy = getPharmacy(username);
         if (pharmacyMedicineExists(pharmacy, medicine))
@@ -53,7 +60,10 @@ public class MedicinesController {
     }
 
     @GetMapping(path = "/index", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String index(@RequestParam String username) {
+    public @ResponseBody String index(HttpServletRequest request) {
+        String username = request.getParameter("username");
+        checkAuthorization(request, username);
+
         Iterable<PharmacyMedicine> pharmacyMedicines = getPharmacy(username).getPharmacyMedicines();
         StringBuilder result = new StringBuilder();
         for (PharmacyMedicine pharmacyMedicine : pharmacyMedicines) {
@@ -71,11 +81,15 @@ public class MedicinesController {
     }
 
     @PutMapping(path = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String update(@RequestParam String pzn,
-                                               @RequestParam String friendlyName,
-                                               @RequestParam String medicineForm,
-                                               @RequestParam int amount,
-                                               @RequestParam String username){
+    public @ResponseBody String update(HttpServletRequest request){
+        String pzn = request.getParameter("pzn");
+        String friendlyName = request.getParameter("friendlyName");
+        String medicineForm = request.getParameter("medicineForm");
+        String username = request.getParameter("username");
+        String amountString = request.getParameter("amount");
+        int amount = Integer.parseInt(amountString);
+        checkAuthorization(request, username);
+
         Pharmacy pharmacy = getPharmacy(username);
         PharmacyMedicine pharmacyMedicine = getPharmacyMedicine(pzn, pharmacy);
         Medicine medicine = pharmacyMedicine.getMedicine();
@@ -92,9 +106,10 @@ public class MedicinesController {
     }
 
     @DeleteMapping(path = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String delete(@RequestParam String pzn,
-                                               @RequestParam String username
-    ){
+    public @ResponseBody String delete(HttpServletRequest request){
+        String username = request.getParameter("username");
+        String pzn = request.getParameter("pzn");
+
         Pharmacy pharmacy = getPharmacy(username);
         PharmacyMedicine pharmacyMedicine = getPharmacyMedicine(pzn, pharmacy);
         Medicine medicine = pharmacyMedicine.getMedicine();
@@ -157,5 +172,16 @@ public class MedicinesController {
                 return true;
         }
         return false;
+    }
+
+    private boolean matchUsernameAndJwt(String jwt, String username){
+        String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
+        return !username.equals(jwtUsername);
+    }
+
+    private void checkAuthorization(HttpServletRequest request, String username){
+        String jwt = request.getHeader("Authorization").substring(7);
+        if (matchUsernameAndJwt(jwt, username))
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Wrong username");
     }
 }

@@ -1,6 +1,5 @@
 package com.pharm.pharmfinder.controller.repositories;
 
-import com.pharm.pharmfinder.jwt.jwt_model.DAOUser;
 import com.pharm.pharmfinder.model.User;
 import org.springframework.data.repository.CrudRepository;
 

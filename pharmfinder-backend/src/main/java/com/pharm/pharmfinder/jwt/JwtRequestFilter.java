@@ -1,6 +1,5 @@
 package com.pharm.pharmfinder.jwt;
 
-import com.pharm.pharmfinder.jwt.jwt_model.JwtUserDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

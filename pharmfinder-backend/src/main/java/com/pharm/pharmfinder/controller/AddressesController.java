@@ -1,5 +1,6 @@
 package com.pharm.pharmfinder.controller;
 
+import com.pharm.pharmfinder.controller.exceptions.NoSuchAddressException;
 import com.pharm.pharmfinder.controller.repositories.AddressRepository;
 import com.pharm.pharmfinder.model.Address;
 import org.springframework.beans.factory.annotation.Autowired;

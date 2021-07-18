@@ -1,5 +1,7 @@
 package com.pharm.pharmfinder.controller;
 
+import com.pharm.pharmfinder.controller.exceptions.NoSuchUsernameException;
+import com.pharm.pharmfinder.controller.exceptions.UsernameAlreadyTakenException;
 import com.pharm.pharmfinder.controller.repositories.AddressRepository;
 import com.pharm.pharmfinder.controller.repositories.PharmacyRepository;
 import com.pharm.pharmfinder.controller.repositories.UserRepository;
@@ -60,20 +62,6 @@ public class UsersController {
     @PostMapping(path = "/create")
     public @ResponseBody
     String create(@RequestParam String username, @RequestParam String email, @RequestParam boolean isPharmacist, @RequestParam String password, @RequestParam String addressStreet, @RequestParam String addressHouseNumber, @RequestParam String addressPostcode) throws UsernameAlreadyTakenException {
-//        User user = new User();
-//
-//        checkUsernameExistence(username);
-//        user.setUsername(username);
-//        user.setEmail(email);
-//        user.setPharmacist(isPharmacist);
-//        user.setPasswordHash(password);
-//        userRepository.save(user);
-//        Address userAddress = new Address(user, addressStreet, addressHouseNumber, addressPostcode);
-//        addressRepository.save(userAddress);
-//        user.setUserAddress(userAddress);
-//        userRepository.save(user);
-//
-//        return "Saved";
             User user = new User();
 
             checkUsernameExistence(username);
