@@ -26,9 +26,7 @@ export class ProfilePageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getUsers()
-    this.getAddresses()
-
+    this.getUsers().then(r => this.getAddresses());
   }
 
   async getUsers(): Promise<void> {
