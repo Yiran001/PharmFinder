@@ -27,7 +27,6 @@ export class LoginComponent implements OnInit {
   errorMessage = '';
 
 
-
   constructor(
     private authService: AuthService,
     private tokenStorage: TokenStorageService, private router:Router) {
@@ -44,33 +43,33 @@ export class LoginComponent implements OnInit {
 
     const { username, password } = this.form;
 
+    this.login(username,password);
+  }
+  public login(username:string,password:string){
     this.authService.login(username, password ).subscribe(
       data => {
         console.log(data);
         this.tokenStorage.saveToken(data.token);
+        console.log(data.token);
         this.tokenStorage.saveUser(username);
         this.isLoginFailed = false;
         this.isSuccessful = true;
-        window.location.reload();
+        this.reload();
       },
       error => {
-        console.log(error)
-        this.errorMessage = error.error.message;
+        console.log('error'+error);
         this.isLoginFailed = true;
+        this.errorMessage = error.error.message;
         if (error instanceof HttpErrorResponse) {
           if (error.error instanceof ErrorEvent) {
             console.error("Error Event");
           } else {
             console.log(`error status : ${error.status} ${error.statusText}`);
             switch (error.status) {
-              case 401:      //login
+              case 401:      //login failed
                 break;
               case 403:     //forbidden
                 console.error("access denied")
-                break;
-              case 200:
-                this.isLoginFailed=false;
-                this.isSuccessful=true;
                 break;
             }
           }
@@ -80,6 +79,11 @@ export class LoginComponent implements OnInit {
         return throwError(error);
       }
     );
+
   }
+  public reload(){
+    window.location.reload();
+  }
+
 
 }

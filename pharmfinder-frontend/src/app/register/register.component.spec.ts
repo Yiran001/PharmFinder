@@ -2,16 +2,25 @@ import {ComponentFixture, fakeAsync, TestBed,async} from '@angular/core/testing'
 
 import { RegisterComponent } from './register.component';
 import {FormsModule} from "@angular/forms";
+import {AuthService} from "../services/auth.service";
+import {RouterTestingModule} from "@angular/router/testing";
+import {LoginComponent} from "../login/login.component";
 
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
+  class MockAuthService{
 
+  };
   beforeEach(async () => {
+
     await TestBed.configureTestingModule({
-      declarations: [ RegisterComponent],
-      imports: [FormsModule]
+      imports:[RouterTestingModule,FormsModule],
+      providers: [
+        { provide: AuthService, useValue: MockAuthService }
+      ],
+      declarations: [ RegisterComponent ]
     })
     .compileComponents();
   });
@@ -22,10 +31,11 @@ describe('RegisterComponent', () => {
     fixture.detectChanges();
   });
 
-  /**
+
   it('should be created', () => {
     expect(component).toBeTruthy();
   });
+  /**
   it('should update the favorite color in the component', fakeAsync(() => {
     const input = fixture.nativeElement.querySelector('input');
     //const event = createNewEvent('input');

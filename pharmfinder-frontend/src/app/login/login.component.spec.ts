@@ -3,34 +3,40 @@ import { LoginComponent } from './login.component';
 import {RouterTestingModule} from "@angular/router/testing";
 import {FormsModule} from "@angular/forms";
 import {AuthService} from "../services/auth.service";
-import {Observable} from "rxjs";
-import {HttpHeaders} from "@angular/common/http";
+import {Observable, of, pipe, throwError} from "rxjs";
+import {HttpHeaders, HttpResponse} from "@angular/common/http";
+
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
-  class MockAuthService {
-    login(username: string, password: string) {
-      let user = {
-        username: username,
-        password: password
+  let userServiceStub: Partial<AuthService>;
+  let username='Max';
+  let longUsername='MaxMustermann';
+  let password='123456'
+  /**
+   * mock of auth.service
+   * returns error when username longer than 10 characters for testing purposes only!!
+   */
+  userServiceStub = {
+    login(username: string, password: string): Observable<any> {
+      let data= 'token : fewfwifwfew.cwcqc.qcewqcf.fbdsbb.trbeterbrebnlf'
+      const expectedResponse = new HttpResponse({ status: 200, statusText: 'saved',  });
+      const obsof2=of(data);
+      if(username.length>10) {
+        return throwError(expectedResponse);
+      }else{
+        return obsof2;
       }
-      const httpOptions = {
-        headers: new HttpHeaders({
-          'Content-Type': 'application/json',
-        }),
-      };
+    },
+  };
 
-      return ;
-
-    }
-  }
   beforeEach(async () => {
 
     await TestBed.configureTestingModule({
       imports:[RouterTestingModule,FormsModule],
       providers: [
-        { provide: AuthService, useValue: MockAuthService }
+        { provide: AuthService, useValue: userServiceStub }
       ],
       declarations: [ LoginComponent ]
     })
@@ -41,50 +47,31 @@ describe('LoginComponent', () => {
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    component.isSuccessful=false;
+    component.isLoginFailed=false;
+
   });
 
-  it('should create', () => {
+  it('should create',  () => {
     expect(component).toBeTruthy();
   });
-  /**
-  it('testing login', () => {
-    component.form.username='Max';
-    component.form.password='123456';
-    console.log(component.form.username)
-    component.onSubmit()
+
+  
+   it('user is logged in when calling login()', fakeAsync(() => {
+     expect(component.isSuccessful).toBeFalse();
+     let spy= spyOn(component, 'reload');
+     component.login(username,password);
+     fixture.detectChanges();
+     expect(spy).toHaveBeenCalled();
+     expect(component.isSuccessful).toBeTrue();
+     expect(component.isLoginFailed).toBeFalse();
+   }));
+
+  it('login error occured -> loginFailed=true, isSucessful=false', () => {
+    expect(component.isSuccessful).toBeFalse();
+    component.login(longUsername,password);
+    fixture.detectChanges();
+    expect(component.isSuccessful).toBeFalse();
+    expect(component.isLoginFailed).toBeTrue();
   });
-
-  it('[Email - Check - Invalid] Should check email field is not valid',async(()=>{
-    fixture.whenStable().then(()=>{
-      let email = component.form.username;
-      email.setValue('abc');
-      console.log(component.form.username)
-      expect(email.valid).toBeFalsy();
-      expect(component.form.valid).toBeFalsy();
-      email.setValue('abc');
-      expect(email.errors['email']).toBeTruthy();
-    });
-
-  }));
-  it('should update the favorite color on the input field', fakeAsync(() => {
-    component.form.username = 'Blue';
-    console.log(component.form.username)
-
-    fixture.detectChanges();
-    tick();
-    const input = fixture.nativeElement.querySelector('input');
-
-    expect(input.value).toBe('Blue');
-  }));
-  it('should update the favorite color in the component', fakeAsync(() => {
-    const input = fixture.nativeElement.querySelector('input');
-
-    input.value = 'Red';
-    input.dispatchEvent(new Event('input'));
-
-    fixture.detectChanges();
-
-    expect(component.form.username).toEqual('Red');
-  }));
-   */
 });

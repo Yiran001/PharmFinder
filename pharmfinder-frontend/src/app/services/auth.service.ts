@@ -13,7 +13,11 @@ export class AuthService {
   loginURL=DEV_URL_LOGIN;
   constructor(private http: HttpClient) { }
 
-
+  /**
+   * login as user
+   * @param username
+   * @param password
+   */
   login(username: string, password: string): Observable<any> {
     let user = {
       username: username,
@@ -27,6 +31,16 @@ export class AuthService {
     return this.http.post(DEV_URL_LOGIN, user,httpOptions );
   }
 
+  /**
+   * register user
+   * @param username
+   * @param email
+   * @param isPharmacist
+   * @param password
+   * @param addressStreet
+   * @param addressHouseNumber
+   * @param addressPostcode
+   */
   registerPost(username: string, email: string, isPharmacist: boolean, password: string, addressStreet: string, addressHouseNumber: string, addressPostcode: string): Observable<any> {
 
     const parameters = new HttpParams().set("username",username).set("email", email).set("isPharmacist",isPharmacist).set("password",password).set("addressStreet",addressStreet).set("addressHouseNumber",addressHouseNumber).set("addressPostcode",addressPostcode); //Create new HttpParams

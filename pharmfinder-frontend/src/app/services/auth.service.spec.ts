@@ -84,7 +84,6 @@ describe('#AuthService', () => {
       const user = {
         username: "Max",
         password: "123456",
-
       }
       const httpOptions = {
         headers: new HttpHeaders({

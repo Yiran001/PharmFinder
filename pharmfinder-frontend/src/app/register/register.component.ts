@@ -7,9 +7,14 @@ import {Router} from "@angular/router";
 /**
  * This component binds form data (username, email, password) from template to
  * AuthService.register() method that returns an Observable object
- * Form Validation: username: required, minLength=3, maxLength=20
+ *
+ * Form Validation:
+ * username: required, minLength=3, maxLength=20
  * email: required, email format
  * password: required, minLength=6
+ * housenumber: max="9999", required,pattern="^\d+$"
+ * street: required, pattern="^[a-zA-Zß]*$"
+ * postcode: max="9999", required, pattern="^\d+$"
  */
 @Component({
   selector: 'app-register',
@@ -17,7 +22,8 @@ import {Router} from "@angular/router";
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
-  //@ViewChild('form',{static: true}) form2: NgForm;
+
+
   form: any = {
     username: null,
     email: null,
