@@ -31,7 +31,6 @@ export class ProfilePageComponent implements OnInit {
 
   async getUsers(): Promise<void> {
     this.users = await this.profileService.getUsers().toPromise();
-    console.log(this.users);
     this.user = this.users[0];
     this.username = this.user.username;
     this.email = this.user.email;
@@ -47,7 +46,6 @@ export class ProfilePageComponent implements OnInit {
   async getAddresses(): Promise<void> {
 
     this.addresses = await this.profileService.getAddresses().toPromise();
-    console.log(this.addresses)
     this.addresses.forEach(address => {
       if (address.addressUsers[0].username == this.username) {
         this.street = address.street;

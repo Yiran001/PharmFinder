@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {tap} from 'rxjs/operators';
+import {environment} from "../../environments/environment";
 
 export interface User {
   userID: any;
@@ -26,12 +26,10 @@ export class ProfileService {
   }
 
   getUsers() {
-    return this.http.get<User[]>('http://localhost:8080/users/index').pipe(
-      tap(_ => console.log(_)));
+    return this.http.get<User[]>(environment.baseUrl + "/users/index");
   }
 
   getAddresses() {
-    return this.http.get<Address[]>('http://localhost:8080/addresses/index').pipe(
-      tap(_ => console.log(_)));
+    return this.http.get<Address[]>(environment.baseUrl + "/addresses/index");
   }
 }
