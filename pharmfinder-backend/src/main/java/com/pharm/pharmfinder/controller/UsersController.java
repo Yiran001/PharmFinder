@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 
 @Controller
+@CrossOrigin
 @RequestMapping(path = "/users")
 public class UsersController {
 

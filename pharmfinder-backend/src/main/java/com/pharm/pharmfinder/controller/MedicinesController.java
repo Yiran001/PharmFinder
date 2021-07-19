@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Controller
+@CrossOrigin
 @RequestMapping(path = "/medicines")
 public class MedicinesController {
 
