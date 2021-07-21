@@ -8,10 +8,13 @@ import { AboutPageComponent } from './about-page/about-page.component';
 import { DatenschutzerklaerungComponent } from './datenschutzerklaerung/datenschutzerklaerung.component';
 import { RegisterComponent } from './register/register.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './login/login.component';
 import { authInterceptorProviders } from './auth.interceptor';
 import {RouterModule, Routes} from "@angular/router";
+
+import { ProfilePageComponent } from './profile-page/profile-page.component';
+import {HttpClientModule} from "@angular/common/http";
+
 
 @NgModule({
   declarations: [
@@ -22,6 +25,8 @@ import {RouterModule, Routes} from "@angular/router";
     RegisterComponent,
     LoginComponent,
 
+    DatenschutzerklaerungComponent,
+    ProfilePageComponent,
   ],
   imports: [
     BrowserModule,
@@ -30,10 +35,10 @@ import {RouterModule, Routes} from "@angular/router";
     HttpClientModule,
     ReactiveFormsModule,
     FormsModule,
-    RouterModule
+    RouterModule,
 
   ],
-  providers: [authInterceptorProviders],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
