@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
+import {environment} from "../../environments/environment";
 
 const DEV_URL_REGISTER = 'http://localhost:8080/users/create';
 const DEV_URL_LOGIN = 'http://localhost:8080/authenticate';
@@ -28,7 +29,7 @@ export class AuthService {
         'Content-Type': 'application/json',
       }),
     };
-    return this.http.post(DEV_URL_LOGIN, user,httpOptions );
+    return this.http.post(environment.baseUrl+'authenticate', user,httpOptions );
   }
 
   /**
@@ -60,7 +61,7 @@ export class AuthService {
       params: parameters,
       responseType: 'text'
     };
-    return this.http.post(DEV_URL_REGISTER, {
+    return this.http.post(environment.baseUrl+'users/create', {
     }, options).pipe(
     );
   }
