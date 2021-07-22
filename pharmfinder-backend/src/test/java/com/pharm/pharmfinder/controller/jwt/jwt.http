@@ -1,6 +1,6 @@
 POST http://localhost:8080/medicines/create
 Content-Type: application/x-www-form-urlencoded
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJteXVzZXIiLCJleHAiOjE2MjY1ODQ5NTMsImlhdCI6MTYyNjU2Njk1M30.hyVsDMb8SVt85xAhCY62uARHUBK2BwHTi6DeuAu7HKDGFtYuVX40KFSUmR1LjKswdabop1niltwStv2ZsUo3ag
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJteXVzZXIyIiwiZXhwIjoxNjI2OTUzMjQ4LCJpYXQiOjE2MjY5MzUyNDh9.QjDDJrBJXqJcgJJER-b9s8IhAFajXW2V135SyBSHGjfEPnqsHXVjEL0ZLqSmc3rX9JIgNaNoKCbVnoYRVFF7Kw
 
 pzn=123&friendlyName=name&medicineForm=PILL&amount=2&username=myuser2
 
@@ -28,13 +28,13 @@ Content-Type: application/json
 
 {
   "username": "admin",
-  "password": "1234"
+  "password": "adminpassword"
 }
 
 ###
 PUT http://localhost:8080/users/ban
 Content-Type: application/x-www-form-urlencoded
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTYyNjk0MTIwMSwiaWF0IjoxNjI2OTIzMjAxfQ.WmDNHiidOqVryE-qsw1j5qgqOnHYisT4XTYl1Nw7-wNqQ36JLkDVK4F6gU-9vbqmoDgeWePiiJeJqnyHoB12cA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTYyNjk1MzI2NCwiaWF0IjoxNjI2OTM1MjY0fQ.dyO2s6hV9uvHi2QGeM5i8n_7DAuzsdxloNHCiV5gTD0La272htbtiTSXMsW4a3CNO_F8zQbEeoNkjVecTSoIEQ
 
 username=myuser2
 

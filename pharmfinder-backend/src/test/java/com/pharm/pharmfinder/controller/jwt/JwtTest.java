@@ -10,6 +10,7 @@ import com.pharm.pharmfinder.controller.repositories.UserRepository;
 import com.pharm.pharmfinder.jwt.jwt_model.JwtRequest;
 import com.pharm.pharmfinder.model.*;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -76,6 +77,14 @@ public class JwtTest {
     @Autowired
     private MedicineRepository medicineRepository;
 
+    @BeforeEach
+    void setUp() {
+        pharmacyRepository.deleteAll();
+        addressRepository.deleteAll();
+        userRepository.deleteAll();
+        medicineRepository.deleteAll();
+    }
+
     @AfterEach
     void tearDown() {
         pharmacyRepository.deleteAll();
@@ -139,6 +148,15 @@ public class JwtTest {
         authenticateFail(username1, password1);
     }
 
+    @Test
+    void should_not_let_banned_user_use_existing_jwt() throws Exception {
+        addAdmin();
+        addUserViaPostRequest(username1);
+        String jwt = authenticate(username1, password1);
+        banUser(username1);
+        addMedicine1Unauthorized(username1, jwt);
+    }
+
     private String authenticate(String username, String password) throws Exception {
         JwtRequest jwtRequest = new JwtRequest();
         jwtRequest.setUsername(username);
@@ -189,6 +207,14 @@ public class JwtTest {
                 .header("Authorization", generateAuthHeader(jwt));
         this.mockMvc.perform(builder)
                 .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    private void addMedicine1Unauthorized(String username, String jwt) throws Exception {
+        MockHttpServletRequestBuilder builder = buildMedicinePostRequest
+                (pzn1, friendlyName, String.valueOf(medicineForm), username, 0)
+                .header("Authorization", generateAuthHeader(jwt));
+        this.mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     private void addMedicine1Conflict(String username, String jwt) throws Exception {
