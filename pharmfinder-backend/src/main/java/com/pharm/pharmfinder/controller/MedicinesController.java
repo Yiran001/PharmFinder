@@ -110,6 +110,7 @@ public class MedicinesController {
     public @ResponseBody String delete(HttpServletRequest request){
         String username = request.getParameter("username");
         String pzn = request.getParameter("pzn");
+        checkAuthorization(request, username);
 
         Pharmacy pharmacy = getPharmacy(username);
         PharmacyMedicine pharmacyMedicine = getPharmacyMedicine(pzn, pharmacy);

@@ -4,6 +4,7 @@ package com.pharm.pharmfinder.jwt;
 import com.pharm.pharmfinder.controller.repositories.UserRepository;
 import com.pharm.pharmfinder.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,6 +25,8 @@ public class JwtUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
+        if (!user.isEnabled())
+            throw new DisabledException("User disabled");
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPasswordHash(),
                 new ArrayList<>());
     }

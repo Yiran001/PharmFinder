@@ -12,6 +12,7 @@ import com.pharm.pharmfinder.model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -55,6 +56,12 @@ public class JwtTest {
     String street2 = "streetTwo";
     String houseNumber2 = "2";
     String postcode2 = "23456";
+//    admin
+    String adminUsername = "admin";
+
+    @Value("${admin.password}")
+    String adminPassword;
+    String adminEmail = "admin@email.com";
 
 
     @Autowired
@@ -103,6 +110,35 @@ public class JwtTest {
         addMedicine1Conflict(username2, jwtUsername1);
     }
 
+    @Test
+    void should_authenticate_admin() throws Exception {
+//        admin needs to be added, since the account gets deleted in tearDown()
+        addAdmin();
+        authenticate(adminUsername, adminPassword);
+    }
+
+    @Test
+    void should_ban_user() throws Exception {
+        addAdmin();
+        addUserViaPostRequest(username1);
+        banUser(username1);
+    }
+
+    @Test
+    void should_unban_user() throws Exception {
+        addAdmin();
+        addUserViaPostRequest(username1);
+        unbanUser(username1);
+    }
+
+    @Test
+    void should_not_authenticate_banned_user() throws Exception {
+        addAdmin();
+        addUserViaPostRequest(username1);
+        banUser(username1);
+        authenticateFail(username1, password1);
+    }
+
     private String authenticate(String username, String password) throws Exception {
         JwtRequest jwtRequest = new JwtRequest();
         jwtRequest.setUsername(username);
@@ -126,6 +162,25 @@ public class JwtTest {
         String[] jsonPair = response.split(":");
         String rawJwt = jsonPair[1];
         return rawJwt.substring(1, rawJwt.length()-2);
+    }
+
+    private void authenticateFail(String username, String password) throws Exception {
+        JwtRequest jwtRequest = new JwtRequest();
+        jwtRequest.setUsername(username);
+        jwtRequest.setPassword(password);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(jwtRequest);
+
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+                .post("/authenticate")
+                .contentType(APPLICATION_JSON_UTF8)
+                .content(requestJson);
+
+        mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
     private void addMedicine1(String username, String jwt) throws Exception {
@@ -165,6 +220,12 @@ public class JwtTest {
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
+    private void addAdmin() throws Exception {
+        MockHttpServletRequestBuilder builder = buildUserPostRequest
+                (adminUsername, adminEmail, false, adminPassword, street1, houseNumber1, postcode1);
+        this.mockMvc.perform(builder);
+    }
+
     private MockHttpServletRequestBuilder buildUserPostRequest
             (String username, String email, boolean isPharmacist, String password, String addressStreet,
              String addressHouseNumber, String addressPostcode) {
@@ -184,5 +245,31 @@ public class JwtTest {
 
     private String generateAuthHeader(String jwt){
         return "Bearer " + jwt;
+    }
+
+    private void banUser(String username) throws Exception {
+        String jwtAdmin = authenticate(adminUsername, adminPassword);
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+                .put("/users/ban")
+                .param("username", username)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", generateAuthHeader(jwtAdmin));
+        this.mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().string(containsString("Banned")));
+    }
+
+    private void unbanUser(String username) throws Exception {
+        String jwtAdmin = authenticate(adminUsername, adminPassword);
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+                .put("/users/unban")
+                .param("username", username)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", generateAuthHeader(jwtAdmin));
+        this.mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().string(containsString("Unbanned")));
     }
 }

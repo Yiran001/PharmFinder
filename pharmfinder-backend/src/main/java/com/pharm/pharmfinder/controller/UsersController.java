@@ -5,6 +5,7 @@ import com.pharm.pharmfinder.controller.exceptions.UsernameAlreadyTakenException
 import com.pharm.pharmfinder.controller.repositories.AddressRepository;
 import com.pharm.pharmfinder.controller.repositories.PharmacyRepository;
 import com.pharm.pharmfinder.controller.repositories.UserRepository;
+import com.pharm.pharmfinder.jwt.JwtTokenUtil;
 import com.pharm.pharmfinder.model.Address;
 import com.pharm.pharmfinder.model.Pharmacy;
 import com.pharm.pharmfinder.model.User;
@@ -13,7 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 
 @Controller
@@ -29,6 +32,8 @@ public class UsersController {
     private PharmacyRepository pharmacyRepository;
     @Autowired
     private PasswordEncoder bcryptEncoder;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     /**
      * handles exception, that occurs when someone wants to take the same user that someone else has already took
@@ -69,6 +74,7 @@ public class UsersController {
             user.setUsername(username);
             user.setEmail(email);
             user.setPharmacist(isPharmacist);
+            user.setEnabled(true);
             user.setPasswordHash(bcryptEncoder.encode(password));
             userRepository.save(user);
             Address userAddress = new Address(user,addressStreet,addressHouseNumber,addressPostcode);
@@ -97,6 +103,7 @@ public class UsersController {
                 certainUser.setUsername(username);
                 certainUser.setEmail(email);
                 certainUser.setPharmacist(isPharmacist);
+                certainUser.setEnabled(true);
                 certainUser.setPasswordHash(passwordHash);
                 userRepository.save(certainUser);
                 Address userAddress = new Address(certainUser, addressStreet, addressHouseNumber, addressPostcode);
@@ -133,6 +140,27 @@ public class UsersController {
         return userRepository.findAll();
     }
 
+    @PutMapping(path = "/ban")
+    public @ResponseBody
+    String ban(HttpServletRequest request) {
+        checkAuthorization(request, "admin");
+        String username = request.getParameter("username");
+        User user = userRepository.findByUsername(username);
+        user.setEnabled(false);
+        userRepository.save(user);
+        return "Banned";
+    }
+
+    @PutMapping(path = "/unban")
+    public @ResponseBody
+    String unban(HttpServletRequest request) {
+        checkAuthorization(request, "admin");
+        String username = request.getParameter("username");
+        User user = userRepository.findByUsername(username);
+        user.setEnabled(true);
+        userRepository.save(user);
+        return "Unbanned";
+    }
 
     private void checkUsernameExistence(String username) throws UsernameAlreadyTakenException {
         Iterable<User> users = userRepository.findAll();
@@ -140,5 +168,16 @@ public class UsersController {
             if (u.getUsername().equals(username))
                 throw new UsernameAlreadyTakenException("Username was already taken by someone, please try another.");
         }
+    }
+
+    private void checkAuthorization(HttpServletRequest request, String username){
+        String jwt = request.getHeader("Authorization").substring(7);
+        if (matchUsernameAndJwt(jwt, username))
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not admin");
+    }
+
+    private boolean matchUsernameAndJwt(String jwt, String username){
+        String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
+        return !username.equals(jwtUsername);
     }
 }
