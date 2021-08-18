@@ -23,6 +23,7 @@ public class User {
     @JsonIgnore
     private String passwordHash;
     private boolean isPharmacist;
+    private boolean enabled;
 
     public User() {
     }
@@ -76,6 +77,14 @@ public class User {
         isPharmacist = pharmacist;
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -83,7 +92,9 @@ public class User {
                 ", userAddress=" + userAddress +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
+                ", passwordHash='" + passwordHash + '\'' +
                 ", isPharmacist=" + isPharmacist +
+                ", enabled=" + enabled +
                 '}';
     }
 }
