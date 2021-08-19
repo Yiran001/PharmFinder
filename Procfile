@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -cp target/classes:target/dependency/* com.pharm.pharmfinder.PharmFinderApplication --server.port=$PORT
+web: java 11 -cp target/classes:target/dependency/* com.pharm.pharmfinder.PharmFinderApplication --server.port=$PORT
