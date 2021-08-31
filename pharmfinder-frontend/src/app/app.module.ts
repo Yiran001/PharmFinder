@@ -14,7 +14,9 @@ import {RouterModule, Routes} from "@angular/router";
 
 import { ProfilePageComponent } from './profile-page/profile-page.component';
 import {HttpClientModule} from "@angular/common/http";
+import { SearchPharmaciesComponent } from './search-pharmacies/search-pharmacies.component';
 
+import { GoogleMapsModule } from '@angular/google-maps'
 
 @NgModule({
   declarations: [
@@ -27,6 +29,7 @@ import {HttpClientModule} from "@angular/common/http";
 
     DatenschutzerklaerungComponent,
     ProfilePageComponent,
+    SearchPharmaciesComponent,
   ],
   imports: [
     BrowserModule,
@@ -36,6 +39,7 @@ import {HttpClientModule} from "@angular/common/http";
     ReactiveFormsModule,
     FormsModule,
     RouterModule,
+    GoogleMapsModule
 
   ],
   providers: [],
