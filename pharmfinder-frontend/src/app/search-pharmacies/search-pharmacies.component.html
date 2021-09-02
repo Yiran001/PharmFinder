@@ -1,0 +1,58 @@
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+    </div>
+      <div class="col">
+        <form
+          *ngIf="!isSuccessful"
+          name="form"
+          (ngSubmit)="f.form.valid && onSubmit()"
+          #f="ngForm"
+          novalidate
+        >
+          <div class="form-group col">
+            <label [htmlFor]="pzn"> </label>
+            <input
+              placeholder="Pharmazentralnummer"
+              type="text"
+              class="form-control"
+              name="pzn"
+              [(ngModel)]="form.pzn"
+              minlength="8"
+              maxlength="8"
+              required
+              pattern="^\d+$"
+              #pzn="ngModel"
+            />
+            <div class="alert-danger" *ngIf="pzn.errors && f.submitted">
+              <div *ngIf="pzn.errors.required">PZN angeben</div>
+              <div *ngIf="pzn.errors.pattern">positive Ziffernfolge angeben</div>
+              <div *ngIf="pzn.errors.maxlength">
+                PZN muss aus 8 Ziffern bestehen
+              </div>
+              <div *ngIf="pzn.errors.minlength">
+                PZN muss aus 8 Ziffern bestehen
+              </div>
+            </div>
+          </div>
+          <div class="form-group text-center btn-block">
+            <button class="btn btn-primary btn-block">Apotheke finden</button>
+          </div>
+        </form>
+        <div class="form-group text-center btn-block">
+          <button class="btn btn-danger btn-block" (click)="findMe()">finde mich</button>
+        </div>
+        <google-map
+          [options]="mapOptions"
+          [center]="center">
+          <map-marker
+            [label]="currentLocMarker.label"
+            [position]="currentLocMarker.position">
+          </map-marker>
+        </google-map>
+      </div>
+    <div class="col">
+    </div>
+  </div>
+</div>
