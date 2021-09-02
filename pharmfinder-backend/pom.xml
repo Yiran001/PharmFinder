@@ -7,7 +7,6 @@
     <groupId>org.group7</groupId>
     <version>0.0.1-SNAPSHOT</version>
 </parent>
-    <groupId>org.group7</groupId>
     <artifactId>pharmfinder-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>pharmfinderbackend</name>
@@ -61,7 +60,13 @@
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
-<!--        <dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!--        <dependency>-->
 <!--            <groupId>com.google.flogger</groupId>-->
 <!--            <artifactId>flogger</artifactId>-->
 <!--            <version>0.6</version>-->
@@ -71,8 +76,6 @@
             <artifactId>flogger-system-backend</artifactId>
             <version>0.6</version>
         </dependency>
-
-
     </dependencies>
 
     <build>

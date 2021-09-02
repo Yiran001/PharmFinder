@@ -1,4 +1,4 @@
-package com.pharm.pharmfinder.controller.jwt;
+package com.pharm.pharmfinder.controller.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class JwtTest {
+public class AuthenticationTest {
     public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
     //    Medicine 1
@@ -59,8 +59,7 @@ public class JwtTest {
     String postcode2 = "23456";
 //    admin
     String adminUsername = "admin";
-
-    @Value("${admin.password}")
+    @Value("${pharm.user_admin_pw}")
     String adminPassword;
     String adminEmail = "admin@email.com";
 

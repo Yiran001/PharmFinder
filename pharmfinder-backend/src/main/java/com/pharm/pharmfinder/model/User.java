@@ -2,8 +2,16 @@ package com.pharm.pharmfinder.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pharm.pharmfinder.model.Role;
+import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "pharmacy_user")
@@ -24,6 +32,8 @@ public class User {
     private String passwordHash;
     private boolean isPharmacist;
     private boolean enabled;
+//    mutliple authorities are comma seperated
+    private String  authorities;
 
     public User() {
     }
@@ -51,7 +61,6 @@ public class User {
     public void setUserID(int userID) {
         this.userID = userID;
     }
-
 
     public String getPasswordHash() {
         return passwordHash;
@@ -85,16 +94,24 @@ public class User {
         this.enabled = enabled;
     }
 
+    public String getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(String authorities) {
+        this.authorities = authorities;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "userID=" + userID +
                 ", userAddress=" + userAddress +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", passwordHash='" + passwordHash + '\'' +
-                ", isPharmacist=" + isPharmacist +
-                ", enabled=" + enabled +
+                ", username='" + username + '\'' + "\n" +
+                ", email='" + email + '\'' + "\n" +
+                ", isPharmacist=" + isPharmacist + "\n" +
+                ", enabled=" + enabled + "\n" +
+                ", authorities='" + authorities + '\'' + "\n" +
                 '}';
     }
 }

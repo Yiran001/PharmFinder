@@ -8,6 +8,7 @@ import com.pharm.pharmfinder.controller.repositories.UserRepository;
 import com.pharm.pharmfinder.jwt.JwtTokenUtil;
 import com.pharm.pharmfinder.model.Address;
 import com.pharm.pharmfinder.model.Pharmacy;
+import com.pharm.pharmfinder.model.Role;
 import com.pharm.pharmfinder.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,8 +17,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
 
 @Controller
 @CrossOrigin
@@ -76,6 +80,7 @@ public class UsersController {
             user.setPharmacist(isPharmacist);
             user.setEnabled(true);
             user.setPasswordHash(bcryptEncoder.encode(password));
+            user.setAuthorities("");
             userRepository.save(user);
             Address userAddress = new Address(user,addressStreet,addressHouseNumber,addressPostcode);
             addressRepository.save(userAddress);
@@ -90,16 +95,26 @@ public class UsersController {
     }
 
     @PutMapping(path = "/update")
-    public @ResponseBody
-    String update(@RequestParam String originalUsername, @RequestParam String originalPassword, @RequestParam String username, @RequestParam String email, @RequestParam boolean isPharmacist, @RequestParam String passwordHash, @RequestParam String addressStreet, @RequestParam String addressHouseNumber, @RequestParam String addressPostcode) throws UsernameAlreadyTakenException, NoSuchUsernameException {
+    public @ResponseBody String
+    update(HttpServletRequest request) throws NoSuchUsernameException {
+        String originalUsername = request.getParameter("originalUsername");
+        String username = request.getParameter("username");
+        String email = request.getParameter("email");
+        boolean isPharmacist = Boolean.parseBoolean(request.getParameter("isPharmacist"));
+        String passwordHash = request.getParameter("passwordHash");
+        String addressStreet = request.getParameter("addressStreet");
+        String addressHouseNumber = request.getParameter("addressHouseNumber");
+        String addressPostcode = request.getParameter("addressPostcode");
 
-        if (originalUsername != username)
+        checkAuthorization(request, originalUsername);
+
+        if (!Objects.equals(originalUsername, username))
             checkUsernameExistence(username);
 
         ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
 
         for (User certainUser : users) {
-            if (certainUser.getUsername().equals(originalUsername) && certainUser.getPasswordHash().equals(originalPassword)) {
+            if (certainUser.getUsername().equals(originalUsername)) {
                 certainUser.setUsername(username);
                 certainUser.setEmail(email);
                 certainUser.setPharmacist(isPharmacist);
@@ -120,13 +135,16 @@ public class UsersController {
 
     @DeleteMapping(path = "/delete")
     public @ResponseBody
-    String delete(@RequestParam String username, @RequestParam String password) throws NoSuchUsernameException {
+    String delete(HttpServletRequest request) throws NoSuchUsernameException {
+        String username = request.getParameter("username");
+        checkAuthorization(request, username);
+
         User user = new User();
         user.setUsername(username);
         ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
         User certainUser = new User();
         for (User p : users) {
-            if (p.getUsername().equals(username) && p.getPasswordHash().equals(password))
+            if (p.getUsername().equals(username))
                 certainUser = p;
             userRepository.deleteById(certainUser.getUserID());
             return "Deleted";
@@ -135,15 +153,18 @@ public class UsersController {
     }
 
     @GetMapping(path = "/index")
-    public @ResponseBody
-    Iterable<User> index() {
-        return userRepository.findAll();
+    public @ResponseBody String index(HttpServletRequest request) {
+        String jwt = request.getHeader("Authorization").substring(7);
+        String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
+        User manipulatingUser = userRepository.findByUsername(jwtUsername);
+        if (manipulatingUser.getAuthorities().contains("USER_ADMIN"))
+            return userRepository.findAll().toString();
+        return manipulatingUser.toString();
     }
 
     @PutMapping(path = "/ban")
     public @ResponseBody
     String ban(HttpServletRequest request) {
-        checkAuthorization(request, "admin");
         String username = request.getParameter("username");
         User user = userRepository.findByUsername(username);
         user.setEnabled(false);
@@ -154,7 +175,6 @@ public class UsersController {
     @PutMapping(path = "/unban")
     public @ResponseBody
     String unban(HttpServletRequest request) {
-        checkAuthorization(request, "admin");
         String username = request.getParameter("username");
         User user = userRepository.findByUsername(username);
         user.setEnabled(true);
@@ -172,12 +192,11 @@ public class UsersController {
 
     private void checkAuthorization(HttpServletRequest request, String username){
         String jwt = request.getHeader("Authorization").substring(7);
-        if (matchUsernameAndJwt(jwt, username))
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Not admin");
-    }
-
-    private boolean matchUsernameAndJwt(String jwt, String username){
         String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
-        return !username.equals(jwtUsername);
+        User manipulatingUser = userRepository.findByUsername(jwtUsername);
+        if (manipulatingUser.getAuthorities().contains("USER_ADMIN"))
+            return;
+        if (!username.equals(jwtUsername))
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Wrong username");
     }
 }
