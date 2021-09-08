@@ -20,8 +20,7 @@ public class DatabaseInitializer implements ApplicationListener<ApplicationReady
     @Autowired
     private PasswordEncoder bcryptEncoder;
 
-    @Value("${admin.password}")
-    private String password;
+    private String password = System.getenv("ADMINPW");
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {

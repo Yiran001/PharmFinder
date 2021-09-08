@@ -1,0 +1,72 @@
+GET http://localhost:8080/users/index
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJteXVzZXI4IiwiZXhwIjoxNjI5NjgzOTI1LCJpYXQiOjE2Mjk2NjU5MjV9.LRejT4dlqKeEGpT8nxpdiZl1-OMtOrjenpYYCUymPkT9PVAaMdTkXEeCR35HZ6qF_Qs7SmrkhNK8Dpipm6lcwA
+
+###
+POST http://localhost:8080/medicines/create
+Content-Type: application/x-www-form-urlencoded
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnaWwiLCJleHAiOjE2MzEwMzYyOTIsImlhdCI6MTYzMTAxODI5Mn0.rJyK421fRFkv6VR3FPGxR_32PpXb_eglmOljbrd1l-6qOzdD8UWbKUHlVBEVRGWUjVQfkkXycQHqj3bywX2spw
+
+pzn=123&friendlyName=name&medicineForm=PILL&amount=2&username=gil
+
+
+###
+POST http://localhost:8080/users/create
+Content-Type: application/x-www-form-urlencoded
+
+username=gil&password=mypass&email=cphconrad@gmail.com&isPharmacist=true&addressStreet=mystreet&addressHouseNumber=42&addressPostcode=12345
+
+###
+PUT http://localhost:8080/users/update
+Content-Type: application/x-www-form-urlencoded
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnaWwiLCJleHAiOjE2MzEwMzYyOTIsImlhdCI6MTYzMTAxODI5Mn0.rJyK421fRFkv6VR3FPGxR_32PpXb_eglmOljbrd1l-6qOzdD8UWbKUHlVBEVRGWUjVQfkkXycQHqj3bywX2spw
+
+username=gil2&password=mypass&email=cphconrad@gmail.com&isPharmacist=true&addressStreet=mystreet&addressHouseNumber=42&addressPostcode=12345
+
+###
+POST http://localhost:8080/users/passwordReset
+Content-Type: application/x-www-form-urlencoded
+
+username=myuser8&newPassword=hrododoc12
+
+
+###
+GET http://localhost:8080/registrationConfirm?token=89b20781-564c-47d6-a272-646e79a29520
+Content-Type: application/x-www-form-urlencoded
+
+###
+POST http://localhost:8080/authenticate
+Content-Type: application/json
+
+{
+  "username": "gil",
+  "password": "mypass"
+}
+
+###
+POST http://localhost:8080/authenticate
+Content-Type: application/json
+
+{
+  "username": "Dennis_Ritchie",
+  "password": "pass1235"
+}
+
+
+###
+PUT http://localhost:8080/users/ban
+Content-Type: application/x-www-form-urlencoded
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJEZW5uaXNfUml0Y2hpZSIsImV4cCI6MTYzMDg2Mzk3MSwiaWF0IjoxNjMwODQ1OTcxfQ.oInQ2g6pldVuj5MWIqy_r9q71Agr_KcoUh0VFCtt0j2sd90HSBqN15JdYZgYkKIhEkETEsKDgvCb-NGEnEQZ5Q
+
+username=myuser4
+
+
+###
+POST http://localhost:8080/admin/users/create
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJteXVzZXI4IiwiZXhwIjoxNjI5NTg2NjkyLCJpYXQiOjE2Mjk1Njg2OTJ9.Vxldg5Ua4WDh8SCvZF778IduSTOqwRuqLXBBPFVhB0CYUCCKy0EJeuZNGcqPjQg9jmmLcRbs-uuRbB3yX4mi4w
+
+
+
+
+

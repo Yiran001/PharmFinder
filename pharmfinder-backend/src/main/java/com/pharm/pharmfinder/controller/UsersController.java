@@ -6,11 +6,16 @@ import com.pharm.pharmfinder.controller.repositories.AddressRepository;
 import com.pharm.pharmfinder.controller.repositories.PharmacyRepository;
 import com.pharm.pharmfinder.controller.repositories.UserRepository;
 import com.pharm.pharmfinder.jwt.JwtTokenUtil;
+import com.pharm.pharmfinder.jwt.JwtUserDetailsService;
 import com.pharm.pharmfinder.model.Address;
 import com.pharm.pharmfinder.model.Pharmacy;
 import com.pharm.pharmfinder.model.User;
+import com.pharm.pharmfinder.model.mail.OnRegistrationCompleteEvent;
+import com.pharm.pharmfinder.model.mail.VerificationToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +23,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Map;
 
 @Controller
 @CrossOrigin
@@ -34,6 +42,10 @@ public class UsersController {
     private PasswordEncoder bcryptEncoder;
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+    @Autowired
+    private JwtUserDetailsService jwtUserDetailsService;
 
     /**
      * handles exception, that occurs when someone wants to take the same user that someone else has already took
@@ -67,26 +79,31 @@ public class UsersController {
      */
     @PostMapping(path = "/create")
     public @ResponseBody
-    String create(@RequestParam String username, @RequestParam String email, @RequestParam boolean isPharmacist, @RequestParam String password, @RequestParam String addressStreet, @RequestParam String addressHouseNumber, @RequestParam String addressPostcode) throws UsernameAlreadyTakenException {
-            User user = new User();
+    String create(HttpServletRequest request, @RequestParam String username, @RequestParam String email, @RequestParam boolean isPharmacist, @RequestParam String password, @RequestParam String addressStreet, @RequestParam String addressHouseNumber, @RequestParam String addressPostcode) throws UsernameAlreadyTakenException {
+        User user = new User();
 
-            checkUsernameExistence(username);
-            user.setUsername(username);
-            user.setEmail(email);
-            user.setPharmacist(isPharmacist);
-            user.setEnabled(true);
-            user.setPasswordHash(bcryptEncoder.encode(password));
-            userRepository.save(user);
-            Address userAddress = new Address(user,addressStreet,addressHouseNumber,addressPostcode);
-            addressRepository.save(userAddress);
-            user.setUserAddress(userAddress);
-            userRepository.save(user);
-            Pharmacy pharmacy = new Pharmacy();
-            pharmacy.setPharmacyAddress(userAddress);
-            pharmacy.setPharmacyName(username);
-            pharmacy.setOwner(user);
-            pharmacyRepository.save(pharmacy);
-            return "Saved";
+        checkUsernameExistence(username);
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPharmacist(isPharmacist);
+        user.setEnabled(false);
+        user.setPasswordHash(bcryptEncoder.encode(password));
+        userRepository.save(user);
+        Address userAddress = new Address(user,addressStreet,addressHouseNumber,addressPostcode);
+        addressRepository.save(userAddress);
+        user.setUserAddress(userAddress);
+        userRepository.save(user);
+        Pharmacy pharmacy = new Pharmacy();
+        pharmacy.setPharmacyAddress(userAddress);
+        pharmacy.setPharmacyName(username);
+        pharmacy.setOwner(user);
+        pharmacyRepository.save(pharmacy);
+
+//            registration confirmation via email, compulsory
+        String appUrl = request.getContextPath();
+        eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user, request.getLocale(), appUrl));
+
+        return "Saved";
     }
 
     @PutMapping(path = "/update")
@@ -160,6 +177,27 @@ public class UsersController {
         user.setEnabled(true);
         userRepository.save(user);
         return "Unbanned";
+    }
+
+    @GetMapping(path = "/registrationConfirm", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    Map<String, String> confirmRegistration(HttpServletRequest request) {
+
+        String token = request.getParameter("token");
+        VerificationToken verificationToken = jwtUserDetailsService.getVerificationToken(token);
+        if (verificationToken == null) {
+            return Collections.singletonMap("response", "Invalid token");
+        }
+
+        User user = verificationToken.getUser();
+        Calendar cal = Calendar.getInstance();
+        if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+            return Collections.singletonMap("response", "message expired");
+        }
+
+        user.setEnabled(true);
+        userRepository.save(user);
+        return Collections.singletonMap("response", "user enabled");
     }
 
     private void checkUsernameExistence(String username) throws UsernameAlreadyTakenException {
