@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-// test comment
 @Component
 public class DatabaseInitializer implements ApplicationListener<ApplicationReadyEvent> {
     @Autowired
