@@ -16,7 +16,6 @@ public class AdminInitializer {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder bcryptEncoder;
-//todo: vor deployment env vars auf heroku anpassen
 
     private String userAdminPw = System.getenv("USERADMINPW");
 
@@ -43,7 +42,6 @@ public class AdminInitializer {
     public void initialize() {
         for (int i = 0; i < fullNames.size(); i++) {
             String username = fullNames.get(i);
-//            if (userRepository.findByUsername(username) == null){
             User admin = new User();
             admin.setUsername(username);
             admin.setEmail(emailAddresses.get(i));
@@ -52,7 +50,6 @@ public class AdminInitializer {
             admin.setPasswordHash(bcryptEncoder.encode(passwords.get(i)));
             admin.setAuthorities(roles.get(i));
             userRepository.save(admin);
-//            }
         }
     }
 }
