@@ -1,5 +1,8 @@
 package com.pharm.pharmfinder.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.pharm.pharmfinder.controller.repositories.AddressRepository;
 import com.pharm.pharmfinder.controller.repositories.MedicineRepository;
 import com.pharm.pharmfinder.controller.repositories.PharmacyRepository;
@@ -12,22 +15,24 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 
 @SpringBootTest
 @AutoConfigureMockMvc
 public class MedicineControllerTest {
+    public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
+
     //    Medicine 1
     public String pzn1 = "123";
     public String friendlyName = "Aspirin";
@@ -55,7 +60,6 @@ public class MedicineControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -73,136 +77,157 @@ public class MedicineControllerTest {
         medicineRepository.deleteAll();
     }
 
-
     @Test
     void should_save_multiple_medicines_in_one_pharmacy() throws Exception {
         addPharmacistUser1();
-        addMedicine(pzn1, friendlyName, medicineForm, username1);
-        addMedicine2(username1);
-        getAndVerifyResponse(username1, "pzn='" + pzn1 + "'");
-        getAndVerifyResponse(username1, "pzn='124'");
+        String jwt = authenticate(username1, password1);
+        addMedicine1(username1, jwt);
+        addMedicine2(username1, jwt);
+        getAndVerifyResponse(username1, "pzn='" + pzn1 + "'", jwt);
+        getAndVerifyResponse(username1, "pzn='124'", jwt);
     }
 
     @Test
     void should_not_return_medicines_from_different_user() throws Exception {
         addPharmacistUser1();
         addPharmacistUser2();
-        addMedicine(pzn1, friendlyName, medicineForm, username1);
-        MockHttpServletRequestBuilder builder = get("/medicines/index")
-                .param("username", username2)
-                .accept(MediaType.APPLICATION_JSON_VALUE);
-        this.mockMvc.perform(builder)
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(content().string(equalTo("No medicines registered")));
+        String jwt1 = authenticate(username1, password1);
+        String jwt2 = authenticate(username2, password2);
+        addMedicine1(username1, jwt1);
+        getAndVerifyResponse(username2, "No medicines registered", jwt2);
     }
 
     @Test
     void should_not_return_medicine_after_deleting() throws Exception {
         addPharmacistUser1();
-        addMedicine(pzn1, friendlyName, medicineForm, username1);
-        deregisterMedicine(pzn1, username1);
-        MockHttpServletRequestBuilder builder = get("/medicines/index")
-                .param("username", username1)
-                .accept(MediaType.APPLICATION_JSON_VALUE);
-        this.mockMvc.perform(builder)
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(content().string(equalTo("No medicines registered")));
+        String jwt1 = authenticate(username1, password1);
+        addMedicine1(username1, jwt1);
+        deregisterMedicine(pzn1, username1, jwt1);
+        getAndVerifyResponse(username1, "No medicines registered", jwt1);
     }
 
     @Test
     void should_change_amount_on_update() throws Exception {
         int newAmount = 15;
         addPharmacistUser1();
-        addMedicine(pzn1, friendlyName, medicineForm, username1);
-        updateMedicine(pzn1, friendlyName, medicineForm, username1, newAmount);
-        getAndVerifyResponse(username1, "Amount: " + newAmount);
+        String jwt1 = authenticate(username1, password1);
+        addMedicine1(username1, jwt1);
+        updateMedicine(pzn1, friendlyName, medicineForm, username1, newAmount, jwt1);
+        getAndVerifyResponse(username1, "Amount: " + newAmount, jwt1);
     }
 
     @Test
     void should_change_friendlyName_on_update() throws Exception {
         String newFriendlyName = "newFriendlyName";
         addPharmacistUser1();
-        addMedicine(pzn1, friendlyName, medicineForm, username1);
-        updateMedicine(pzn1, newFriendlyName, medicineForm, username1, 0);
-        getAndVerifyResponse(username1, "friendlyName='" + newFriendlyName + "'");
+        String jwt1 = authenticate(username1, password1);
+        addMedicine1(username1, jwt1);
+        updateMedicine(pzn1, newFriendlyName, medicineForm, username1, 0, jwt1);
+        getAndVerifyResponse(username1, "friendlyName='" + newFriendlyName + "'", jwt1);
     }
 
     @Test
     void should_save_one_medicine_to_multiple_pharmacys() throws Exception {
-        String username = "name";
-        String username2 = "name2";
         addPharmacistUser1();
         addPharmacistUser2();
-        addMedicine1(username);
-        addMedicine1(username2);
-        getAndVerifyResponse(username, "pzn='" + pzn1 + "'");
-        getAndVerifyResponse(username2, "pzn='" + pzn1 + "'");
+        String jwt1 = authenticate(username1, password1);
+        String jwt2 = authenticate(username2, password2);
+        addMedicine1(username1, jwt1);
+        addMedicine1(username2, jwt2);
+        getAndVerifyResponse(username1, "pzn='" + pzn1 + "'", jwt1);
+        getAndVerifyResponse(username2, "pzn='" + pzn1 + "'", jwt2);
     }
 
-    private void addPharmacistUser1() {
-        User user = new User();
-        user.setUsername(username1);
-        user.setEmail(email1);
-        user.setPharmacist(true);
-        user.setPasswordHash(password1);
-        Set<User> userSet = new HashSet<>();
-        userSet.add(user);
-        Address address = new Address(userSet, street1, houseNumber1, postcode1);
-        user.setUserAddress(address);
-        Pharmacy pharmacy = new Pharmacy();
-        pharmacy.setPharmacyAddress(address);
-        pharmacy.setPharmacyName(username1);
-        pharmacy.setOwner(user);
-        pharmacy.setPharmacyMedicines(new HashSet<PharmacyMedicine>());
-        addressRepository.save(address);
-        userRepository.save(user);
-        pharmacyRepository.save(pharmacy);
+    private void addMedicine1(String username, String jwt) throws Exception {
+        MockHttpServletRequestBuilder builder = buildMedicinePostRequest
+                (pzn1, friendlyName, String.valueOf(medicineForm), username, 0)
+                .header("Authorization", generateAuthHeader(jwt));
+        this.mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
-    private void addPharmacistUser2() {
-        User user = new User();
-        user.setUsername(username2);
-        user.setEmail(email2);
-        user.setPharmacist(true);
-        user.setPasswordHash(password2);
-        Set<User> userSet = new HashSet<>();
-        userSet.add(user);
-        Address address = new Address(userSet, street2, houseNumber2, postcode2);
-        user.setUserAddress(address);
-        Pharmacy pharmacy = new Pharmacy();
-        pharmacy.setPharmacyAddress(address);
-        pharmacy.setPharmacyName(username2);
-        pharmacy.setOwner(user);
-        pharmacy.setPharmacyMedicines(new HashSet<PharmacyMedicine>());
-        addressRepository.save(address);
-        userRepository.save(user);
-        pharmacyRepository.save(pharmacy);
+    private void addMedicine2(String username, String jwt) throws Exception {
+        MockHttpServletRequestBuilder builder = buildMedicinePostRequest
+                (pzn2, friendlyName2, String.valueOf(medicineForm2), username, 0)
+                .header("Authorization", generateAuthHeader(jwt));
+        this.mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
-    private void updateMedicine(String pzn, String friendlyName, MedicineForm medicineForm, String username, int amount) throws Exception {
+    private String generateAuthHeader(String jwt){
+        return "Bearer " + jwt;
+    }
+
+    private void addUserViaPostRequest(String username, String email, boolean isPharmacist, String password, String addressStreet,
+                                       String addressHouseNumber, String addressPostcode) throws Exception {
+        MockHttpServletRequestBuilder builder = buildUserPostRequest
+                (username, email, isPharmacist, password, addressStreet, addressHouseNumber, addressPostcode);
+        this.mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    private MockHttpServletRequestBuilder buildUserPostRequest
+            (String username, String email, boolean isPharmacist, String password, String addressStreet,
+             String addressHouseNumber, String addressPostcode) {
+        return MockMvcRequestBuilders
+                .post("/users/create")
+                .param("username", username)
+                .param("email", email)
+                .param("isPharmacist", String.valueOf(isPharmacist))
+                .param("password", password)
+                .param("addressStreet", addressStreet)
+                .param("addressHouseNumber", addressHouseNumber)
+                .param("addressPostcode", addressPostcode)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON_VALUE);
+    }
+
+
+    private void addPharmacistUser1() throws Exception {
+        addUserViaPostRequest(username1, email1, true, password1, street1,houseNumber1, postcode1);
+
+    }
+
+    private void addPharmacistUser2() throws Exception {
+        addUserViaPostRequest(username2, email2, true, password2, street2, houseNumber2, postcode2);
+    }
+
+    private String authenticate(String username, String password) throws Exception {
+        com.pharm.pharmfinder.jwt.jwt_model.JwtRequest jwtRequest = new com.pharm.pharmfinder.jwt.jwt_model.JwtRequest();
+        jwtRequest.setUsername(username);
+        jwtRequest.setPassword(password);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(jwtRequest);
+
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+                .post("/authenticate")
+                .contentType(APPLICATION_JSON_UTF8)
+                .content(requestJson);
+
+        MvcResult result = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(content().string(containsString("token")))
+                .andReturn();
+        String response = result.getResponse().getContentAsString();
+        String[] jsonPair = response.split(":");
+        String rawJwt = jsonPair[1];
+        return rawJwt.substring(1, rawJwt.length()-2);
+    }
+
+    private void updateMedicine(String pzn, String friendlyName, MedicineForm medicineForm, String username, int amount, String jwt) throws Exception {
         MockHttpServletRequestBuilder builder = buildMedicinePutRequest
-                (pzn, friendlyName, String.valueOf(medicineForm), username, amount);
-        this.mockMvc.perform(builder)
-                .andExpect(MockMvcResultMatchers.status().isOk());
-    }
-
-    private void addMedicine1(String username) throws Exception {
-        MockHttpServletRequestBuilder builder = buildMedicinePostRequest
-                (pzn1, friendlyName, String.valueOf(medicineForm), username, 0);
-        this.mockMvc.perform(builder)
-                .andExpect(MockMvcResultMatchers.status().isOk());
-    }
-
-    private void addMedicine2(String username) throws Exception {
-        MockHttpServletRequestBuilder builder = buildMedicinePostRequest
-                (pzn2, friendlyName2, String.valueOf(medicineForm2), username, 0);
+                (pzn, friendlyName, String.valueOf(medicineForm), username, amount)
+                .header("Authorization", generateAuthHeader(jwt));
         this.mockMvc.perform(builder)
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     private MockHttpServletRequestBuilder buildMedicinePostRequest
             (String pzn, String friendlyName, String medicineForm, String username, int amount) {
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+        return MockMvcRequestBuilders
                 .post("/medicines/create")
                 .param("pzn", pzn)
                 .param("friendlyName", friendlyName)
@@ -211,12 +236,11 @@ public class MedicineControllerTest {
                 .param("amount", String.valueOf(amount))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE);
-        return builder;
     }
 
     private MockHttpServletRequestBuilder buildMedicinePutRequest
             (String pzn, String friendlyName, String medicineForm, String username, int amount) {
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+        return MockMvcRequestBuilders
                 .put("/medicines/update")
                 .param("pzn", pzn)
                 .param("friendlyName", friendlyName)
@@ -225,34 +249,25 @@ public class MedicineControllerTest {
                 .param("amount", String.valueOf(amount))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE);
-        return builder;
     }
 
-    private void deregisterMedicine(String pzn, String username) throws Exception {
+    private void deregisterMedicine(String pzn, String username, String jwt) throws Exception {
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
                 .delete("/medicines/delete")
                 .param("pzn", pzn)
                 .param("username", username)
                 .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON_VALUE);
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", generateAuthHeader(jwt));
         this.mockMvc.perform(builder)
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
-    private void addMedicine(String pzn, String friendlyName, MedicineForm medicineForm, String username) {
-        Medicine medicine = new Medicine(pzn, new HashSet<PharmacyMedicine>(), friendlyName, medicineForm);
-        Pharmacy pharmacy = getPharmacy(username);
-        PharmacyMedicine pharmacyMedicine = new PharmacyMedicine(pharmacy, medicine, 0);
-        savePharmacyMedicineToMedicine(medicine, pharmacyMedicine);
-        savePharmacyMedicineToEmptyPharmacy(pharmacy, pharmacyMedicine);
-        medicineRepository.save(medicine);
-        pharmacyRepository.save(pharmacy);
-    }
-
-    private void getAndVerifyResponse(String username, String expectedOutput) throws Exception {
+    private void getAndVerifyResponse(String username, String expectedOutput, String jwt) throws Exception {
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/medicines/index")
                 .param("username", username)
-                .accept(MediaType.APPLICATION_JSON_VALUE);
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", generateAuthHeader(jwt));
         this.mockMvc.perform(builder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().string(containsString(expectedOutput)));

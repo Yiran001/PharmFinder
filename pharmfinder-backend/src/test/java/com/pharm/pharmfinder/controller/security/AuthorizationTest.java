@@ -241,7 +241,7 @@ public class AuthorizationTest {
     private MockHttpServletRequestBuilder buildUserPostRequest
             (String username, String email, boolean isPharmacist, String password, String addressStreet,
              String addressHouseNumber, String addressPostcode) {
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+        return MockMvcRequestBuilders
                 .post("/users/create")
                 .param("username", username)
                 .param("email", email)
@@ -252,48 +252,43 @@ public class AuthorizationTest {
                 .param("addressPostcode", addressPostcode)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE);
-        return builder;
     }
 
     private MockHttpServletRequestBuilder buildUserDeleteRequest(String username) {
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+        return MockMvcRequestBuilders
                 .delete("/users/delete")
                 .param("username", username)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE);
-        return builder;
     }
 
     private MockHttpServletRequestBuilder buildUserBanRequest(String username) {
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+        return MockMvcRequestBuilders
                 .put("/users/ban")
                 .param("username", username)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE);
-        return builder;
     }
 
     private MockHttpServletRequestBuilder buildUserIndexRequest() {
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+        return MockMvcRequestBuilders
                 .get("/users/index")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE);
-        return builder;
     }
 
     private MockHttpServletRequestBuilder buildMedicinesIndexRequest(String username) {
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+        return MockMvcRequestBuilders
                 .get("/medicines/index")
                 .param("username", username)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE);
-        return builder;
     }
 
     private MockHttpServletRequestBuilder buildUserPutRequest
             (String originalUsername, String username, String email, boolean isPharmacist, String password, String addressStreet,
              String addressHouseNumber, String addressPostcode) {
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+        return MockMvcRequestBuilders
                 .put("/users/update")
                 .param("originalUsername", originalUsername)
                 .param("username", username)
@@ -305,7 +300,6 @@ public class AuthorizationTest {
                 .param("addressPostcode", addressPostcode)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE);
-        return builder;
     }
 
     private String authenticate(String username, String password) throws Exception {
@@ -442,7 +436,7 @@ public class AuthorizationTest {
 
     private MockHttpServletRequestBuilder buildMedicinePostRequest
             (String pzn, String friendlyName, String medicineForm, String username, int amount) {
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+        return MockMvcRequestBuilders
                 .post("/medicines/create")
                 .param("pzn", pzn)
                 .param("friendlyName", friendlyName)
@@ -451,12 +445,11 @@ public class AuthorizationTest {
                 .param("amount", String.valueOf(amount))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE);
-        return builder;
     }
 
     private MockHttpServletRequestBuilder buildMedicinePutRequest
             (String pzn, String friendlyName, String medicineForm, String username, int amount) {
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+        return MockMvcRequestBuilders
                 .put("/medicines/update")
                 .param("pzn", pzn)
                 .param("friendlyName", friendlyName)
@@ -465,28 +458,25 @@ public class AuthorizationTest {
                 .param("amount", String.valueOf(amount))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE);
-        return builder;
     }
 
     private MockHttpServletRequestBuilder buildMedicineDeleteRequest
             (String pzn, String username) {
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+        return MockMvcRequestBuilders
                 .delete("/medicines/delete")
                 .param("username", username)
                 .param("pzn", pzn)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE);
-        return builder;
     }
 
     private MockHttpServletRequestBuilder buildMedicineGetRequest
             (String username) {
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+        return MockMvcRequestBuilders
                 .get("/medicines/index")
                 .param("username", username)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE);
-        return builder;
     }
 
     private void addAdmins() {
@@ -494,6 +484,5 @@ public class AuthorizationTest {
         medicineAdminPassword = System.getenv("MEDICINEADMINPW");
         adminInitializer.initialize();
     }
-
 }
 
