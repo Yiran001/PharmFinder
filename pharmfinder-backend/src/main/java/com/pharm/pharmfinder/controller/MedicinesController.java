@@ -3,14 +3,14 @@ package com.pharm.pharmfinder.controller;
 import com.pharm.pharmfinder.controller.repositories.MedicineRepository;
 import com.pharm.pharmfinder.controller.repositories.PharmacyMedicineRepository;
 import com.pharm.pharmfinder.controller.repositories.PharmacyRepository;
+import com.pharm.pharmfinder.controller.repositories.UserRepository;
 import com.pharm.pharmfinder.jwt.JwtTokenUtil;
-import com.pharm.pharmfinder.model.Medicine;
-import com.pharm.pharmfinder.model.MedicineForm;
-import com.pharm.pharmfinder.model.Pharmacy;
-import com.pharm.pharmfinder.model.PharmacyMedicine;
+import com.pharm.pharmfinder.jwt.JwtUserDetailsService;
+import com.pharm.pharmfinder.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -31,7 +31,8 @@ public class MedicinesController {
     private PharmacyMedicineRepository pharmacyMedicineRepository;
     @Autowired
     private PharmacyRepository pharmacyRepository;
-
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
@@ -176,14 +177,13 @@ public class MedicinesController {
         return false;
     }
 
-    private boolean matchUsernameAndJwt(String jwt, String username){
-        String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
-        return !username.equals(jwtUsername);
-    }
-
     private void checkAuthorization(HttpServletRequest request, String username){
         String jwt = request.getHeader("Authorization").substring(7);
-        if (matchUsernameAndJwt(jwt, username))
+        String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
+        User manipulatingUser = userRepository.findByUsername(jwtUsername);
+        if (manipulatingUser.getAuthorities().contains("MEDICINE_ADMIN"))
+            return;
+        if (!username.equals(jwtUsername))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Wrong username");
     }
 }

@@ -15,11 +15,11 @@ public class DataSourceConfig {
     public DataSource postgresDataSource() {
         String databaseUrl = System.getenv("DATABASE_URL");
 
+
         URI dbUri;
         try {
             dbUri = new URI(databaseUrl);
-        }
-        catch (URISyntaxException e) {
+        } catch (URISyntaxException e) {
             System.out.println("Setting up DataSource failed.");
             return null;
         }
