@@ -1,12 +1,8 @@
-package com.pharm.pharmfinder.controller.security;
+package com.pharm.pharmfinder.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.pharm.pharmfinder.controller.repositories.AddressRepository;
-import com.pharm.pharmfinder.controller.repositories.MedicineRepository;
-import com.pharm.pharmfinder.controller.repositories.PharmacyRepository;
-import com.pharm.pharmfinder.controller.repositories.UserRepository;
 import com.pharm.pharmfinder.jwt.jwt_model.JwtRequest;
 import com.pharm.pharmfinder.model.*;
 import org.junit.jupiter.api.Test;

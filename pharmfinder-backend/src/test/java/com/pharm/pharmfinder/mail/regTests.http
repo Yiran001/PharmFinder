@@ -14,7 +14,15 @@ pzn=123&friendlyName=name&medicineForm=PILL&amount=2&username=gil
 POST http://localhost:8080/users/create
 Content-Type: application/x-www-form-urlencoded
 
-username=gil&password=mypass&email=cphconrad@gmail.com&isPharmacist=true&addressStreet=mystreet&addressHouseNumber=42&addressPostcode=12345
+username=gil2&password=mypass&email=cphconrad@gmail.com&isPharmacist=true&addressStreet=mystreet&addressHouseNumber=42&addressPostcode=12345
+
+
+###
+DELETE http://localhost:8080/users/delete
+Content-Type: application/x-www-form-urlencoded
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnaWwiLCJleHAiOjE2MzE4MTQ2ODMsImlhdCI6MTYzMTc5NjY4M30.W3pKjYkeTCOBSYX8jWniYbLeY0CB7DoCv87GHGpyzjwXVtFN33M_YSy9Dbkq5Pqmiix3kNfNXA4SLOpyKU-gbQ
+
+username=gil
 
 ###
 PUT http://localhost:8080/users/update
@@ -39,7 +47,7 @@ POST http://localhost:8080/authenticate
 Content-Type: application/json
 
 {
-  "username": "gil",
+  "username": "gil2",
   "password": "mypass"
 }
 

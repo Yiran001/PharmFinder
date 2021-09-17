@@ -7,6 +7,7 @@ import com.pharm.pharmfinder.controller.repositories.AddressRepository;
 import com.pharm.pharmfinder.controller.repositories.MedicineRepository;
 import com.pharm.pharmfinder.controller.repositories.PharmacyRepository;
 import com.pharm.pharmfinder.controller.repositories.UserRepository;
+import com.pharm.pharmfinder.jwt.JwtUserDetailsService;
 import com.pharm.pharmfinder.model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -68,14 +69,8 @@ public class MedicineControllerTest {
     private PharmacyRepository pharmacyRepository;
     @Autowired
     private MedicineRepository medicineRepository;
-
-    @AfterEach
-    void tearDown() {
-        pharmacyRepository.deleteAll();
-        addressRepository.deleteAll();
-        userRepository.deleteAll();
-        medicineRepository.deleteAll();
-    }
+    @Autowired
+    private JwtUserDetailsService jwtUserDetailsService;
 
     @Test
     void should_save_multiple_medicines_in_one_pharmacy() throws Exception {
@@ -85,6 +80,7 @@ public class MedicineControllerTest {
         addMedicine2(username1, jwt);
         getAndVerifyResponse(username1, "pzn='" + pzn1 + "'", jwt);
         getAndVerifyResponse(username1, "pzn='124'", jwt);
+        jwtUserDetailsService.deleteUserByUsername(username1);
     }
 
     @Test
@@ -95,6 +91,9 @@ public class MedicineControllerTest {
         String jwt2 = authenticate(username2, password2);
         addMedicine1(username1, jwt1);
         getAndVerifyResponse(username2, "No medicines registered", jwt2);
+        jwtUserDetailsService.deleteUserByUsername(username1);
+        jwtUserDetailsService.deleteUserByUsername(username2);
+
     }
 
     @Test
@@ -104,6 +103,7 @@ public class MedicineControllerTest {
         addMedicine1(username1, jwt1);
         deregisterMedicine(pzn1, username1, jwt1);
         getAndVerifyResponse(username1, "No medicines registered", jwt1);
+        jwtUserDetailsService.deleteUserByUsername(username1);
     }
 
     @Test
@@ -114,6 +114,7 @@ public class MedicineControllerTest {
         addMedicine1(username1, jwt1);
         updateMedicine(pzn1, friendlyName, medicineForm, username1, newAmount, jwt1);
         getAndVerifyResponse(username1, "Amount: " + newAmount, jwt1);
+        jwtUserDetailsService.deleteUserByUsername(username1);
     }
 
     @Test
@@ -124,6 +125,7 @@ public class MedicineControllerTest {
         addMedicine1(username1, jwt1);
         updateMedicine(pzn1, newFriendlyName, medicineForm, username1, 0, jwt1);
         getAndVerifyResponse(username1, "friendlyName='" + newFriendlyName + "'", jwt1);
+        jwtUserDetailsService.deleteUserByUsername(username1);
     }
 
     @Test
@@ -136,6 +138,8 @@ public class MedicineControllerTest {
         addMedicine1(username2, jwt2);
         getAndVerifyResponse(username1, "pzn='" + pzn1 + "'", jwt1);
         getAndVerifyResponse(username2, "pzn='" + pzn1 + "'", jwt2);
+        jwtUserDetailsService.deleteUserByUsername(username1);
+        jwtUserDetailsService.deleteUserByUsername(username2);
     }
 
     private void addMedicine1(String username, String jwt) throws Exception {

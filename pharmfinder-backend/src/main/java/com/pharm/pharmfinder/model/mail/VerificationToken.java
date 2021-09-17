@@ -4,6 +4,7 @@ package com.pharm.pharmfinder.model.mail;
 import com.pharm.pharmfinder.model.User;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.sql.Delete;
 
 import javax.persistence.*;
 import java.sql.Timestamp;

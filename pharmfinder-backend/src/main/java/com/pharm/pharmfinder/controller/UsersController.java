@@ -9,7 +9,6 @@ import com.pharm.pharmfinder.jwt.JwtTokenUtil;
 import com.pharm.pharmfinder.jwt.JwtUserDetailsService;
 import com.pharm.pharmfinder.model.Address;
 import com.pharm.pharmfinder.model.Pharmacy;
-import com.pharm.pharmfinder.model.Role;
 import com.pharm.pharmfinder.model.User;
 import com.pharm.pharmfinder.model.mail.OnRegistrationCompleteEvent;
 import com.pharm.pharmfinder.model.mail.VerificationToken;
@@ -17,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -82,13 +82,16 @@ public class UsersController {
     @PostMapping(path = "/create")
     public @ResponseBody
     String create(HttpServletRequest request, @RequestParam String username, @RequestParam String email, @RequestParam boolean isPharmacist, @RequestParam String password, @RequestParam String addressStreet, @RequestParam String addressHouseNumber, @RequestParam String addressPostcode) throws UsernameAlreadyTakenException {
-        User user = new User();
+        String registration_env_var = System.getenv("REGISTRATION_EMAIL");
+        boolean no_email_registration = registration_env_var == null || !registration_env_var.equalsIgnoreCase("true");
 
+        User user = new User();
         checkUsernameExistence(username);
         user.setUsername(username);
         user.setEmail(email);
         user.setPharmacist(isPharmacist);
-        user.setEnabled(false);
+//        if env var is set, and equals to true, account has to be activated via email
+        user.setEnabled(no_email_registration);
         user.setPasswordHash(bcryptEncoder.encode(password));
         user.setAuthorities("");
         userRepository.save(user);
@@ -99,13 +102,14 @@ public class UsersController {
         Pharmacy pharmacy = new Pharmacy();
         pharmacy.setPharmacyAddress(userAddress);
         pharmacy.setPharmacyName(username);
-        pharmacy.setOwner(user);
+        pharmacy.setUser(user);
         pharmacyRepository.save(pharmacy);
 
-//            registration confirmation via email, compulsory
-        String appUrl = request.getContextPath();
-        eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user, request.getLocale(), appUrl));
-
+//            registration confirmation via email, compulsory when activated
+        if (!no_email_registration){
+            String appUrl = request.getContextPath();
+            eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user, request.getLocale(), appUrl));
+        }
         return "Saved";
     }
 
@@ -148,23 +152,14 @@ public class UsersController {
 
     }
 
+//    todo: testen
     @DeleteMapping(path = "/delete")
     public @ResponseBody
     String delete(HttpServletRequest request) throws NoSuchUsernameException {
         String username = request.getParameter("username");
         checkAuthorization(request, username);
-
-        User user = new User();
-        user.setUsername(username);
-        ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
-        User certainUser = new User();
-        for (User p : users) {
-            if (p.getUsername().equals(username))
-                certainUser = p;
-            userRepository.deleteById(certainUser.getUserID());
-            return "Deleted";
-        }
-        throw new NoSuchUsernameException();
+        jwtUserDetailsService.deleteUserByUsername(username);
+        return "Deleted";
     }
 
     @GetMapping(path = "/index")
@@ -198,24 +193,28 @@ public class UsersController {
     }
 
     @GetMapping(path = "/registrationConfirm", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody
-    Map<String, String> confirmRegistration(HttpServletRequest request) {
+    public ResponseEntity<Map<String, String>> confirmRegistration(HttpServletRequest request) {
 
         String token = request.getParameter("token");
         VerificationToken verificationToken = jwtUserDetailsService.getVerificationToken(token);
         if (verificationToken == null) {
-            return Collections.singletonMap("response", "Invalid token");
+            Map<String, String> jsonResponse = Collections.singletonMap("response", "Invalid token");
+            return new ResponseEntity<>(jsonResponse, HttpStatus.FORBIDDEN);
         }
 
         User user = verificationToken.getUser();
         Calendar cal = Calendar.getInstance();
         if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
-            return Collections.singletonMap("response", "message expired");
+            Map<String, String> jsonResponse = Collections.singletonMap("response", "message expired");
+            return new ResponseEntity<>(jsonResponse, HttpStatus.FORBIDDEN);
         }
 
         user.setEnabled(true);
         userRepository.save(user);
-        return Collections.singletonMap("response", "user enabled");
+        jwtUserDetailsService.deleteVerificationToken(verificationToken);
+
+        Map<String, String> jsonResponse = Collections.singletonMap("response", "user enabled");
+        return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
     }
 
     private void checkUsernameExistence(String username) throws UsernameAlreadyTakenException {
