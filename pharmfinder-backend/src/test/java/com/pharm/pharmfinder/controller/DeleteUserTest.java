@@ -27,8 +27,6 @@ public class DeleteUserTest {
     private UserRepository userRepository;
     @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
-    @Autowired
-    private VerificationTokenRepository verificationTokenRepository;
 
     //    User data
     String username = "testUser";

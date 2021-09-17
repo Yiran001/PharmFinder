@@ -9,7 +9,6 @@ import com.pharm.pharmfinder.controller.repositories.PharmacyRepository;
 import com.pharm.pharmfinder.controller.repositories.UserRepository;
 import com.pharm.pharmfinder.jwt.JwtUserDetailsService;
 import com.pharm.pharmfinder.model.*;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -62,13 +61,7 @@ public class MedicineControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private AddressRepository addressRepository;
-    @Autowired
     private PharmacyRepository pharmacyRepository;
-    @Autowired
-    private MedicineRepository medicineRepository;
     @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
 
