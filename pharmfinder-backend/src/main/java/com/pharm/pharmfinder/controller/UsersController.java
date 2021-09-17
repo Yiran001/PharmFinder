@@ -152,7 +152,6 @@ public class UsersController {
 
     }
 
-//    todo: testen
     @DeleteMapping(path = "/delete")
     public @ResponseBody
     String delete(HttpServletRequest request) throws NoSuchUsernameException {
