@@ -16,8 +16,14 @@ public class MailConfig {
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
 
+        String registration_env_var = System.getenv("REGISTRATION_EMAIL");
+        boolean no_email_registration = registration_env_var == null || !registration_env_var.equalsIgnoreCase("true");
+        if (no_email_registration){
+            return null;
+        }
+
         mailSender.setUsername("PharmacyFinderHTW@gmail.com");
-        mailSender.setPassword("qhqflutogbyuygqh");
+        mailSender.setPassword(System.getenv("EMAILPW"));
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
