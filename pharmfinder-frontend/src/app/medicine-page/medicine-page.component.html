@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bootstrap User Management Data Table</title>
+</head>
+<body>
+<div class="container">
+  <div class="table-responsive">
+    <div class="table-wrapper">
+      <div class="table-title">
+        <div class="row">
+          <div class="col-xs-5">
+            <h2>User <b>Management</b></h2>
+          </div>
+        </div>
+      </div>
+      <table class="table table-striped table-hover">
+        <thead>
+        <tr>
+          <th>PZN</th>
+          <th>Name</th>
+          <th>Menge</th>
+          <th>Form</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let medicine of medicines">
+          <td>{{medicine.pzn}}</td>
+          <td>{{medicine.name}}</td>
+          <td>{{medicine.form}}</td>
+          <td>{{medicine.amount}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>
