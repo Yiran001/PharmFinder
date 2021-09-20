@@ -2,6 +2,7 @@ package com.pharm.pharmfinder.mail.pw_reset;
 
 import com.pharm.pharmfinder.jwt.JwtUserDetailsService;
 import com.pharm.pharmfinder.model.User;
+import com.pharm.pharmfinder.model.mail.password.OnPasswordResetEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.mail.SimpleMailMessage;

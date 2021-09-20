@@ -1,4 +1,4 @@
-package com.pharm.pharmfinder.mail.pw_reset;
+package com.pharm.pharmfinder.model.mail.password;
 
 import com.pharm.pharmfinder.model.User;
 import lombok.Getter;

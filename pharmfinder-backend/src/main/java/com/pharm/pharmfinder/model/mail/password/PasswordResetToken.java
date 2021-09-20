@@ -1,25 +1,30 @@
-package com.pharm.pharmfinder.model.mail;
-
+package com.pharm.pharmfinder.model.mail.password;
 
 import com.pharm.pharmfinder.model.User;
-import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.sql.Delete;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 
-@Entity
-@Data
+
+
+//https://www.baeldung.com/spring-security-registration-i-forgot-my-password
 @RequiredArgsConstructor
-public class VerificationToken {
+@Getter
+@Setter
+@Entity
+public class PasswordResetToken {
+
     private static final int EXPIRATION = 60 * 24;
 
-    public VerificationToken(String token, User user) {
+    public PasswordResetToken(String token, User user, String newPassword) {
         this.token = token;
         this.user = user;
+        this.newPassword = newPassword;
         this.expiryDate = calculateExpiryDate(EXPIRATION);
     }
 
@@ -33,6 +38,8 @@ public class VerificationToken {
     @JoinColumn(nullable = false, name = "user_id")
     private User user;
 
+    private String newPassword;
+
     private Date expiryDate;
 
     private Date calculateExpiryDate(int expiryTimeInMinutes) {
@@ -41,4 +48,5 @@ public class VerificationToken {
         cal.add(Calendar.MINUTE, expiryTimeInMinutes);
         return new Date(cal.getTime().getTime());
     }
+
 }

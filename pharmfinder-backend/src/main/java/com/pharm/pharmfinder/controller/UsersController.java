@@ -7,13 +7,13 @@ import com.pharm.pharmfinder.controller.repositories.PharmacyRepository;
 import com.pharm.pharmfinder.controller.repositories.UserRepository;
 import com.pharm.pharmfinder.jwt.JwtTokenUtil;
 import com.pharm.pharmfinder.jwt.JwtUserDetailsService;
-import com.pharm.pharmfinder.mail.pw_reset.OnPasswordResetEvent;
-import com.pharm.pharmfinder.mail.pw_reset.PasswordResetToken;
+import com.pharm.pharmfinder.model.mail.password.OnPasswordResetEvent;
+import com.pharm.pharmfinder.model.mail.password.PasswordResetToken;
 import com.pharm.pharmfinder.model.Address;
 import com.pharm.pharmfinder.model.Pharmacy;
 import com.pharm.pharmfinder.model.User;
-import com.pharm.pharmfinder.model.mail.OnRegistrationCompleteEvent;
-import com.pharm.pharmfinder.model.mail.VerificationToken;
+import com.pharm.pharmfinder.model.mail.registration.OnRegistrationCompleteEvent;
+import com.pharm.pharmfinder.model.mail.registration.RegistrationVerificationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
@@ -196,22 +196,22 @@ public class UsersController {
     @GetMapping(path = "/registrationConfirm", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, String>> registrationConfirm(HttpServletRequest request) {
         String token = request.getParameter("token");
-        VerificationToken verificationToken = jwtUserDetailsService.getVerificationToken(token);
-        if (verificationToken == null) {
+        RegistrationVerificationToken registrationVerificationToken = jwtUserDetailsService.getVerificationToken(token);
+        if (registrationVerificationToken == null) {
             Map<String, String> jsonResponse = Collections.singletonMap("response", "Invalid token");
             return new ResponseEntity<>(jsonResponse, HttpStatus.FORBIDDEN);
         }
 
-        User user = verificationToken.getUser();
+        User user = registrationVerificationToken.getUser();
         Calendar cal = Calendar.getInstance();
-        if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+        if ((registrationVerificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
             Map<String, String> jsonResponse = Collections.singletonMap("response", "message expired");
             return new ResponseEntity<>(jsonResponse, HttpStatus.FORBIDDEN);
         }
 
         user.setEnabled(true);
         userRepository.save(user);
-        jwtUserDetailsService.deleteVerificationToken(verificationToken);
+        jwtUserDetailsService.deleteVerificationToken(registrationVerificationToken);
 
         Map<String, String> jsonResponse = Collections.singletonMap("response", "user enabled");
         return new ResponseEntity<>(jsonResponse, HttpStatus.OK);

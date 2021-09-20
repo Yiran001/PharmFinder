@@ -1,6 +1,6 @@
 package com.pharm.pharmfinder.controller.repositories;
 
-import com.pharm.pharmfinder.mail.pw_reset.PasswordResetToken;
+import com.pharm.pharmfinder.model.mail.password.PasswordResetToken;
 import com.pharm.pharmfinder.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 

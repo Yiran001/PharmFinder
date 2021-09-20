@@ -2,20 +2,17 @@
 package com.pharm.pharmfinder.jwt;
 
 import com.pharm.pharmfinder.controller.repositories.*;
-import com.pharm.pharmfinder.mail.pw_reset.PasswordResetToken;
-import com.pharm.pharmfinder.model.Address;
+import com.pharm.pharmfinder.model.mail.password.PasswordResetToken;
 import com.pharm.pharmfinder.model.Pharmacy;
 import com.pharm.pharmfinder.model.Role;
 import com.pharm.pharmfinder.model.User;
-import com.pharm.pharmfinder.model.mail.VerificationToken;
+import com.pharm.pharmfinder.model.mail.registration.RegistrationVerificationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Set;
 
 @Service
@@ -52,16 +49,16 @@ public class JwtUserDetailsService implements UserDetailsService {
                 authorities);
     }
 
-    public VerificationToken getVerificationToken(String VerificationToken) {
+    public RegistrationVerificationToken getVerificationToken(String VerificationToken) {
         return verificationTokenRepository.findByToken(VerificationToken);
     }
 
     public void createVerificationToken(User user, String token) {
-        VerificationToken myToken = new VerificationToken(token, user);
+        RegistrationVerificationToken myToken = new RegistrationVerificationToken(token, user);
         verificationTokenRepository.save(myToken);
     }
 
-    public void deleteVerificationToken(VerificationToken token){
+    public void deleteVerificationToken(RegistrationVerificationToken token){
         verificationTokenRepository.deleteById(token.getId());
     }
 
@@ -69,7 +66,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         User user = userRepository.findByUsername(username);
 
         if (System.getenv("REGISTRATION_EMAIL") != null && System.getenv("REGISTRATION_EMAIL").equalsIgnoreCase("true")){
-            VerificationToken registrationToken = verificationTokenRepository.findByUser(user);
+            RegistrationVerificationToken registrationToken = verificationTokenRepository.findByUser(user);
 //            token already gets deleted, when confirmation comes in
             if (registrationToken != null)
                 verificationTokenRepository.deleteById(registrationToken.getId());
