@@ -2,6 +2,7 @@
 package com.pharm.pharmfinder.jwt;
 
 import com.pharm.pharmfinder.controller.repositories.*;
+import com.pharm.pharmfinder.mail.pw_reset.PasswordResetToken;
 import com.pharm.pharmfinder.model.Address;
 import com.pharm.pharmfinder.model.Pharmacy;
 import com.pharm.pharmfinder.model.Role;
@@ -13,6 +14,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Set;
 
 @Service
@@ -26,6 +29,8 @@ public class JwtUserDetailsService implements UserDetailsService {
     private AddressRepository addressRepository;
     @Autowired
     private PharmacyRepository pharmacyRepository;
+    @Autowired
+    private PasswordTokenRepository passwordTokenRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -64,11 +69,19 @@ public class JwtUserDetailsService implements UserDetailsService {
         User user = userRepository.findByUsername(username);
 
         if (System.getenv("REGISTRATION_EMAIL") != null && System.getenv("REGISTRATION_EMAIL").equalsIgnoreCase("true")){
-            VerificationToken token = verificationTokenRepository.findByUser(user);
+            VerificationToken registrationToken = verificationTokenRepository.findByUser(user);
 //            token already gets deleted, when confirmation comes in
-            if (token != null)
-                verificationTokenRepository.deleteById(token.getId());
+            if (registrationToken != null)
+                verificationTokenRepository.deleteById(registrationToken.getId());
+            PasswordResetToken passwordResetToken = passwordTokenRepository.findByUser(user);
+            if (passwordResetToken != null)
+                passwordTokenRepository.deleteById(passwordResetToken.getId());
         }
+
+        PasswordResetToken passwordResetToken = passwordTokenRepository.findByUser(user);
+        if (passwordResetToken != null)
+            passwordTokenRepository.deleteById(passwordResetToken.getId());
+
 
         Pharmacy pharmacy = pharmacyRepository.findByUser(user);
         if (pharmacy != null)
@@ -80,6 +93,15 @@ public class JwtUserDetailsService implements UserDetailsService {
         else addressUsers.remove(user);
 
         userRepository.delete(user);
+    }
+
+    public void createPasswordResetTokenForUser(User user, String token, String newPassword) {
+        PasswordResetToken myToken = new PasswordResetToken(token, user, newPassword);
+        passwordTokenRepository.save(myToken);
+    }
+
+    public PasswordResetToken getPasswordResetToken(String token){
+        return passwordTokenRepository.findByToken(token);
     }
 }
 

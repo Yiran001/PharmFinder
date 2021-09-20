@@ -7,6 +7,8 @@ import com.pharm.pharmfinder.controller.repositories.PharmacyRepository;
 import com.pharm.pharmfinder.controller.repositories.UserRepository;
 import com.pharm.pharmfinder.jwt.JwtTokenUtil;
 import com.pharm.pharmfinder.jwt.JwtUserDetailsService;
+import com.pharm.pharmfinder.mail.pw_reset.OnPasswordResetEvent;
+import com.pharm.pharmfinder.mail.pw_reset.PasswordResetToken;
 import com.pharm.pharmfinder.model.Address;
 import com.pharm.pharmfinder.model.Pharmacy;
 import com.pharm.pharmfinder.model.User;
@@ -192,8 +194,7 @@ public class UsersController {
     }
 
     @GetMapping(path = "/registrationConfirm", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, String>> confirmRegistration(HttpServletRequest request) {
-
+    public ResponseEntity<Map<String, String>> registrationConfirm(HttpServletRequest request) {
         String token = request.getParameter("token");
         VerificationToken verificationToken = jwtUserDetailsService.getVerificationToken(token);
         if (verificationToken == null) {
@@ -213,6 +214,41 @@ public class UsersController {
         jwtUserDetailsService.deleteVerificationToken(verificationToken);
 
         Map<String, String> jsonResponse = Collections.singletonMap("response", "user enabled");
+        return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/passwordReset")
+    public @ResponseBody String passwordReset(HttpServletRequest request){
+        String username = request.getParameter("username");
+        String newPassword = request.getParameter("newPassword");
+        User user = userRepository.findByUsername(username);
+        if (user == null)
+            return "Unknown username";
+
+        String appUrl = request.getContextPath();
+        eventPublisher.publishEvent(new OnPasswordResetEvent(appUrl, request.getLocale(), user, newPassword));
+        return "Reset initialized";
+    }
+
+    @GetMapping(path = "/passwordResetConfirm")
+    public ResponseEntity<Map<String, String>> passwordResetConfirm(HttpServletRequest request) {
+        String token = request.getParameter("token");
+        PasswordResetToken passwordResetToken = jwtUserDetailsService.getPasswordResetToken(token);
+        if (passwordResetToken == null) {
+            Map<String, String> jsonResponse = Collections.singletonMap("response", "invalid token");
+            return new ResponseEntity<>(jsonResponse, HttpStatus.FORBIDDEN);
+        }
+
+        User user = passwordResetToken.getUser();
+        Calendar cal = Calendar.getInstance();
+        if ((passwordResetToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+            Map<String, String> jsonResponse = Collections.singletonMap("response", "token expired");
+            return new ResponseEntity<>(jsonResponse, HttpStatus.FORBIDDEN);
+        }
+
+        user.setPasswordHash(bcryptEncoder.encode(passwordResetToken.getNewPassword()));
+        userRepository.save(user);
+        Map<String, String> jsonResponse = Collections.singletonMap("response", "password changed");
         return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
     }
 

@@ -19,7 +19,7 @@ public class MailConfig {
         String registration_env_var = System.getenv("REGISTRATION_EMAIL");
         boolean no_email_registration = registration_env_var == null || !registration_env_var.equalsIgnoreCase("true");
         if (no_email_registration){
-            return null;
+            return new JavaMailSenderImpl();
         }
 
         mailSender.setUsername("PharmacyFinderHTW@gmail.com");
