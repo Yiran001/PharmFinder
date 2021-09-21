@@ -3,6 +3,7 @@ import { AuthService } from '../services/auth.service';
 import {Observable, throwError} from "rxjs";
 import {HttpErrorResponse} from "@angular/common/http";
 import {Router} from "@angular/router";
+import {SearchPharmaciesService} from "../services/search-pharmacies.service";
 
 /**
  * This component binds form data (username, email, password) from template to
@@ -38,15 +39,48 @@ export class RegisterComponent implements OnInit {
   errorMessage = '';
   registerPharmacy = false;
   usernameAlreadyGiven = false;
+  address:string = '';
 
-  constructor(private authService: AuthService,private router: Router) { }
+
+  constructor(private authService: AuthService,private router: Router,private searchPharmaciesService: SearchPharmaciesService) { }
 
 
   ngOnInit(): void {
   }
 
   onSubmit(): void {
+    var result;
+    var lat=-200;
+    var lng=-200;
+    var status='OK';
     const { username, email, password, street, housenumber, postcode, isPharmacist } = this.form;
+    this.address = this.form.street+' '+this.form.housenumber+' '+this.form.postcode;
+    this.searchPharmaciesService.geocodeAddress(this.address,function(results: any){
+      lng=results;
+      console.log('lng: '+lng);
+    },
+      function(results: any){
+        lat=results;
+        console.log('lat: '+lat);
+      }
+      ,
+      function(results: any){
+        status=results;
+        console.log('status: '+status);
+        if(status!=='OK') {
+          console.log(status);
+          if(status=='ZERO_RESULTS') {
+            alert('Adresse konnte nicht gefunden werden!');
+          } else if (status=='OVER_QUERY_LIMIT'){
+            alert('Adresse ist zu lang.');
+          } else {
+            alert('Ein Problem mit der Adresse ist aufgetreten. Bitte versuchen Sie erneut sich zu registrieren.')
+          }
+        }
+      });
+
+
+
 
     this.authService.registerPost(username, email, isPharmacist, password, street,housenumber,postcode).subscribe(
       data => {

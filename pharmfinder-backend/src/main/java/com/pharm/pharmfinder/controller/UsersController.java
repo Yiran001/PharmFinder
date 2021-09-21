@@ -180,4 +180,5 @@ public class UsersController {
         String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
         return !username.equals(jwtUsername);
     }
+
 }

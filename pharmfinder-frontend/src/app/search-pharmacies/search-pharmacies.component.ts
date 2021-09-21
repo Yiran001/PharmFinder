@@ -29,6 +29,7 @@ export class SearchPharmaciesComponent implements OnInit {
     pzn: null,
   };
   isSuccessful = false;
+  foundMe = false;
 
 
   // @ts-ignore
@@ -52,10 +53,10 @@ export class SearchPharmaciesComponent implements OnInit {
 
   onSubmit() {
     const { pzn } = this.form;
+    this.foundMe=true;
     this.center=this.currentLocCenter;
     this.currentLocMarker.position=this.center;
     //console.log(JSON.stringify(this.map.getZoom()));
-
     this.search(pzn,this.currentLocMarker.position);
   }
   /*
@@ -84,11 +85,13 @@ export class SearchPharmaciesComponent implements OnInit {
     console.log(event)
   }
    */
+
   private search(pzn: number, location: google.maps.LatLngLiteral) {
 
   }
 
   findMe() {
+    this.foundMe=true;
     this.center=this.currentLocCenter;
     this.currentLocMarker.position=this.center;
   }

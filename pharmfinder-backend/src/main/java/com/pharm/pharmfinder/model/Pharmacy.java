@@ -23,6 +23,10 @@ public class Pharmacy {
 
     private String pharmacyName;
 
+    public float lng;
+
+    public float lat;
+
     public Pharmacy(int pharmacyID, Address pharmacyAddress, User owner, String pharmacyName) {
         this.pharmacyID = pharmacyID;
         this.pharmacyAddress = pharmacyAddress;

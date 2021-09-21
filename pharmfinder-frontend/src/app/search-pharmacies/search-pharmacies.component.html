@@ -46,9 +46,12 @@
         <google-map
           [options]="mapOptions"
           [center]="center">
+
           <map-marker
+            *ngIf="foundMe"
             [label]="currentLocMarker.label"
-            [position]="currentLocMarker.position">
+            [position]="currentLocMarker.position"
+            >
           </map-marker>
         </google-map>
       </div>
