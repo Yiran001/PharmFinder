@@ -39,8 +39,11 @@ export class RegisterComponent implements OnInit {
   errorMessage = '';
   registerPharmacy = false;
   usernameAlreadyGiven = false;
-  address:string = '';
 
+  address:string = '';
+  lat = -200;
+  lng= -200;
+  status = 'ok';
 
   constructor(private authService: AuthService,private router: Router,private searchPharmaciesService: SearchPharmaciesService) { }
 
@@ -49,29 +52,64 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit(): void {
-    var result;
-    var lat=-200;
-    var lng=-200;
-    var status='OK';
+
     const { username, email, password, street, housenumber, postcode, isPharmacist } = this.form;
     this.address = this.form.street+' '+this.form.housenumber+' '+this.form.postcode;
-    this.searchPharmaciesService.geocodeAddress(this.address,function(results: any){
-      lng=results;
-      console.log('lng: '+lng);
+    this.searchPharmaciesService.geocodeAddress(this.address, (results: any) =>{
+      this.lng=results;
+      console.log('lng: '+this.lng);
     },
-      function(results: any){
-        lat=results;
-        console.log('lat: '+lat);
-      }
-      ,
-      function(results: any){
-        status=results;
-        console.log('status: '+status);
-        if(status!=='OK') {
-          console.log(status);
-          if(status=='ZERO_RESULTS') {
+      (results: any) => {
+        this.lat=results;
+        console.log('lat: '+this.lat);
+
+        this.authService.registerPost(username, email, isPharmacist, password, street, housenumber, postcode, this.lat.toString(),this.lng.toString()).subscribe(
+          data => {
+            console.log(data);
+            console.log(this.lat + '  ' + this.lng);
+            this.isSuccessful = true;
+            this.isSignUpFailed = false;
+            this.router.navigate(['/login']).then();
+
+          },
+          error => {
+            console.log(error)
+            console.log(this.lat + '  ' + this.lng);
+            this.isSignUpFailed = true;
+            this.usernameAlreadyGiven = false;
+
+            if (error instanceof HttpErrorResponse) {
+              this.errorMessage = error.error.message;
+              if (error.error instanceof ErrorEvent) {
+                console.error("Error Event");
+              } else {
+                console.log(`error status : ${error.status} ${error.statusText}`);
+                switch (error.status) {
+                  case 401:      //login
+
+                    break;
+                  case 403:     //forbidden
+
+                    break;
+                  case 409:     //username already taken
+                    this.usernameAlreadyGiven = true;
+                    console.log('Username vergeben')
+                    break;
+                }
+              }
+            } else {
+              console.error("undefined error status");
+            }
+            return throwError(error);
+          }
+        );
+      },
+      (results: any) =>{
+        this.status=results;
+        if(this.status!=='ok') {
+          if(this.status=='ZERO_RESULTS') {
             alert('Adresse konnte nicht gefunden werden!');
-          } else if (status=='OVER_QUERY_LIMIT'){
+          } else if (this.status=='OVER_QUERY_LIMIT'){
             alert('Adresse ist zu lang.');
           } else {
             alert('Ein Problem mit der Adresse ist aufgetreten. Bitte versuchen Sie erneut sich zu registrieren.')
@@ -82,44 +120,50 @@ export class RegisterComponent implements OnInit {
 
 
 
-    this.authService.registerPost(username, email, isPharmacist, password, street,housenumber,postcode).subscribe(
-      data => {
-        console.log(data);
-        this.isSuccessful = true;
-        this.isSignUpFailed = false;
-        this.router.navigate(['/login']).then();
+      /*
+      this.authService.registerPost(username, email, isPharmacist, password, street, housenumber, postcode).subscribe(
+        data => {
+          console.log(data);
+          console.log(this.lat + '  ' + this.lng);
+          this.isSuccessful = true;
+          this.isSignUpFailed = false;
+          this.router.navigate(['/login']).then();
 
-      },
-      error => {
-        console.log(error)
+        },
+        error => {
+          console.log(error)
+          console.log(this.lat + '  ' + this.lng);
+          this.isSignUpFailed = true;
+          this.usernameAlreadyGiven = false;
 
-        this.isSignUpFailed = true;
-        this.usernameAlreadyGiven=false;
+          if (error instanceof HttpErrorResponse) {
+            this.errorMessage = error.error.message;
+            if (error.error instanceof ErrorEvent) {
+              console.error("Error Event");
+            } else {
+              console.log(`error status : ${error.status} ${error.statusText}`);
+              switch (error.status) {
+                case 401:      //login
 
-        if (error instanceof HttpErrorResponse) {
-          this.errorMessage = error.error.message;
-          if (error.error instanceof ErrorEvent) {
-            console.error("Error Event");
-          } else {
-            console.log(`error status : ${error.status} ${error.statusText}`);
-            switch (error.status) {
-              case 401:      //login
+                  break;
+                case 403:     //forbidden
 
-                break;
-              case 403:     //forbidden
-
-                break;
-              case 409:     //username already taken
-                this.usernameAlreadyGiven=true;
-                console.log('Username vergeben')
-                break;
+                  break;
+                case 409:     //username already taken
+                  this.usernameAlreadyGiven = true;
+                  console.log('Username vergeben')
+                  break;
+              }
             }
+          } else {
+            console.error("undefined error status");
           }
-        } else {
-          console.error("undefined error status");
+          return throwError(error);
         }
-        return throwError(error);
-      }
-    );
-  }
+      );
+
+       */
+    }
+
+
 }
