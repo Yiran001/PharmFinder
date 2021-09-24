@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 
 export interface User {
@@ -26,10 +26,18 @@ export class ProfileService {
   }
 
   getUsers() {
-    return this.http.get<User[]>(environment.baseUrl + "/users/index");
+    /*
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+     */
+    return this.http.get<User[]>(environment.baseUrl + "users/index");
   }
 
   getAddresses() {
-    return this.http.get<Address[]>(environment.baseUrl + "/addresses/index");
+    return this.http.get<Address[]>(environment.baseUrl + "addresses/index");
   }
 }

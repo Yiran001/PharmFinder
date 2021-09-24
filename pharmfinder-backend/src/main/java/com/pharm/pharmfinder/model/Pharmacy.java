@@ -23,15 +23,17 @@ public class Pharmacy {
 
     private String pharmacyName;
 
-    public float lng;
+    public String lng;
 
-    public float lat;
+    public String lat;
 
-    public Pharmacy(int pharmacyID, Address pharmacyAddress, User owner, String pharmacyName) {
+    public Pharmacy(int pharmacyID, Address pharmacyAddress, User owner, String pharmacyName, String lng, String lat) {
         this.pharmacyID = pharmacyID;
         this.pharmacyAddress = pharmacyAddress;
         this.owner = owner;
         this.pharmacyName = pharmacyName;
+        this.lat = lat;
+        this.lng = lng;
     }
 
     public int getPharmacyID() {
@@ -75,6 +77,22 @@ public class Pharmacy {
 
     public void setPharmacyMedicines(Set<PharmacyMedicine> pharmacyMedicines) {
         this.pharmacyMedicines = pharmacyMedicines;
+    }
+
+    public String getLng() {
+        return lng;
+    }
+
+    public void setLng(String lng) {
+        this.lng = lng;
+    }
+
+    public String getLat() {
+        return lat;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
     }
 }
 

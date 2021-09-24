@@ -9,11 +9,12 @@ import { DatenschutzerklaerungComponent } from './datenschutzerklaerung/datensch
 import { RegisterComponent } from './register/register.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { LoginComponent } from './login/login.component';
-import { authInterceptorProviders } from './auth.interceptor';
+import {AuthInterceptor, authInterceptorProviders} from './auth.interceptor';
+
 import {RouterModule, Routes} from "@angular/router";
 
 import { ProfilePageComponent } from './profile-page/profile-page.component';
-import {HttpClientModule} from "@angular/common/http";
+import {HttpClientModule,HTTP_INTERCEPTORS} from "@angular/common/http";
 import { SearchPharmaciesComponent } from './search-pharmacies/search-pharmacies.component';
 
 import { GoogleMapsModule } from '@angular/google-maps'
@@ -39,10 +40,11 @@ import { GoogleMapsModule } from '@angular/google-maps'
     ReactiveFormsModule,
     FormsModule,
     RouterModule,
-    GoogleMapsModule
+    GoogleMapsModule,
+
 
   ],
-  providers: [],
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

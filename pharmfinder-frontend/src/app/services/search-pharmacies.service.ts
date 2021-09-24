@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {environment} from "../../environments/environment";
+import {Observable} from "rxjs";
 
 
 var geocoder;
@@ -11,7 +12,7 @@ var map;
 
 export class SearchPharmaciesService {
   geocoder = new google.maps.Geocoder() ;
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   geocodeAddress(address: string,callbackLng: any,callbackLat:any,callbackStatus: any){
     var result;
@@ -24,5 +25,19 @@ export class SearchPharmaciesService {
           callbackStatus(status)
       }
     });
+  }
+
+  searchPharmacy(pzn: number, lat: String, lng: String): Observable<any>  {
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+    return this.http.post(environment.baseUrl+'users/create', {
+    }, httpOptions).pipe(
+    );
+
+
   }
 }

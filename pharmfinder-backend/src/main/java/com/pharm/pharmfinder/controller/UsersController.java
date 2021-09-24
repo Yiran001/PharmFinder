@@ -67,7 +67,7 @@ public class UsersController {
      */
     @PostMapping(path = "/create")
     public @ResponseBody
-    String create(@RequestParam String username, @RequestParam String email, @RequestParam boolean isPharmacist, @RequestParam String password, @RequestParam String addressStreet, @RequestParam String addressHouseNumber, @RequestParam String addressPostcode) throws UsernameAlreadyTakenException {
+    String create(@RequestParam String username, @RequestParam String email, @RequestParam boolean isPharmacist, @RequestParam String password, @RequestParam String addressStreet, @RequestParam String addressHouseNumber, @RequestParam String addressPostcode, @RequestParam String latitude, @RequestParam String longitude) throws UsernameAlreadyTakenException {
             User user = new User();
 
             checkUsernameExistence(username);
@@ -81,11 +81,15 @@ public class UsersController {
             addressRepository.save(userAddress);
             user.setUserAddress(userAddress);
             userRepository.save(user);
+        if(isPharmacist==true) {
             Pharmacy pharmacy = new Pharmacy();
             pharmacy.setPharmacyAddress(userAddress);
             pharmacy.setPharmacyName(username);
             pharmacy.setOwner(user);
+            pharmacy.setLat(latitude);
+            pharmacy.setLng(longitude);
             pharmacyRepository.save(pharmacy);
+        }
             return "Saved";
     }
 

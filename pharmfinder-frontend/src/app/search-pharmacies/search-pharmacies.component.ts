@@ -1,5 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {GoogleMap} from "@angular/google-maps";
+import {SearchPharmaciesService} from "../services/search-pharmacies.service";
 
 @Component({
   selector: 'app-search-pharmacies',
@@ -39,7 +40,7 @@ export class SearchPharmaciesComponent implements OnInit {
     console.log(JSON.stringify(this.map.getCenter()))
   }
 
-  constructor() { }
+  constructor(private searchPharmService : SearchPharmaciesService) {  }
 
   ngOnInit(): void {
     //const geocoder = new google.maps.Geocoder();
@@ -87,7 +88,7 @@ export class SearchPharmaciesComponent implements OnInit {
    */
 
   private search(pzn: number, location: google.maps.LatLngLiteral) {
-
+    this.searchPharmService.searchPharmacy(pzn,location.lat.toString(),location.lng.toString());
   }
 
   findMe() {
@@ -95,4 +96,6 @@ export class SearchPharmaciesComponent implements OnInit {
     this.center=this.currentLocCenter;
     this.currentLocMarker.position=this.center;
   }
+
+
 }

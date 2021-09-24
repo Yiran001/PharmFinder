@@ -34,7 +34,8 @@ export class LoginComponent implements OnInit {
   }
   ngOnInit(): void {
     if(this.tokenStorage.getToken()!=null){
-      this.router.navigate(['/home']).then();
+      //this.router.navigate(['/home']).then();
+      //console.log(this.tokenStorage.getToken())
     }
 
   }
@@ -47,9 +48,8 @@ export class LoginComponent implements OnInit {
   public login(username:string,password:string){
     this.authService.login(username, password ).subscribe(
       data => {
-        console.log(data);
         this.tokenStorage.saveToken(data.token);
-        console.log(data.token);
+        console.log(data);
         this.tokenStorage.saveUser(username);
         this.isLoginFailed = false;
         this.isSuccessful = true;
@@ -82,7 +82,7 @@ export class LoginComponent implements OnInit {
 
   }
   public reload(){
-    window.location.reload();
+    //window.location.reload();
   }
 
 
