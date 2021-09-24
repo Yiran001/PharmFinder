@@ -7,7 +7,7 @@ POST http://localhost:8080/medicines/create
 Content-Type: application/x-www-form-urlencoded
 Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnaWwiLCJleHAiOjE2MzEwMzYyOTIsImlhdCI6MTYzMTAxODI5Mn0.rJyK421fRFkv6VR3FPGxR_32PpXb_eglmOljbrd1l-6qOzdD8UWbKUHlVBEVRGWUjVQfkkXycQHqj3bywX2spw
 
-pzn=123&friendlyName=name&medicineForm=PILL&amount=2&username=gil
+pzn=123&friendlyName=name&medicineForm=PILL&amount=2&username=gil2
 
 
 ###
