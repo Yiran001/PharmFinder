@@ -1,4 +1,4 @@
-package com.pharm.pharmfinder.controller.security;
+package com.pharm.pharmfinder.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;

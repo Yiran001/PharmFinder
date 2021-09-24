@@ -16,17 +16,17 @@ public class Pharmacy {
     private Address pharmacyAddress;
 
     @OneToOne
-    private User owner;
+    private User user;
 
     @OneToMany(mappedBy = "pharmacy", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PharmacyMedicine> pharmacyMedicines = new HashSet<>();
 
     private String pharmacyName;
 
-    public Pharmacy(int pharmacyID, Address pharmacyAddress, User owner, String pharmacyName) {
+    public Pharmacy(int pharmacyID, Address pharmacyAddress, User user, String pharmacyName) {
         this.pharmacyID = pharmacyID;
         this.pharmacyAddress = pharmacyAddress;
-        this.owner = owner;
+        this.user = user;
         this.pharmacyName = pharmacyName;
     }
 
@@ -34,8 +34,8 @@ public class Pharmacy {
         return pharmacyID;
     }
 
-    public User getOwner() {
-        return owner;
+    public User getUser() {
+        return user;
     }
 
     public String getPharmacyName() {
@@ -57,8 +57,8 @@ public class Pharmacy {
         this.pharmacyAddress = pharmacyAddress;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
+    public void setUser(User owner) {
+        this.user = owner;
     }
 
     public void setPharmacyName(String pharmacyName) {

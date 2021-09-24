@@ -8,12 +8,13 @@ import {AboutPageComponent} from './about-page/about-page.component';
 import {DatenschutzerklaerungComponent} from './datenschutzerklaerung/datenschutzerklaerung.component';
 import {RegisterComponent} from './register/register.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {LoginComponent} from './login/login.component';
-import {RouterModule} from "@angular/router";
+import { LoginComponent } from './login/login.component';
+import {AuthInterceptor,authInterceptorProviders } from './auth.interceptor';
+import {RouterModule, Routes} from "@angular/router";
 
-import {ProfilePageComponent} from './profile-page/profile-page.component';
-import {HttpClientModule} from "@angular/common/http";
 import {MedicinePageComponent} from "./medicine-page/medicine-page.component";
+import { ProfilePageComponent } from './profile-page/profile-page.component';
+import {HttpClientModule,HTTP_INTERCEPTORS} from "@angular/common/http";
 
 
 @NgModule({
@@ -39,8 +40,7 @@ import {MedicinePageComponent} from "./medicine-page/medicine-page.component";
     RouterModule,
 
   ],
-  providers: [],
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },],
   bootstrap: [AppComponent]
 })
-export class AppModule {
-}
+export class AppModule { }
