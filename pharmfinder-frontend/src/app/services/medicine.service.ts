@@ -19,7 +19,7 @@ export class MedicineService {
   }
 
   getMedicines() {
-    return this.http.get<Medicine[]>(environment.baseUrl + "/medicines/index");
+    return this.http.get<Medicine[]>(environment.baseUrl + "medicines/index");
   }
 
 }

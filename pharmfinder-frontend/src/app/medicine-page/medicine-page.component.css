@@ -1,7 +1,7 @@
 body {
-  color: #566787;
+  color: #193416;
   background: #f5f5f5;
-  font-family: 'Varela Round', sans-serif;
+  font: bold x-large sans-serif;
   font-size: 13px;
 }
 
@@ -19,7 +19,7 @@ body {
 
 .table-title {
   padding-bottom: 15px;
-  background: #299be4;
+  background: #193416;
   color: #fff;
   padding: 16px 30px;
   margin: -20px -25px 10px;
@@ -32,7 +32,7 @@ body {
 }
 
 .table-title .btn {
-  color: #566787;
+  color: #193416;
   float: right;
   font-size: 13px;
   background: #fff;
@@ -45,7 +45,7 @@ body {
 }
 
 .table-title .btn:hover, .table-title .btn:focus {
-  color: #566787;
+  color: #193416;
   background: #f2f2f2;
 }
 
@@ -102,11 +102,11 @@ table.table td a {
 }
 
 table.table td a:hover {
-  color: #2196F3;
+  color: #7eef6f;
 }
 
 table.table td a.settings {
-  color: #2196F3;
+  color: #7eef6f;
 }
 
 table.table td a.delete {
@@ -136,7 +136,7 @@ table.table .avatar {
 }
 
 .text-info {
-  color: #62c9e8;
+  color: #7eef6f;
 }
 
 .text-warning {
@@ -170,11 +170,11 @@ table.table .avatar {
 }
 
 .pagination li.active a, .pagination li.active a.page-link {
-  background: #03A9F4;
+  background: #7eef6f;
 }
 
 .pagination li.active a:hover {
-  background: #0397d6;
+  background: #7eef6f;
 }
 
 .pagination li.disabled i {

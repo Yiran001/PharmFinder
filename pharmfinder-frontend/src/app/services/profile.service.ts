@@ -26,10 +26,10 @@ export class ProfileService {
   }
 
   getUsers() {
-    return this.http.get<User[]>(environment.baseUrl + "/users/index");
+    return this.http.get<User[]>(environment.baseUrl + "users/index");
   }
 
   getAddresses() {
-    return this.http.get<Address[]>(environment.baseUrl + "/addresses/index");
+    return this.http.get<Address[]>(environment.baseUrl + "addresses/index");
   }
 }
