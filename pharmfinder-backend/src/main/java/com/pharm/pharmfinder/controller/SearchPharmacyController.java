@@ -33,27 +33,28 @@ public class SearchPharmacyController {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    @GetMapping(path = "/phamacy", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody
-    String index(HttpServletRequest request) {
-        String username = request.getParameter("pzn");
-        checkAuthorization(request, username);
 
-        Iterable<PharmacyMedicine> pharmacyMedicines = getPharmacy(username).getPharmacyMedicines();
-        StringBuilder result = new StringBuilder();
-        for (PharmacyMedicine pharmacyMedicine : pharmacyMedicines) {
-            Medicine medicine = pharmacyMedicine.getMedicine();
-            Pharmacy pharmacy = pharmacyMedicine.getPharmacy();
-            if (pharmacy.getPharmacyName().equals(username)){
-                result.append(medicine.toString());
-                result.append(" Amount: ").append(pharmacyMedicine.getAmount());
-                result.append("\n");
-            }
-        }
-        if (result.toString().equals(""))
-            result.append("No medicines registered");
-        return result.toString();
-    }
+//    @GetMapping(path = "/phamacy", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public @ResponseBody
+//    String index(HttpServletRequest request) {
+//        String username = request.getParameter("pzn");
+//        checkAuthorization(request, username);
+//
+//        Iterable<PharmacyMedicine> pharmacyMedicines = getPharmacy(username).getPharmacyMedicines();
+//        StringBuilder result = new StringBuilder();
+//        for (PharmacyMedicine pharmacyMedicine : pharmacyMedicines) {
+//            Medicine medicine = pharmacyMedicine.getMedicine();
+//            Pharmacy pharmacy = pharmacyMedicine.getPharmacy();
+//            if (pharmacy.getPharmacyName().equals(username)){
+//                result.append(medicine.toString());
+//                result.append(" Amount: ").append(pharmacyMedicine.getAmount());
+//                result.append("\n");
+//            }
+//        }
+//        if (result.toString().equals(""))
+//            result.append("No medicines registered");
+//        return result.toString();
+//    }
 
     //jwt authorization
     private boolean matchUsernameAndJwt(String jwt, String username){
