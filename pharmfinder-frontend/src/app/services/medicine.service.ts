@@ -4,9 +4,8 @@ import {environment} from "../../environments/environment";
 
 export interface Medicine {
   pzn: string;
-  name: string;
-  form: string;
-  amount: number;
+  friendlyName: string;
+  medicineForm: string;
 }
 
 @Injectable({
@@ -19,7 +18,7 @@ export class MedicineService {
   }
 
   getMedicines() {
-    return this.http.get<Medicine[]>(environment.baseUrl + "medicines/index");
+    return this.http.get<Map<Medicine, number>>(environment.baseUrl + "medicines/index?username=abc");
   }
 
 }

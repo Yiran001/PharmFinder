@@ -13,7 +13,7 @@
       <div class="table-title">
         <div class="row">
           <div class="col-xs-5">
-            <h2>User <b>Management</b></h2>
+            <h2>Medizin <b>Management</b></h2>
           </div>
         </div>
       </div>
@@ -27,11 +27,11 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let medicine of medicines">
-          <td>{{medicine.pzn}}</td>
-          <td>{{medicine.name}}</td>
-          <td>{{medicine.form}}</td>
-          <td>{{medicine.amount}}</td>
+        <tr *ngFor="let medicine of medicineAmountMap | keyvalue">
+          <td>{{medicine.key}}</td>
+          <td>{{medicine.key.friendlyName}}</td>
+          <td>{{medicine.value}}</td>
+          <td>{{medicine.key.medicineForm}}</td>
         </tr>
         </tbody>
       </table>

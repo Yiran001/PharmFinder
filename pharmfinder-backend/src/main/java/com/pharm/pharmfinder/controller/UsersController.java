@@ -23,11 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @CrossOrigin
@@ -95,7 +91,7 @@ public class UsersController {
         user.setPasswordHash(bcryptEncoder.encode(password));
         user.setAuthorities("");
         userRepository.save(user);
-        Address userAddress = new Address(user,addressStreet,addressHouseNumber,addressPostcode);
+        Address userAddress = new Address(user, addressStreet, addressHouseNumber, addressPostcode);
         addressRepository.save(userAddress);
         user.setUserAddress(userAddress);
         userRepository.save(user);
@@ -106,7 +102,7 @@ public class UsersController {
         pharmacyRepository.save(pharmacy);
 
 //            registration confirmation via email, compulsory when activated
-        if (!no_email_registration){
+        if (!no_email_registration) {
             String appUrl = request.getContextPath();
             eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user, request.getLocale(), appUrl));
         }
@@ -114,7 +110,8 @@ public class UsersController {
     }
 
     @PutMapping(path = "/update")
-    public @ResponseBody String
+    public @ResponseBody
+    String
     update(HttpServletRequest request) throws NoSuchUsernameException {
         String originalUsername = request.getParameter("originalUsername");
         String username = request.getParameter("username");
@@ -162,13 +159,16 @@ public class UsersController {
     }
 
     @GetMapping(path = "/index")
-    public @ResponseBody String index(HttpServletRequest request) {
+    public @ResponseBody
+    Iterable<User> index(HttpServletRequest request) {
         String jwt = request.getHeader("Authorization").substring(7);
         String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
         User manipulatingUser = userRepository.findByUsername(jwtUsername);
         if (manipulatingUser.getAuthorities().contains("USER_ADMIN"))
-            return userRepository.findAll().toString();
-        return manipulatingUser.toString();
+            return userRepository.findAll();
+        ArrayList<User> userArrayList = new ArrayList<>();
+        userArrayList.add(manipulatingUser);
+        return userArrayList;
     }
 
     @PutMapping(path = "/ban")
@@ -224,7 +224,7 @@ public class UsersController {
         }
     }
 
-    private void checkAuthorization(HttpServletRequest request, String username){
+    private void checkAuthorization(HttpServletRequest request, String username) {
         String jwt = request.getHeader("Authorization").substring(7);
         String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
         User manipulatingUser = userRepository.findByUsername(jwtUsername);

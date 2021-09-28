@@ -8,13 +8,13 @@ import {AboutPageComponent} from './about-page/about-page.component';
 import {DatenschutzerklaerungComponent} from './datenschutzerklaerung/datenschutzerklaerung.component';
 import {RegisterComponent} from './register/register.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import { LoginComponent } from './login/login.component';
-import {AuthInterceptor,authInterceptorProviders } from './auth.interceptor';
-import {RouterModule, Routes} from "@angular/router";
+import {LoginComponent} from './login/login.component';
+import {AuthInterceptor} from './auth.interceptor';
+import {RouterModule} from "@angular/router";
 
 import {MedicinePageComponent} from "./medicine-page/medicine-page.component";
-import { ProfilePageComponent } from './profile-page/profile-page.component';
-import {HttpClientModule,HTTP_INTERCEPTORS} from "@angular/common/http";
+import {ProfilePageComponent} from './profile-page/profile-page.component';
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 
 
 @NgModule({
@@ -40,7 +40,8 @@ import {HttpClientModule,HTTP_INTERCEPTORS} from "@angular/common/http";
     RouterModule,
 
   ],
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },],
+  providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}
