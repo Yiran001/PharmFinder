@@ -23,7 +23,7 @@ export class SearchPharmaciesService {
       if (status == 'OK') {
         result=results[0].geometry.location;
         callbackLng(results[0].geometry.location.lng());
-        callbackLat(results[0].geometry.location.lat())
+        callbackLat(results[0].geometry.location.lat());
       } else {
           callbackStatus(status)
       }

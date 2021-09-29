@@ -56,6 +56,7 @@ export class SearchPharmaciesComponent implements OnInit {
   // @ts-ignore
   @ViewChild(MapInfoWindow, { static: false }) infoWindow: MapInfoWindow
   // @ts-ignore
+  titleS: string= 'Standort';
   openInfo(marker: MapMarker, address: string, dist: string) {
       this.markerAddress=address;
       this.markerDist=dist;
@@ -99,14 +100,21 @@ export class SearchPharmaciesComponent implements OnInit {
         this.app.logout();
       }
     });
-    console.log(this.foundPharms);
-    this.foundPharms.forEach( (element)=>{
-      this.addMarker(element.latitude,element.longitude,element.street+' '+element.houseNumber+','+element.postcode,element.dist)
-    });
-    console.log(this.markers);
+    if(this.foundPharms!=undefined) {
+      // console.log(this.map.getBounds()?.getNorthEast());
+      // console.log(this.map.getBounds()?.getSouthWest());
+      this.foundPharms.forEach((element) => {
+        this.addMarker(element.latitude, element.longitude, element.street + ' ' + element.houseNumber + ',' + element.postcode, element.dist)
+
+
+      });
+    }
   }
 
   private addMarker(latitude: string,longitude: string,address:string,distance:string) {
+    var i=distance.indexOf('.');
+    var d1= distance.substr(0,i);
+    var d2=distance.substr(i,i+1)
     this.markers.push({
       position: {
         lat: Number(latitude),
@@ -116,11 +124,11 @@ export class SearchPharmaciesComponent implements OnInit {
         color: 'black',
         text: 'A' + (this.markers.length + 1),
       },
-      title: 'Marker title ' + (this.markers.length + 1),
+      title: 'Apotheke '+(this.markers.length + 1),
       address: 'Adresse: '+address+'         ',
-      dist: 'Entfernung: '+distance,
+      dist: 'Entfernung: '+d1+d2+' km',
 
-    })
+    });
   }
 
   findMe() {
@@ -129,7 +137,4 @@ export class SearchPharmaciesComponent implements OnInit {
     this.center=this.currentLocCenter;
     this.currentLocMarker.position=this.center;
   }
-
-
-
 }

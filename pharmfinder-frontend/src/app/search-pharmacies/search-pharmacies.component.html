@@ -54,6 +54,7 @@
             *ngIf="foundMe"
             [label]="currentLocMarker.label"
             [position]="currentLocMarker.position"
+            [title]='titleS'
             (mapClick)="openInfoCurrentLocation(markerLoc)"
             >
           </map-marker>
