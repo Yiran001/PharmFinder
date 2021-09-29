@@ -6,7 +6,6 @@ import com.pharm.pharmfinder.controller.repositories.PharmacyMedicineRepository;
 import com.pharm.pharmfinder.controller.repositories.PharmacyRepository;
 import com.pharm.pharmfinder.controller.repositories.UserRepository;
 import com.pharm.pharmfinder.jwt.JwtTokenUtil;
-import com.pharm.pharmfinder.model.Medicine;
 import com.pharm.pharmfinder.model.Pharmacy;
 import com.pharm.pharmfinder.model.PharmacyMedicine;
 import com.pharm.pharmfinder.model.User;
@@ -35,93 +34,117 @@ public class SearchPharmacyController {
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * handles exception, that occurs when wanted medicine in no pharmacy
+     */
+    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such username")
+    @ExceptionHandler(MedicineNotFoundException.class)
+    public void noMedicineFoundException() {
+    }
+
+    // einfachere Pharmacy für frontend ohne Medikamentenbestand etc.
+    public class frontendPharmacy{
+        private String pharmacyname;
+        private String latitude;
+        private String longitude;
+        private String username;
+        private String street;
+        private String houseNumber;
+        private String postcode;
+        private String dist;
+
+        public frontendPharmacy(String pharmacyname, String latitude, String longitude, String username, String street, String houseNumber, String postcode,String dist) {
+            this.pharmacyname = pharmacyname;
+            this.latitude = latitude;
+            this.longitude = longitude;
+            this.username = username;
+            this.street = street;
+            this.houseNumber = houseNumber;
+            this.postcode = postcode;
+            this.dist=dist;
+        }
+        public String getPharmacyname() {
+            return pharmacyname;
+        }
+
+        public String getLatitude() {
+            return latitude;
+        }
+
+        public String getLongitude() {
+            return longitude;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public String getStreet() {
+            return street;
+        }
+
+        public String getHouseNumber() {
+            return houseNumber;
+        }
+
+        public String getPostcode() {
+            return postcode;
+        }
+
+
+        public String getDist() {
+            return dist;
+        }
+    }
 
     @GetMapping(path = "/pharmacy", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
-    String index(HttpServletRequest request,@RequestParam String pzn,@RequestParam String latitude,@RequestParam String longitude) throws MedicineNotFoundException {
-//
-//        String jwt = request.getHeader("Authorization").substring(7);
-//        String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
-//        User manipulatingUser = userRepository.findByUsername(jwtUsername);
+    List<frontendPharmacy> search(HttpServletRequest request, @RequestParam String pzn, @RequestParam String latitude, @RequestParam String longitude) throws MedicineNotFoundException {
 
-//        String username = request.getParameter("username");
-//        checkAuthorization(request, username);
-
-        //Medicine foundMedicine=null;
         ArrayList<Pharmacy> pharmacies = new ArrayList<>();
-        HashMap<Pharmacy, Double> nearbyPharmacies = new HashMap<Pharmacy,Double>();
+        HashMap<Pharmacy, Double> nearbyPharmacies;
+        List<frontendPharmacy> pharList = new ArrayList<>();
         StringBuilder result = new StringBuilder();
 
-        System.out.println(pzn);
         Iterable<PharmacyMedicine> pharmacyMedicines = pharmacyMedicineRepository.findAll();
         for(PharmacyMedicine p : pharmacyMedicines){
             if(p.getMedicine().getPzn().equals(pzn)){
                 pharmacies.add(p.getPharmacy());
-               // return p.getMedicine().getPzn()+"hier";
-
             }
         }
-
         if(pharmacies.size()>0){
             nearbyPharmacies=searchPharmacies(pharmacies,Double.parseDouble(latitude),Double.parseDouble(longitude));
         }else{
-//            throw new MedicineNotFoundException("Medicine was not found");
-            return "warum?";
+            throw new MedicineNotFoundException("Medicine was not found");
+
         }
-
-
-//        Iterable<PharmacyMedicine> pharmacyMedicines = getPharmacy(username).getPharmacyMedicines();
-//        StringBuilder result = new StringBuilder();
-//        for (PharmacyMedicine pharmacyMedicine : pharmacyMedicines) {
-//            Medicine medicine = pharmacyMedicine.getMedicine();
-//            Pharmacy pharmacy = pharmacyMedicine.getPharmacy();
-//            if (pharmacy.getPharmacyName().equals(username)){
-//                result.append(medicine.toString());
-//                result.append(" Amount: ").append(pharmacyMedicine.getAmount());
-//                result.append("\n");
-//            }
-//        }
-//        if (result.toString().equals(""))
-//            result.append("No medicines registered");
-//        return result.toString();
-
-
-
-
-
         for(Pharmacy p: nearbyPharmacies.keySet()){
-            result.append("Pharmacy: ").append(p.getPharmacyID()).append(" Latitude: ").append(p.lat).append(" Longitude: ").append(p.lng).append(" Distance: ").append(String.valueOf(nearbyPharmacies.get(p)));
+            result.append("Pharmacy: ").append(p.getPharmacyID()).append(" Latitude: ").append(p.getLat()).append(" Longitude: ").append(p.getLng()).append(" Distance: ").append(nearbyPharmacies.get(p));
+            frontendPharmacy fP = new frontendPharmacy(p.getPharmacyName(),p.getLat(),p.getLng(),p.getUser().getUsername(),p.getPharmacyAddress().getStreet(),p.getPharmacyAddress().getHouseNumber(),p.getPharmacyAddress().getPostcode(),String.valueOf(nearbyPharmacies.get(p)));
+            pharList.add(fP);
         }
-        return result.toString();
+        return pharList;
     }
 
+    /**
+     *
+     * @param pharmacies liste mit pharmacies, die gesuchtes Medikament auf Lager haben
+     * @param lat latitude des Users, der Apotheke sucht
+     * @param lng longitude des Users, der Apotheke sucht
+     * @return die ggf. 5 nähesten Apotheken werden als Hashmap mit der Entfernung zurückgegeben
+     */
     private HashMap<Pharmacy,Double> searchPharmacies(ArrayList<Pharmacy> pharmacies, double lat,double lng) {
 
         HashMap<Pharmacy,Double> nearbyPharmacies = new HashMap<Pharmacy, Double>();
         for(Pharmacy p: pharmacies){
-//            double latP=Double.parseDouble(p.getLat());
-//            double lngP=Double.parseDouble(p.getLng());
-//            double theta = lng - lngP;
-//            double dist = Math.sin(degToRad(lat))*Math.sin(degToRad(latP)) +Math.cos(degToRad(lat))*Math.cos(degToRad(latP))
-//                    +Math.cos(degToRad(theta));
-//            dist = Math.acos(dist);
-//            dist = radToDeg(dist);
-//            dist = dist * 60; // grad in seemeile
-//            dist = dist * 1852; // seemeile in meter
 
-            //annahme dass apotheke nicht zu weit entfernt ist deshalb satz des pythagoras angewendet
+            //annahme dass apotheke nicht zu weit entfernt ist + kürzere rechenzeit, deshalb satz des pythagoras angewendet
             double pharLng=Double.parseDouble(p.getLng());
             double pharLat=Double.parseDouble(p.getLat());
             double latD = (lat + pharLat) / 2 * 0.01745;
             double dx = 111.3 * Math.cos(degToRad(latD)) * (lng - pharLng);
             double dy = 111.3 * (lat - pharLat);
-
-
-//            double dx= 71.5* (lng-pharLng);
-//            double dy = 111.3*(lat-pharLat);
             double dist = Math.sqrt(dx * dx + dy*dy);
-
-
 
                 if(nearbyPharmacies.size()<5)
                     nearbyPharmacies.put(p,dist);
@@ -147,24 +170,6 @@ public class SearchPharmacyController {
     private double degToRad(double x){
         return  x * Math.PI/180;
     }
-    private double radToDeg(double x){
-        return  x * 180/Math.PI;
-    }
-
-//    private Medicine checkMedicineExistence(String pzn) throws MedicineNotFoundException {
-//        Iterable<Medicine> medicines = medicineRepository.findAll();
-//        Medicine foundMedicine = null;
-//        for(Medicine m : medicines){
-//            if(m.getPzn().equals(pzn)){
-//                foundMedicine=m;
-//            }
-//        }
-//        if(foundMedicine==null) {
-//            throw new MedicineNotFoundException("Medicine was not found");
-//        }
-//        return foundMedicine;
-//    }
-
 
     private void checkAuthorization(HttpServletRequest request, String username){
         String jwt = request.getHeader("Authorization").substring(7);

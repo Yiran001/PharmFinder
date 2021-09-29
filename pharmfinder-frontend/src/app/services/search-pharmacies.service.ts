@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {Observable} from "rxjs";
+import {foundPharmacy} from "../foundPharmacy";
 
 
 var geocoder;
 var map;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -13,6 +15,7 @@ var map;
 export class SearchPharmaciesService {
   geocoder = new google.maps.Geocoder() ;
   constructor(private http: HttpClient) { }
+
 
   geocodeAddress(address: string,callbackLng: any,callbackLat:any,callbackStatus: any){
     var result;
@@ -27,17 +30,20 @@ export class SearchPharmaciesService {
     });
   }
 
-  searchPharmacy(pzn: number, lat: String, lng: String): Observable<any>  {
+  searchPharmacy(pzn: String, lat: String, lng: String): Observable<any>  {
+    // @ts-ignore
+    const parameters = new HttpParams().set("pzn",pzn).set("latitude", lat).set("longitude",lng); //Create new HttpParams
 
-    const httpOptions = {
+    const options: {
+      headers?: HttpHeaders,
+      observe?: 'body',
+      params?: HttpParams,
+    } = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
       }),
+      params: parameters,
     };
-    return this.http.post(environment.baseUrl+'users/create', {
-    }, httpOptions).pipe(
-    );
-
-
+    return this.http.get<foundPharmacy[]>(environment.baseUrl+'search/pharmacy', options, );
   }
 }

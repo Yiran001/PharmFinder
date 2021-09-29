@@ -1,6 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {GoogleMap} from "@angular/google-maps";
 import {SearchPharmaciesService} from "../services/search-pharmacies.service";
+import {foundPharmacy} from "../foundPharmacy";
 
 @Component({
   selector: 'app-search-pharmacies',
@@ -9,6 +10,9 @@ import {SearchPharmaciesService} from "../services/search-pharmacies.service";
 })
 export class SearchPharmaciesComponent implements OnInit {
 
+
+  foundPharms: Array<foundPharmacy> = [];
+  foundPharm: foundPharmacy | undefined;
 
   center: google.maps.LatLngLiteral = { lat: 52.52, lng: 13.4 };
   mapOptions: google.maps.MapOptions = {
@@ -87,8 +91,10 @@ export class SearchPharmaciesComponent implements OnInit {
   }
    */
 
-  private search(pzn: number, location: google.maps.LatLngLiteral) {
-    this.searchPharmService.searchPharmacy(pzn,location.lat.toString(),location.lng.toString());
+  async search(pzn: number, location: google.maps.LatLngLiteral): Promise<void> {
+    console.log('es geht los')
+    this.foundPharms=await this.searchPharmService.searchPharmacy(pzn.toString(),location.lat.toString(),location.lng.toString()).toPromise();
+    console.log(this.foundPharms);
   }
 
   findMe() {
