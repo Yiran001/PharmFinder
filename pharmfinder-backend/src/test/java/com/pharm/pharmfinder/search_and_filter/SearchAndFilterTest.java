@@ -223,6 +223,24 @@ public class SearchAndFilterTest {
         checkSortingDescending(username, jwt, "pzn", pzn1, pzn2, pzn3);
     }
 
+    @Test
+    void should_smaller_or_equal_given_amount() throws Exception {
+        String username = UUID.randomUUID().toString();
+        addUserViaPostRequest(username);
+        String jwt = authenticate(username, password1);
+        String pzn1 = basePzn + "32";
+        String pzn2 = basePzn + "33";
+        String pzn3 = basePzn + "34";
+        addMedicine(username, jwt, pzn1, friendlyName, medicineForm, 1);
+        addMedicine(username, jwt, pzn2, friendlyName, medicineForm, 2);
+        addMedicine(username, jwt, pzn3, friendlyName, medicineForm, 3);
+        checkSortingDescending(username, jwt, "pzn", pzn1, pzn2, pzn3);
+        String result = searchForAmount(username, jwt, "2");
+        Assertions.assertTrue(result.contains(pzn1));
+        Assertions.assertTrue(result.contains(pzn2));
+        Assertions.assertFalse(result.contains(pzn3));
+    }
+
 //    string1 should get returned first, string3 last
     private void checkSorting(String username, String jwt, String sortBy, String string1, String string2, String string3) throws Exception {
         SearchAndFilterRequest request = new SearchAndFilterRequest();
@@ -339,6 +357,22 @@ public class SearchAndFilterTest {
         int index3 = stringResult.indexOf(string3);
         Assertions.assertTrue(index1 < index2 && index2 < index3);
         return stringResult;
+    }
+
+    private String searchForAmount(String username, String jwt, String amount) throws Exception {
+        SearchAndFilterRequest request = new SearchAndFilterRequest();
+        request.setUsername(username);
+        request.setAmount(amount);
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+                .get("/search_and_filter/get")
+                .content(toJson(objectMapper, request))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer " + jwt);
+        MvcResult result = this.mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+        return result.getResponse().getContentAsString();
     }
 
     private void searchInRequest(String username, String jwt, String pzn, String friendlyName, String medicineForm, String amount) throws Exception {

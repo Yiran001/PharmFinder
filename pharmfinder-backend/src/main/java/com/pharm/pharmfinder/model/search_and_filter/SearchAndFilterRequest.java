@@ -2,8 +2,6 @@ package com.pharm.pharmfinder.model.search_and_filter;
 
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
-
 @Data
 public class SearchAndFilterRequest {
     private String username;

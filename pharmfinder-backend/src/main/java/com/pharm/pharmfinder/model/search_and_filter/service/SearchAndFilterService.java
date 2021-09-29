@@ -117,7 +117,7 @@ public class SearchAndFilterService {
     private ArrayList<PharmacyMedicine> matchByAmount(List<PharmacyMedicine> pharmacyMedicines, long amount){
         ArrayList<PharmacyMedicine> matchedPharmacyMedicines = new ArrayList<>();
         for (PharmacyMedicine pharmacyMedicine : pharmacyMedicines){
-            if (pharmacyMedicine.getAmount() == amount)
+            if (pharmacyMedicine.getAmount() <= amount)
                 matchedPharmacyMedicines.add(pharmacyMedicine);
         }
         return matchedPharmacyMedicines;
