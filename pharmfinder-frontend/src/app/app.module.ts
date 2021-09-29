@@ -12,9 +12,19 @@ import {LoginComponent} from './login/login.component';
 import {AuthInterceptor} from './auth.interceptor';
 import {RouterModule} from "@angular/router";
 
-import {MedicinePageComponent} from "./medicine-page/medicine-page.component";
+import {
+  MedicineManagementDialog,
+  MedicinePageComponent,
+  NewMedicineDialog
+} from "./medicine-page/medicine-page.component";
 import {ProfilePageComponent} from './profile-page/profile-page.component';
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {MatSelectModule} from "@angular/material/select";
+import {MatOptionModule} from "@angular/material/core";
 
 
 @NgModule({
@@ -29,6 +39,8 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
     DatenschutzerklaerungComponent,
     ProfilePageComponent,
     MedicinePageComponent,
+    MedicineManagementDialog,
+    NewMedicineDialog,
   ],
   imports: [
     BrowserModule,
@@ -38,7 +50,12 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
     ReactiveFormsModule,
     FormsModule,
     RouterModule,
-
+    BrowserAnimationsModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatOptionModule,
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},],
   bootstrap: [AppComponent]

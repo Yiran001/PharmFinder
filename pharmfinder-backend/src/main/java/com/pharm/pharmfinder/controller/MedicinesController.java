@@ -59,20 +59,38 @@ public class MedicinesController {
 
     @GetMapping(path = "/index", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
-    Map<Medicine, Long> index(HttpServletRequest request) {
+    List<MedicineView> index(HttpServletRequest request) {
         String username = request.getParameter("username");
         checkAuthorization(request, username);
 
         Iterable<PharmacyMedicine> pharmacyMedicines = getPharmacy(username).getPharmacyMedicines();
-        HashMap<Medicine, Long> medicineStorageMap = new HashMap<Medicine, Long>();
+        List<Medicine> medicines = new ArrayList<>();
         for (PharmacyMedicine pharmacyMedicine : pharmacyMedicines) {
-            Medicine medicine = pharmacyMedicine.getMedicine();
-            Pharmacy pharmacy = pharmacyMedicine.getPharmacy();
-            if (pharmacy.getPharmacyName().equals(username)) {
-                medicineStorageMap.put(medicine, pharmacyMedicine.getAmount());
-            }
+            medicines.add(pharmacyMedicine.getMedicine());
         }
-        return medicineStorageMap;
+        User user = userRepository.findByUsername(username);
+        return map(medicines, user);
+    }
+
+    private List<MedicineView> map(List<Medicine> medicines, User user) {
+        List<MedicineView> medicineViews = new ArrayList<>();
+        for (Medicine medicine : medicines) {
+            MedicineView medicineView = new MedicineView();
+            medicineView.setPzn(medicine.getPzn());
+            medicineView.setFriendlyName(medicine.getFriendlyName());
+            medicineView.setMedicineForm(medicine.getMedicineForm());
+            Pharmacy pharmacy = pharmacyRepository.findByUser(user);
+            for (PharmacyMedicine pharmacyMedicine : medicine.getPharmacyMedicines()) {
+                if (pharmacyMedicine.getPharmacy().getPharmacyID() == pharmacy.getPharmacyID()) {
+                    if (Objects.equals(pharmacyMedicine.getMedicine().getPzn(), medicine.getPzn())) {
+                        medicineView.setAmount(pharmacyMedicine.getAmount());
+                        break;
+                    }
+                }
+            }
+            medicineViews.add(medicineView);
+        }
+        return medicineViews;
     }
 
     @PutMapping(path = "/update", produces = MediaType.APPLICATION_JSON_VALUE)

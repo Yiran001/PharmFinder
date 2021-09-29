@@ -14,6 +14,7 @@
         <div class="row">
           <div class="col-xs-5">
             <h2>Medizin <b>Management</b></h2>
+            <em class="btn btn-info" (click)="openNewMedicineDialog()">Anpassen</em>
           </div>
         </div>
       </div>
@@ -27,11 +28,11 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let medicine of medicineAmountMap | keyvalue">
-          <td>{{medicine.key}}</td>
-          <td>{{medicine.key.friendlyName}}</td>
-          <td>{{medicine.value}}</td>
-          <td>{{medicine.key.medicineForm}}</td>
+        <tr *ngFor="let medicine of medicineList" (click)="openDialog(medicine)">
+          <td>{{medicine.pzn}}</td>
+          <td>{{medicine.friendlyName}}</td>
+          <td><b>{{medicine.amount}}</b></td>
+          <td>{{medicine.medicineForm}}</td>
         </tr>
         </tbody>
       </table>
