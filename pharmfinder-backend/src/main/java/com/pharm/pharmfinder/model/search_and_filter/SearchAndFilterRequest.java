@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 public class SearchAndFilterRequest {
     @NotBlank
     private String username;
+//    all following attributes are optional
     private String pzn;
     private String friendlyName;
     private String medicineForm;

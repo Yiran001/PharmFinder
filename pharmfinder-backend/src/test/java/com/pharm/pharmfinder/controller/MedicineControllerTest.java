@@ -71,8 +71,8 @@ public class MedicineControllerTest {
         String jwt = authenticate(username1, password1);
         addMedicine1(username1, jwt);
         addMedicine2(username1, jwt);
-        getAndVerifyResponse(username1, "pzn='" + pzn1 + "'", jwt);
-        getAndVerifyResponse(username1, "pzn='124'", jwt);
+        getAndVerifyResponse(username1, pzn1, jwt);
+        getAndVerifyResponse(username1, "124", jwt);
         jwtUserDetailsService.deleteUserByUsername(username1);
     }
 
@@ -83,7 +83,7 @@ public class MedicineControllerTest {
         String jwt1 = authenticate(username1, password1);
         String jwt2 = authenticate(username2, password2);
         addMedicine1(username1, jwt1);
-        getAndVerifyResponse(username2, "No medicines registered", jwt2);
+        getAndVerifyResponse(username2, "[]", jwt2);
         jwtUserDetailsService.deleteUserByUsername(username1);
         jwtUserDetailsService.deleteUserByUsername(username2);
 
@@ -95,7 +95,7 @@ public class MedicineControllerTest {
         String jwt1 = authenticate(username1, password1);
         addMedicine1(username1, jwt1);
         deregisterMedicine(pzn1, username1, jwt1);
-        getAndVerifyResponse(username1, "No medicines registered", jwt1);
+        getAndVerifyResponse(username1, "[]", jwt1);
         jwtUserDetailsService.deleteUserByUsername(username1);
     }
 
@@ -106,7 +106,7 @@ public class MedicineControllerTest {
         String jwt1 = authenticate(username1, password1);
         addMedicine1(username1, jwt1);
         updateMedicine(pzn1, friendlyName, medicineForm, username1, newAmount, jwt1);
-        getAndVerifyResponse(username1, "Amount: " + newAmount, jwt1);
+        getAndVerifyResponse(username1, String.valueOf(newAmount), jwt1);
         jwtUserDetailsService.deleteUserByUsername(username1);
     }
 
@@ -117,7 +117,7 @@ public class MedicineControllerTest {
         String jwt1 = authenticate(username1, password1);
         addMedicine1(username1, jwt1);
         updateMedicine(pzn1, newFriendlyName, medicineForm, username1, 0, jwt1);
-        getAndVerifyResponse(username1, "friendlyName='" + newFriendlyName + "'", jwt1);
+        getAndVerifyResponse(username1, "\"friendlyName\":\"" + newFriendlyName + "\"", jwt1);
         jwtUserDetailsService.deleteUserByUsername(username1);
     }
 
@@ -129,8 +129,8 @@ public class MedicineControllerTest {
         String jwt2 = authenticate(username2, password2);
         addMedicine1(username1, jwt1);
         addMedicine1(username2, jwt2);
-        getAndVerifyResponse(username1, "pzn='" + pzn1 + "'", jwt1);
-        getAndVerifyResponse(username2, "pzn='" + pzn1 + "'", jwt2);
+        getAndVerifyResponse(username1, pzn1, jwt1);
+        getAndVerifyResponse(username2, pzn1, jwt2);
         jwtUserDetailsService.deleteUserByUsername(username1);
         jwtUserDetailsService.deleteUserByUsername(username2);
     }

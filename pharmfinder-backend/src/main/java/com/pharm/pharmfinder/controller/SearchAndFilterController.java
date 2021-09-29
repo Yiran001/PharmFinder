@@ -10,14 +10,15 @@ import com.pharm.pharmfinder.model.search_and_filter.service.SearchAndFilterServ
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller
 @CrossOrigin
-@RestController
 @RequestMapping(path = "/search_and_filter")
 public class SearchAndFilterController {
 
@@ -28,10 +29,11 @@ public class SearchAndFilterController {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    @GetMapping
-    public ListResponse<MedicineView> searchAndFilter(@RequestBody SearchAndFilterRequest searchAndFilterRequest, HttpServletRequest httpRequest){
+    @GetMapping(path="/get")
+    public @ResponseBody ListResponse<MedicineView> searchAndFilter(@RequestBody SearchAndFilterRequest searchAndFilterRequest, HttpServletRequest httpRequest){
         checkAuthorization(searchAndFilterRequest, httpRequest);
-        return new ListResponse<>(searchAndFilterService.getMedicines(searchAndFilterRequest));
+        List<MedicineView> list = searchAndFilterService.getMedicines(searchAndFilterRequest);
+        return new ListResponse<>(list);
     }
 
     private void checkAuthorization(SearchAndFilterRequest searchAndFilterRequest, HttpServletRequest httpRequest){

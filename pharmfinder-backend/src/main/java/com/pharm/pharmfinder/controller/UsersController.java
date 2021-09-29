@@ -25,11 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @CrossOrigin
@@ -164,13 +160,16 @@ public class UsersController {
     }
 
     @GetMapping(path = "/index")
-    public @ResponseBody String index(HttpServletRequest request) {
+    public @ResponseBody
+    Iterable<User> index(HttpServletRequest request) {
         String jwt = request.getHeader("Authorization").substring(7);
         String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
         User manipulatingUser = userRepository.findByUsername(jwtUsername);
         if (manipulatingUser.getAuthorities().contains("USER_ADMIN"))
-            return userRepository.findAll().toString();
-        return manipulatingUser.toString();
+            return userRepository.findAll();
+        ArrayList<User> list = new ArrayList<>();
+        list.add(manipulatingUser);
+        return list;
     }
 
     @PutMapping(path = "/ban")

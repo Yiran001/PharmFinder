@@ -7,6 +7,7 @@ import com.pharm.pharmfinder.controller.repositories.UserRepository;
 import com.pharm.pharmfinder.jwt.JwtTokenUtil;
 import com.pharm.pharmfinder.jwt.JwtUserDetailsService;
 import com.pharm.pharmfinder.model.*;
+import com.pharm.pharmfinder.model.search_and_filter.MedicineView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,9 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 @CrossOrigin
@@ -62,24 +61,17 @@ public class MedicinesController {
     }
 
     @GetMapping(path = "/index", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String index(HttpServletRequest request) {
+    public @ResponseBody List<MedicineView> index(HttpServletRequest request) {
         String username = request.getParameter("username");
         checkAuthorization(request, username);
 
         Iterable<PharmacyMedicine> pharmacyMedicines = getPharmacy(username).getPharmacyMedicines();
-        StringBuilder result = new StringBuilder();
+        List<Medicine> medicines = new ArrayList<>();
         for (PharmacyMedicine pharmacyMedicine : pharmacyMedicines) {
-            Medicine medicine = pharmacyMedicine.getMedicine();
-            Pharmacy pharmacy = pharmacyMedicine.getPharmacy();
-            if (pharmacy.getPharmacyName().equals(username)){
-                result.append(medicine.toString());
-                result.append(" Amount: ").append(pharmacyMedicine.getAmount());
-                result.append("\n");
-            }
+            medicines.add(pharmacyMedicine.getMedicine());
         }
-        if (result.toString().equals(""))
-            result.append("No medicines registered");
-        return result.toString();
+        User user = userRepository.findByUsername(username);
+        return map(medicines, user);
     }
 
     @PutMapping(path = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -104,7 +96,6 @@ public class MedicinesController {
         medicineRepository.save(medicine);
         pharmacyMedicineRepository.save(pharmacyMedicine);
         return "Medicine updated";
-
     }
 
     @DeleteMapping(path = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -122,6 +113,27 @@ public class MedicinesController {
         medicineRepository.save(medicine);
         pharmacyMedicineRepository.delete(pharmacyMedicine);
         return "Removed";
+    }
+
+    private List<MedicineView> map(List<Medicine> medicines, User user){
+        List<MedicineView> medicineViews = new ArrayList<>();
+        for (Medicine medicine : medicines) {
+            MedicineView medicineView = new MedicineView();
+            medicineView.setPzn(medicine.getPzn());
+            medicineView.setFriendlyName(medicine.getFriendlyName());
+            medicineView.setMedicineForm(medicine.getMedicineForm());
+            Pharmacy pharmacy = pharmacyRepository.findByUser(user);
+            for (PharmacyMedicine pharmacyMedicine : medicine.getPharmacyMedicines()) {
+                if (pharmacyMedicine.getPharmacy().getPharmacyID() == pharmacy.getPharmacyID()) {
+                    if (Objects.equals(pharmacyMedicine.getMedicine().getPzn(), medicine.getPzn())) {
+                        medicineView.setAmount(pharmacyMedicine.getAmount());
+                        break;
+                    }
+                }
+            }
+            medicineViews.add(medicineView);
+        }
+        return medicineViews;
     }
 
     private PharmacyMedicine getPharmacyMedicine(String pzn, Pharmacy pharmacy){

@@ -2,13 +2,9 @@ package com.pharm.pharmfinder.model.search_and_filter.service;
 
 import com.pharm.pharmfinder.controller.repositories.PharmacyRepository;
 import com.pharm.pharmfinder.controller.repositories.UserRepository;
-import com.pharm.pharmfinder.model.Medicine;
-import com.pharm.pharmfinder.model.MedicineForm;
-import com.pharm.pharmfinder.model.Pharmacy;
-import com.pharm.pharmfinder.model.PharmacyMedicine;
+import com.pharm.pharmfinder.model.*;
 import com.pharm.pharmfinder.model.search_and_filter.MedicineView;
 import com.pharm.pharmfinder.model.search_and_filter.SearchAndFilterRequest;
-import com.pharm.pharmfinder.model.search_and_filter.mapper.MedicineViewMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +15,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class SearchAndFilterService {
 
-    private final MedicineViewMapper medicineViewMapper;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -33,20 +28,42 @@ public class SearchAndFilterService {
         if (request.getAmount() != null)
             pharmacyMedicines = matchByAmount(pharmacyMedicines, Long.parseLong(request.getAmount()));
         if (request.getSortBy() != null && request.getSortBy().equals("amount"))
-            pharmacyMedicines = sortByAmount(pharmacyMedicines, request.getSortBy());
+            pharmacyMedicines = sortByAmount(pharmacyMedicines);
         List<Medicine> medicines = getAllMedicinesFromPharmacyMedicines(pharmacyMedicines);
-//        filter for other parameters
+//        search and filter for other parameters
         if (request.getSortBy() != null)
             medicines = sortByOtherParameters(medicines, request.getSortBy());
 //        search for other parameters
         if (request.getPzn() != null)
             medicines = matchByPzn(medicines, request.getPzn());
+//        partial match is allowed<
         if (request.getFriendlyName() != null)
             medicines = matchByFriendlyName(medicines, request.getFriendlyName());
         if (request.getMedicineForm() != null)
             medicines = matchByMedicineForm(medicines, MedicineForm.valueOf(request.getMedicineForm()));
 
-        return medicineViewMapper.toMedicinceView(medicines, userRepository.findByUsername(username));
+        return map(medicines, userRepository.findByUsername(username));
+    }
+
+    private List<MedicineView> map(List<Medicine> medicines, User user){
+        List<MedicineView> medicineViews = new ArrayList<>();
+        for (Medicine medicine : medicines) {
+            MedicineView medicineView = new MedicineView();
+            medicineView.setPzn(medicine.getPzn());
+            medicineView.setFriendlyName(medicine.getFriendlyName());
+            medicineView.setMedicineForm(medicine.getMedicineForm());
+            Pharmacy pharmacy = pharmacyRepository.findByUser(user);
+            for (PharmacyMedicine pharmacyMedicine : medicine.getPharmacyMedicines()) {
+                if (pharmacyMedicine.getPharmacy().getPharmacyID() == pharmacy.getPharmacyID()) {
+                    if (Objects.equals(pharmacyMedicine.getMedicine().getPzn(), medicine.getPzn())) {
+                        medicineView.setAmount(pharmacyMedicine.getAmount());
+                        break;
+                    }
+                }
+            }
+            medicineViews.add(medicineView);
+        }
+        return medicineViews;
     }
 
     private List<PharmacyMedicine> getAllPharmacyMedicinesFromPharmacist(String username){
@@ -57,7 +74,15 @@ public class SearchAndFilterService {
     private List<Medicine> getAllMedicinesFromPharmacyMedicines(List<PharmacyMedicine> pharmacyMedicines){
         List<Medicine> medicines = new ArrayList<>();
         for (PharmacyMedicine pharmacyMedicine : pharmacyMedicines){
-            medicines.add(pharmacyMedicine.getMedicine());
+            Medicine oldMedicine = pharmacyMedicine.getMedicine();
+            Medicine newMedicine = new Medicine();
+            newMedicine.setPzn(oldMedicine.getPzn());
+            newMedicine.setFriendlyName(oldMedicine.getFriendlyName());
+            newMedicine.setMedicineForm(oldMedicine.getMedicineForm());
+            Set<PharmacyMedicine> tempSet = new HashSet<>();
+            tempSet.add(pharmacyMedicine);
+            newMedicine.setPharmacyMedicines(tempSet);
+            medicines.add(newMedicine);
         }
         return medicines;
     }
@@ -116,16 +141,22 @@ public class SearchAndFilterService {
             });
         }
         else if (sortBy.equalsIgnoreCase("medicineForm")){
-            medicines.sort(Comparator.comparing(Medicine::getMedicineForm));
+//            medicines.sort(Comparator.comparing(Medicine::getMedicineForm));
+            medicines.sort(new Comparator<Medicine>() {
+                @Override
+                public int compare(Medicine o1, Medicine o2) {
+                    return String.valueOf(o1.getMedicineForm()).compareTo(String.valueOf(o2.getMedicineForm()));
+                }
+            });
         }
         return medicines;
     }
 
-    private List<PharmacyMedicine> sortByAmount(List<PharmacyMedicine> medicines, String sortBy){
+    private List<PharmacyMedicine> sortByAmount(List<PharmacyMedicine> medicines){
         medicines.sort(new Comparator<PharmacyMedicine>() {
             @Override
             public int compare(PharmacyMedicine o1, PharmacyMedicine o2) {
-                return String.valueOf(o1.getAmount()).compareTo(String.valueOf(o2.getAmount()));
+                return Long.compare(o1.getAmount(), o2.getAmount());
             }
         });
         return medicines;
