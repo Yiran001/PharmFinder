@@ -2,6 +2,8 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {GoogleMap, MapInfoWindow, MapMarker} from "@angular/google-maps";
 import {SearchPharmaciesService} from "../services/search-pharmacies.service";
 import {foundPharmacy} from "../foundPharmacy";
+import {HttpErrorResponse} from "@angular/common/http";
+import {AppComponent} from "../app.component";
 
 export interface marker{
   position: google.maps.LatLngLiteral;
@@ -18,6 +20,7 @@ export interface marker{
 })
 export class SearchPharmaciesComponent implements OnInit {
 
+  medicineNotFound=false;
   markers: Array<marker> =[];
   foundPharms: Array<foundPharmacy> = [];
   foundPharm: foundPharmacy | undefined;
@@ -49,9 +52,7 @@ export class SearchPharmaciesComponent implements OnInit {
 
   // @ts-ignore
   @ViewChild(GoogleMap, { static: false }) map: GoogleMap;
-    logCenter() {
-    console.log(JSON.stringify(this.map.getCenter()))
-  }
+
   // @ts-ignore
   @ViewChild(MapInfoWindow, { static: false }) infoWindow: MapInfoWindow
   // @ts-ignore
@@ -60,8 +61,13 @@ export class SearchPharmaciesComponent implements OnInit {
       this.markerDist=dist;
       this.infoWindow.open(marker)
   }
+  openInfoCurrentLocation(markerLoc: MapMarker) {
+      this.markerAddress='Ihr Standort';
+      this.markerDist=''
+      this.infoWindow.open(markerLoc);
+  }
 
-  constructor(private searchPharmService : SearchPharmaciesService) {  }
+  constructor(private searchPharmService : SearchPharmaciesService,private app: AppComponent) {  }
 
   ngOnInit(): void {
     this.searchPosition();
@@ -86,7 +92,13 @@ export class SearchPharmaciesComponent implements OnInit {
 
   async search(pzn: number, location: google.maps.LatLngLiteral): Promise<void> {
     this.markers=[];
-    this.foundPharms=await this.searchPharmService.searchPharmacy(pzn.toString(),location.lat.toString(),location.lng.toString()).toPromise();
+    this.foundPharms=await this.searchPharmService.searchPharmacy(pzn.toString(),location.lat.toString(),location.lng.toString()).toPromise().catch((err: HttpErrorResponse)=>{
+      if(err.status==404){
+          this.medicineNotFound=true;
+      }else if(err.status==401){
+        this.app.logout();
+      }
+    });
     console.log(this.foundPharms);
     this.foundPharms.forEach( (element)=>{
       this.addMarker(element.latitude,element.longitude,element.street+' '+element.houseNumber+','+element.postcode,element.dist)
@@ -117,6 +129,7 @@ export class SearchPharmaciesComponent implements OnInit {
     this.center=this.currentLocCenter;
     this.currentLocMarker.position=this.center;
   }
+
 
 
 }

@@ -35,6 +35,9 @@
                 PZN muss aus 8 Ziffern bestehen
               </div>
             </div>
+            <div class="alert-danger" *ngIf="medicineNotFound">
+              <div>Medikament ist derzeit nirgendwo auf Lager</div>
+            </div>
           </div>
           <div class="form-group text-center btn-block">
             <button class="btn btn-primary btn-block">Apotheken finden</button>
@@ -47,9 +50,11 @@
           [options]="mapOptions"
           [center]="center">
           <map-marker
+            #markerLoc="mapMarker"
             *ngIf="foundMe"
             [label]="currentLocMarker.label"
             [position]="currentLocMarker.position"
+            (mapClick)="openInfoCurrentLocation(markerLoc)"
             >
           </map-marker>
           <map-marker

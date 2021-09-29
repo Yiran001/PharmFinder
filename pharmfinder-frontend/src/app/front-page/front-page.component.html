@@ -25,7 +25,7 @@
         Mit unserem Apothekenfinder werden Sie diesem Problem nie wieder begegnen. Nach einer kurzen Registrierung können Sie ganz bequem nach Apotheken in Ihrer Nähe suchen, die garantiert das richtige Medikament auf Lager haben.
       </article>
       <article>
-        Unter dem Menüpunkt <a class="link-primary" routerLink="/suchen" href="#">Suchen</a> haben Sie die Möglichkeit Apotheken in Ihrer Umgebung zu finden und mit der Angabe der Pharmazentralnummer Ihres Arzneimittels zu filtern. So kommen Sie garantiert zur passenden Apotheke.
+        Unter dem Menüpunkt <a *ngIf="app.isLoggedIn" class="link-primary" routerLink="/suchen" href="#">Suchen</a> <a *ngIf="!app.isLoggedIn">Suchen</a> haben Sie die Möglichkeit Apotheken in Ihrer Umgebung zu finden und mit der Angabe der Pharmazentralnummer Ihres Arzneimittels zu filtern. So kommen Sie garantiert zur passenden Apotheke.
       </article>
       <img src="assets/images/bestand%20(3).jpg" class="img-fluid" alt="Responsive image">
       <h2>Bestand verwalten</h2>

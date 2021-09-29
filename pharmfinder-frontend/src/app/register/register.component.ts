@@ -66,18 +66,14 @@ export class RegisterComponent implements OnInit {
         this.authService.registerPost(username, email, isPharmacist, password, street, housenumber, postcode, this.lat.toString(),this.lng.toString()).subscribe(
           data => {
             console.log(data);
-            console.log(this.lat + '  ' + this.lng);
             this.isSuccessful = true;
             this.isSignUpFailed = false;
             this.router.navigate(['/login']).then();
 
           },
           error => {
-            console.log(error)
-            console.log(this.lat + '  ' + this.lng);
             this.isSignUpFailed = true;
             this.usernameAlreadyGiven = false;
-
             if (error instanceof HttpErrorResponse) {
               this.errorMessage = error.error.message;
               if (error.error instanceof ErrorEvent) {
@@ -93,7 +89,6 @@ export class RegisterComponent implements OnInit {
                     break;
                   case 409:     //username already taken
                     this.usernameAlreadyGiven = true;
-                    console.log('Username vergeben')
                     break;
                 }
               }

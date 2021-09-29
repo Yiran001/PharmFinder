@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import {AppComponent} from "../app.component";
 
 const TOKEN_KEY = 'auth-token';
 const USER_KEY = 'auth-user';
