@@ -58,8 +58,7 @@ public class MedicinesController {
     }
 
     @GetMapping(path = "/index", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody
-    List<MedicineView> index(HttpServletRequest request) {
+    public @ResponseBody List<MedicineView> index(HttpServletRequest request) {
         String username = request.getParameter("username");
         checkAuthorization(request, username);
 
@@ -72,30 +71,8 @@ public class MedicinesController {
         return map(medicines, user);
     }
 
-    private List<MedicineView> map(List<Medicine> medicines, User user) {
-        List<MedicineView> medicineViews = new ArrayList<>();
-        for (Medicine medicine : medicines) {
-            MedicineView medicineView = new MedicineView();
-            medicineView.setPzn(medicine.getPzn());
-            medicineView.setFriendlyName(medicine.getFriendlyName());
-            medicineView.setMedicineForm(medicine.getMedicineForm());
-            Pharmacy pharmacy = pharmacyRepository.findByUser(user);
-            for (PharmacyMedicine pharmacyMedicine : medicine.getPharmacyMedicines()) {
-                if (pharmacyMedicine.getPharmacy().getPharmacyID() == pharmacy.getPharmacyID()) {
-                    if (Objects.equals(pharmacyMedicine.getMedicine().getPzn(), medicine.getPzn())) {
-                        medicineView.setAmount(pharmacyMedicine.getAmount());
-                        break;
-                    }
-                }
-            }
-            medicineViews.add(medicineView);
-        }
-        return medicineViews;
-    }
-
     @PutMapping(path = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody
-    String update(HttpServletRequest request) {
+    public @ResponseBody String update(HttpServletRequest request){
         String pzn = request.getParameter("pzn");
         String friendlyName = request.getParameter("friendlyName");
         String medicineForm = request.getParameter("medicineForm");
@@ -120,8 +97,7 @@ public class MedicinesController {
     }
 
     @DeleteMapping(path = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody
-    String delete(HttpServletRequest request) {
+    public @ResponseBody String delete(HttpServletRequest request){
         String username = request.getParameter("username");
         String pzn = request.getParameter("pzn");
         checkAuthorization(request, username);
@@ -137,7 +113,28 @@ public class MedicinesController {
         return "Removed";
     }
 
-    private PharmacyMedicine getPharmacyMedicine(String pzn, Pharmacy pharmacy) {
+    private List<MedicineView> map(List<Medicine> medicines, User user){
+        List<MedicineView> medicineViews = new ArrayList<>();
+        for (Medicine medicine : medicines) {
+            MedicineView medicineView = new MedicineView();
+            medicineView.setPzn(medicine.getPzn());
+            medicineView.setFriendlyName(medicine.getFriendlyName());
+            medicineView.setMedicineForm(medicine.getMedicineForm());
+            Pharmacy pharmacy = pharmacyRepository.findByUser(user);
+            for (PharmacyMedicine pharmacyMedicine : medicine.getPharmacyMedicines()) {
+                if (pharmacyMedicine.getPharmacy().getPharmacyID() == pharmacy.getPharmacyID()) {
+                    if (Objects.equals(pharmacyMedicine.getMedicine().getPzn(), medicine.getPzn())) {
+                        medicineView.setAmount(pharmacyMedicine.getAmount());
+                        break;
+                    }
+                }
+            }
+            medicineViews.add(medicineView);
+        }
+        return medicineViews;
+    }
+
+    private PharmacyMedicine getPharmacyMedicine(String pzn, Pharmacy pharmacy){
         Set<PharmacyMedicine> pharmacyMedicines = pharmacy.getPharmacyMedicines();
         for (PharmacyMedicine pharmacyMedicine : pharmacyMedicines) {
             if (pharmacyMedicine.getMedicine().getPzn().equals(pzn))
