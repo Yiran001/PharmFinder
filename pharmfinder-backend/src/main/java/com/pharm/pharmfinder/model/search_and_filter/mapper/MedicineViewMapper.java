@@ -12,7 +12,6 @@ import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.awt.print.Book;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -27,20 +26,19 @@ public abstract class MedicineViewMapper {
         this.pharmacyRepository = pharmacyRepository;
     }
 
-//    public abstract ArrayList<MedicineView> toMedicinceView(List<Medicine> medicines, User user);
-    public abstract ArrayList<MedicineView> toMedicinceView(List<Medicine> medicines);
+//    public abstract List<MedicineView> toMedicinceView(List<Medicine> medicines, User user);
 
-//    @AfterMapping
-//    protected void after(User user, Medicine medicine, @MappingTarget MedicineView medicineView) {
-//        Pharmacy pharmacy = pharmacyRepository.findByUser(user);
-//        for (PharmacyMedicine pharmacyMedicine : medicine.getPharmacyMedicines()){
-//            if (pharmacyMedicine.getPharmacy().getPharmacyID() == pharmacy.getPharmacyID()){
-//                if (Objects.equals(pharmacyMedicine.getMedicine().getPzn(), medicine.getPzn())){
-//                    medicineView.setAmount(pharmacyMedicine.getAmount());
-//                    break;
-//                }
-//            }
-//        }
-//        throw new IllegalStateException("Medicine not registered for this pharmacist");
-//    }
+    @AfterMapping
+    protected void after(User user, Medicine medicine, @MappingTarget MedicineView medicineView) {
+        Pharmacy pharmacy = pharmacyRepository.findByUser(user);
+        for (PharmacyMedicine pharmacyMedicine : medicine.getPharmacyMedicines()){
+            if (pharmacyMedicine.getPharmacy().getPharmacyID() == pharmacy.getPharmacyID()){
+                if (Objects.equals(pharmacyMedicine.getMedicine().getPzn(), medicine.getPzn())){
+                    medicineView.setAmount(pharmacyMedicine.getAmount());
+                    break;
+                }
+            }
+        }
+        throw new IllegalStateException("Medicine not registered for this pharmacist");
+    }
 }

@@ -202,12 +202,25 @@ public class SearchAndFilterTest {
         addMedicine(username, jwt, pzn1, friendlyName, medicineForm, amount2);
         addMedicine(username, jwt, pzn4, friendlyName, differentMedicineForm, amount3);
         addMedicine(username, jwt, pzn3, friendlyName, medicineForm, amount1);
-//        todo: methode anpassen, sodass nach 2 parametern gesucht wird
         String stringResult = searchMedicineFormAndFriendlyNameAndCheckSorting(username, jwt, String.valueOf(medicineForm),
                 friendlyName, "pzn", pzn1, pzn3, pzn5);
 //        only medicines with the searched for name get returned and sorted
         Assertions.assertFalse(stringResult.contains(String.valueOf(differentMedicineForm)));
         Assertions.assertFalse(stringResult.contains(differentFriendlyName));
+    }
+
+    @Test
+    void should_do_descending_sort_by_pzn() throws Exception {
+        String username = UUID.randomUUID().toString();
+        addUserViaPostRequest(username);
+        String jwt = authenticate(username, password1);
+        String pzn1 = basePzn + "29";
+        String pzn2 = basePzn + "30";
+        String pzn3 = basePzn + "31";
+        addMedicine(username, jwt, pzn3, friendlyName, medicineForm, 1);
+        addMedicine(username, jwt, pzn1, friendlyName, medicineForm, 1);
+        addMedicine(username, jwt, pzn2, friendlyName, medicineForm, 1);
+        checkSortingDescending(username, jwt, "pzn", pzn1, pzn2, pzn3);
     }
 
 //    string1 should get returned first, string3 last
@@ -230,6 +243,29 @@ public class SearchAndFilterTest {
         int index2 = stringResult.indexOf(string2);
         int index3 = stringResult.indexOf(string3);
         Assertions.assertTrue(index1 < index2 && index2 < index3);
+    }
+
+    //    string1 should get returned first, string3 last
+    private void checkSortingDescending(String username, String jwt, String sortBy, String string1, String string2, String string3) throws Exception {
+        SearchAndFilterRequest request = new SearchAndFilterRequest();
+        request.setUsername(username);
+        request.setSortBy(sortBy);
+        request.setDescending(true);
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
+                .get("/search_and_filter/get")
+                .content(toJson(objectMapper, request))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer " + jwt);
+        MvcResult result = this.mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+        String stringResult = result.getResponse().getContentAsString();
+        System.out.println(stringResult);
+        int index1 = stringResult.indexOf(string1);
+        int index2 = stringResult.indexOf(string2);
+        int index3 = stringResult.indexOf(string3);
+        Assertions.assertTrue(index1 > index2 && index2 > index3);
     }
 
     //    string1 should get returned first, string3 last

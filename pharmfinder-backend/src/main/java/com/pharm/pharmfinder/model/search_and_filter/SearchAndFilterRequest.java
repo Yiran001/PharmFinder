@@ -6,7 +6,6 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 public class SearchAndFilterRequest {
-    @NotBlank
     private String username;
 //    all following attributes are optional
     private String pzn;
@@ -14,5 +13,5 @@ public class SearchAndFilterRequest {
     private String medicineForm;
     private String amount;
     private String sortBy;
-
+    private boolean descending;
 }

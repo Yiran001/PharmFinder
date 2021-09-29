@@ -28,11 +28,11 @@ public class SearchAndFilterService {
         if (request.getAmount() != null)
             pharmacyMedicines = matchByAmount(pharmacyMedicines, Long.parseLong(request.getAmount()));
         if (request.getSortBy() != null && request.getSortBy().equals("amount"))
-            pharmacyMedicines = sortByAmount(pharmacyMedicines);
+            pharmacyMedicines = sortByAmount(pharmacyMedicines, request.isDescending());
         List<Medicine> medicines = getAllMedicinesFromPharmacyMedicines(pharmacyMedicines);
 //        search and filter for other parameters
         if (request.getSortBy() != null)
-            medicines = sortByOtherParameters(medicines, request.getSortBy());
+            medicines = sortByOtherParameters(medicines, request.getSortBy(), request.isDescending());
 //        search for other parameters
         if (request.getPzn() != null)
             medicines = matchByPzn(medicines, request.getPzn());
@@ -123,7 +123,7 @@ public class SearchAndFilterService {
         return matchedPharmacyMedicines;
     }
 
-    private List<Medicine> sortByOtherParameters(List<Medicine> medicines, String sortBy){
+    private List<Medicine> sortByOtherParameters(List<Medicine> medicines, String sortBy, boolean descending){
         if (sortBy.equalsIgnoreCase("pzn")){
             medicines.sort(new Comparator<Medicine>() {
                 @Override
@@ -149,16 +149,20 @@ public class SearchAndFilterService {
                 }
             });
         }
+        if (descending)
+            Collections.reverse(medicines);
         return medicines;
     }
 
-    private List<PharmacyMedicine> sortByAmount(List<PharmacyMedicine> medicines){
+    private List<PharmacyMedicine> sortByAmount(List<PharmacyMedicine> medicines, boolean descending){
         medicines.sort(new Comparator<PharmacyMedicine>() {
             @Override
             public int compare(PharmacyMedicine o1, PharmacyMedicine o2) {
                 return Long.compare(o1.getAmount(), o2.getAmount());
             }
         });
+        if (descending)
+            Collections.reverse(medicines);
         return medicines;
     }
 
