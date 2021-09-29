@@ -116,53 +116,6 @@ export class RegisterComponent implements OnInit {
           }
         }
       });
-
-
-
-
-      /*
-      this.authService.registerPost(username, email, isPharmacist, password, street, housenumber, postcode).subscribe(
-        data => {
-          console.log(data);
-          console.log(this.lat + '  ' + this.lng);
-          this.isSuccessful = true;
-          this.isSignUpFailed = false;
-          this.router.navigate(['/login']).then();
-
-        },
-        error => {
-          console.log(error)
-          console.log(this.lat + '  ' + this.lng);
-          this.isSignUpFailed = true;
-          this.usernameAlreadyGiven = false;
-
-          if (error instanceof HttpErrorResponse) {
-            this.errorMessage = error.error.message;
-            if (error.error instanceof ErrorEvent) {
-              console.error("Error Event");
-            } else {
-              console.log(`error status : ${error.status} ${error.statusText}`);
-              switch (error.status) {
-                case 401:      //login
-
-                  break;
-                case 403:     //forbidden
-
-                  break;
-                case 409:     //username already taken
-                  this.usernameAlreadyGiven = true;
-                  console.log('Username vergeben')
-                  break;
-              }
-            }
-          } else {
-            console.error("undefined error status");
-          }
-          return throwError(error);
-        }
-      );
-
-       */
     }
 
 

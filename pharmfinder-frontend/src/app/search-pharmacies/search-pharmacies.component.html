@@ -53,11 +53,18 @@
             >
           </map-marker>
           <map-marker
+            #markerElem="mapMarker"
             *ngFor="let marker of markers"
              [position]="marker.position"
              [label]="marker.label"
-             [title]="marker.title">
+             [title]="marker.title"
+              (mapClick)="openInfo(markerElem,marker.address,marker.dist)"
+          >
           </map-marker>
+          <map-info-window>
+            {{markerAddress}}
+            {{markerDist}}
+          </map-info-window>
         </google-map>
       </div>
     <div class="col">

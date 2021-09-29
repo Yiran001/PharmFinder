@@ -35,7 +35,6 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     if(this.tokenStorage.getToken()!=null){
       this.router.navigate(['/home']).then();
-      //console.log(this.tokenStorage.getToken())
     }
 
   }
