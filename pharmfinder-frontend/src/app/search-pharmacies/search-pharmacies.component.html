@@ -37,7 +37,7 @@
             </div>
           </div>
           <div class="form-group text-center btn-block">
-            <button class="btn btn-primary btn-block">Apotheke finden</button>
+            <button class="btn btn-primary btn-block">Apotheken finden</button>
           </div>
         </form>
         <div class="form-group text-center btn-block">
@@ -46,12 +46,17 @@
         <google-map
           [options]="mapOptions"
           [center]="center">
-
           <map-marker
             *ngIf="foundMe"
             [label]="currentLocMarker.label"
             [position]="currentLocMarker.position"
             >
+          </map-marker>
+          <map-marker
+            *ngFor="let marker of markers"
+             [position]="marker.position"
+             [label]="marker.label"
+             [title]="marker.title">
           </map-marker>
         </google-map>
       </div>

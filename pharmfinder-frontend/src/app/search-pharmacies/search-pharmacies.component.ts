@@ -3,6 +3,12 @@ import {GoogleMap} from "@angular/google-maps";
 import {SearchPharmaciesService} from "../services/search-pharmacies.service";
 import {foundPharmacy} from "../foundPharmacy";
 
+export interface marker{
+  position: google.maps.LatLngLiteral;
+  label: google.maps.MarkerLabel;
+  title: string;
+}
+
 @Component({
   selector: 'app-search-pharmacies',
   templateUrl: './search-pharmacies.component.html',
@@ -10,7 +16,7 @@ import {foundPharmacy} from "../foundPharmacy";
 })
 export class SearchPharmaciesComponent implements OnInit {
 
-
+  markers: Array<marker> =[];
   foundPharms: Array<foundPharmacy> = [];
   foundPharm: foundPharmacy | undefined;
 
@@ -40,6 +46,9 @@ export class SearchPharmaciesComponent implements OnInit {
   // @ts-ignore
   @ViewChild(GoogleMap, { static: false }) map: GoogleMap;
 
+
+
+
   logCenter() {
     console.log(JSON.stringify(this.map.getCenter()))
   }
@@ -47,7 +56,10 @@ export class SearchPharmaciesComponent implements OnInit {
   constructor(private searchPharmService : SearchPharmaciesService) {  }
 
   ngOnInit(): void {
-    //const geocoder = new google.maps.Geocoder();
+    this.searchPosition();
+
+  }
+  searchPosition(){
     navigator.geolocation.getCurrentPosition((position) => {
       this.currentLocCenter = {
         lat: position.coords.latitude,
@@ -61,43 +73,35 @@ export class SearchPharmaciesComponent implements OnInit {
     this.foundMe=true;
     this.center=this.currentLocCenter;
     this.currentLocMarker.position=this.center;
-    //console.log(JSON.stringify(this.map.getZoom()));
     this.search(pzn,this.currentLocMarker.position);
   }
-  /*
-  geocodeAddress(
-    geocoder: google.maps.Geocoder,
-    resultsMap: google.maps.Map
-  ) {
-    const address = (document.getElementById("address") as HTMLInputElement)
-      .value;
-    geocoder
-      .geocode({ address: address })
-      .then(({ results }) => {
-        resultsMap.setCenter(results[0].geometry.location);
-        new google.maps.Marker({
-          map: resultsMap,
-          position: results[0].geometry.location,
-        });
-      })
-      .catch((e: any) =>
-        alert("Geocode was not successful for the following reason: " + e)
-      );
-  }
-
-
-  click(event: google.maps.MouseEvent) {
-    console.log(event)
-  }
-   */
 
   async search(pzn: number, location: google.maps.LatLngLiteral): Promise<void> {
-    console.log('es geht los')
+    this.markers=[];
     this.foundPharms=await this.searchPharmService.searchPharmacy(pzn.toString(),location.lat.toString(),location.lng.toString()).toPromise();
     console.log(this.foundPharms);
+    this.foundPharms.forEach( (element)=>{
+      this.addMarker(element.latitude,element.longitude)
+    });
+    console.log(this.markers);
+  }
+
+  private addMarker(latitude: string,longitude: string) {
+    this.markers.push({
+      position: {
+        lat: Number(latitude),
+        lng: Number(longitude),
+      },
+      label: {
+        color: 'black',
+        text: 'A' + (this.markers.length + 1),
+      },
+      title: 'Marker title ' + (this.markers.length + 1),
+    })
   }
 
   findMe() {
+    this.searchPosition();
     this.foundMe=true;
     this.center=this.currentLocCenter;
     this.currentLocMarker.position=this.center;
