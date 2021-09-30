@@ -10,11 +10,51 @@
 <div class="container">
   <div class="table-responsive">
     <div class="table-wrapper">
-      <div class="table-title">
+      <div class="table-title bg-dark">
         <div class="row">
-          <div class="col-xs-5">
-            <h2>Medizin <b>Management</b></h2>
-            <em class="btn btn-info" (click)="openNewMedicineDialog()">Anpassen</em>
+          <div class="col">
+            <div class="float-left">
+              <h2>Medizin <b>Management</b></h2>
+            </div>
+          </div>
+          <div class="col">
+            <div class="float-right">
+              <button type="button" class="btn btn-primary" (click)="openNewMedicineDialog()">Neu
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="row top-buffer">
+          <div class="col">
+            <div class="md-form mt-0">
+              <label class="form-label">PZN:</label>
+              <input class="form-control mr-sm-2" type="text" placeholder="Suche" [(ngModel)]="searchPzn"
+                     type="text" name="pznSearcher">
+            </div>
+          </div>
+          <div class="col">
+            <div class="md-form mt-0">
+              <label class="form-label">Name:</label>
+              <input class="form-control mr-sm-2" type="text" placeholder="Suche" [(ngModel)]="searchName"
+                     type="text" name="nameSearcher">
+            </div>
+          </div>
+          <div class="col">
+            <div class="md-form mt-0">
+              <label class="form-label">Form:</label>
+              <input class="form-control mr-sm-2" type="text" placeholder="Suche" [(ngModel)]="searchForm"
+                     type="text" name="formSearcher">
+            </div>
+          </div>
+          <div class="col">
+            <div class="md-form mt-0">
+              <label class="form-label">Menge:</label>
+              <input class="form-control mr-sm-2" type="text" placeholder="Suche" [(ngModel)]="searchAmount"
+                     type="text" name="amountSearcher">
+            </div>
+          </div>
+          <div class="col-1">
+            <button type="button" class="btn btn-primary top-buffer" (click)="initSearch()">Los</button>
           </div>
         </div>
       </div>
@@ -23,16 +63,16 @@
         <tr>
           <th>PZN</th>
           <th>Name</th>
-          <th>Menge</th>
           <th>Form</th>
+          <th>Menge</th>
         </tr>
         </thead>
         <tbody>
         <tr *ngFor="let medicine of medicineList" (click)="openDialog(medicine)">
           <td>{{medicine.pzn}}</td>
           <td>{{medicine.friendlyName}}</td>
-          <td><b>{{medicine.amount}}</b></td>
           <td>{{medicine.medicineForm}}</td>
+          <td><b>{{medicine.amount}}</b></td>
         </tr>
         </tbody>
       </table>

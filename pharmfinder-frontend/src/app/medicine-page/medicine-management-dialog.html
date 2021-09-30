@@ -38,19 +38,17 @@
     <div class="col-sm-3">
       <h6 class="mb-0">Menge</h6>
     </div>
-    <mat-form-field appearance="fill">
-      <mat-label>{{data.dialogMedicine.amount}}</mat-label>
+    <mat-form-field appearance="outline">
       <input matInput [(ngModel)]="data.dialogMedicine.amount">
     </mat-form-field>
   </div>
   <hr>
   <div class="row">
     <div class="col">
-
-      <a class="btn btn-info" (click)="handleChanges()">Anpassen</a>
+      <button class="btn btn-dark" (click)="handleChanges()">Anpassen</button>
     </div>
     <div class="col">
-      <a class="btn btn-info" (click)="deleteMedicine()">Löschen</a>
+      <button class="btn btn-danger" (click)="deleteMedicine()">Löschen</button>
     </div>
   </div>
 </div>

@@ -22,6 +22,10 @@ export class MedicinePageComponent implements OnInit {
 
   pharmacy: string = ""
   medicineList: Array<Medicine> = []
+  searchAmount: number = 0;
+  searchName: string = "";
+  searchForm: string = "";
+  searchPzn: string = "";
 
   constructor(private medicineService: MedicineService, private router: Router, private dialog: MatDialog) {
   }
@@ -53,6 +57,10 @@ export class MedicinePageComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       this.getMedicines();
     });
+  }
+
+  initSearch() {
+    console.log(this.searchAmount)
   }
 }
 
@@ -108,10 +116,8 @@ export class NewMedicineDialog {
   }
 
   handleChanges() {
-    console.log(this.medicine)
     this.medicineService.createMedicine(this.medicine);
     this.dialogRef.close();
-
   }
 }
 

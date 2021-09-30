@@ -6,7 +6,7 @@
       <h6 class="mb-0">PZN</h6>
     </div>
     <div class="row">
-      <mat-form-field appearance="fill">
+      <mat-form-field appearance="outline">
         <input matInput [(ngModel)]="medicine.pzn">
       </mat-form-field>
     </div>
@@ -17,7 +17,7 @@
       <h6 class="mb-0">Name</h6>
     </div>
     <div class="row">
-      <mat-form-field appearance="fill">
+      <mat-form-field appearance="outline">
         <input matInput [(ngModel)]="medicine.friendlyName">
       </mat-form-field>
     </div>
@@ -28,7 +28,7 @@
       <h6 class="mb-0">Darreichungsform</h6>
     </div>
     <div class="row">
-      <mat-form-field appearance="fill">
+      <mat-form-field appearance="outline">
         <mat-select [(ngModel)]="medicine.medicineForm">
           <mat-option *ngFor="let actualForm of medicineForms" [value]="actualForm.value">
             {{actualForm.viewValue}}
@@ -42,14 +42,14 @@
     <div class="col-sm-3">
       <h6 class="mb-0">Menge</h6>
     </div>
-    <mat-form-field appearance="fill">
+    <mat-form-field appearance="outline">
       <input matInput [(ngModel)]="medicine.amount">
     </mat-form-field>
   </div>
   <hr>
   <div class="row">
     <div class="col-sm-12">
-      <a class="btn btn-info" (click)="handleChanges()">Anpassen</a>
+      <button class="btn btn-dark" (click)="handleChanges()">Erstellen</button>
     </div>
   </div>
 </div>
