@@ -19,3 +19,4 @@ Zusätzlich kann nach einem gewählten Attribut gefiltert bzw. sortiert werden.
 So können die Medikamente z.B. alphabetisch nach ihrem Namen oder der PZN aufgelistet werden.
 
 Die Richtung (ascending, descending) ist einstellbar.
+
