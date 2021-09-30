@@ -11,7 +11,6 @@ import java.util.Properties;
 
 @SpringBootApplication
 public class PharmFinderApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(PharmFinderApplication.class, args);
     }

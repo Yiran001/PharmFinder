@@ -6,6 +6,7 @@ import com.pharm.pharmfinder.controller.repositories.PharmacyRepository;
 import com.pharm.pharmfinder.controller.repositories.UserRepository;
 import com.pharm.pharmfinder.jwt.JwtTokenUtil;
 import com.pharm.pharmfinder.model.*;
+import com.pharm.pharmfinder.model.search_and_filter.MedicineView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -93,7 +94,6 @@ public class MedicinesController {
         medicineRepository.save(medicine);
         pharmacyMedicineRepository.save(pharmacyMedicine);
         return "Medicine updated";
-
     }
 
     @DeleteMapping(path = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)

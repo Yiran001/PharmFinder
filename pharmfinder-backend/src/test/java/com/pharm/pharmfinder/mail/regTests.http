@@ -1,13 +1,18 @@
 GET http://localhost:8080/users/index
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJteXVzZXI4IiwiZXhwIjoxNjI5NjgzOTI1LCJpYXQiOjE2Mjk2NjU5MjV9.LRejT4dlqKeEGpT8nxpdiZl1-OMtOrjenpYYCUymPkT9PVAaMdTkXEeCR35HZ6qF_Qs7SmrkhNK8Dpipm6lcwA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnaWwyIiwiZXhwIjoxNjMyODg1Mzc3LCJpYXQiOjE2MzI4NjczNzd9.WLW-IyHWdG8FVledYjXhVE5sCOplS7U1lSkVu678fkZOKTgaLtvxbDyT_k81wllCTUg83MFV7waeao46mEJhug
 
 ###
 POST http://localhost:8080/medicines/create
 Content-Type: application/x-www-form-urlencoded
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnaWwiLCJleHAiOjE2MzEwMzYyOTIsImlhdCI6MTYzMTAxODI5Mn0.rJyK421fRFkv6VR3FPGxR_32PpXb_eglmOljbrd1l-6qOzdD8UWbKUHlVBEVRGWUjVQfkkXycQHqj3bywX2spw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnaWwyIiwiZXhwIjoxNjMyODg1Mzc3LCJpYXQiOjE2MzI4NjczNzd9.WLW-IyHWdG8FVledYjXhVE5sCOplS7U1lSkVu678fkZOKTgaLtvxbDyT_k81wllCTUg83MFV7waeao46mEJhug
 
-pzn=123&friendlyName=name&medicineForm=PILL&amount=2&username=gil
+pzn=126&friendlyName=name&medicineForm=PILL&amount=3&username=gil2
+
+###
+GET http://localhost:8080/medicines/index?username=gil2
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnaWwyIiwiZXhwIjoxNjMyODg1OTE3LCJpYXQiOjE2MzI4Njc5MTd9.0UKUAyYePITh1MkvZJ5npZUR3lajnp7sIiWTei0uqsM5CfQjyrgxDawDNO8HQA0_qEICCh-yJGljdfCDFhxJPQ
+Accept: application/json
 
 
 ###
@@ -20,14 +25,14 @@ username=gil2&password=mypass&email=cphconrad@gmail.com&isPharmacist=true&addres
 ###
 DELETE http://localhost:8080/users/delete
 Content-Type: application/x-www-form-urlencoded
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnaWwiLCJleHAiOjE2MzE4MTQ2ODMsImlhdCI6MTYzMTc5NjY4M30.W3pKjYkeTCOBSYX8jWniYbLeY0CB7DoCv87GHGpyzjwXVtFN33M_YSy9Dbkq5Pqmiix3kNfNXA4SLOpyKU-gbQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnaWwyIiwiZXhwIjoxNjMyODg1Njc4LCJpYXQiOjE2MzI4Njc2Nzh9.G6HYMGIWAsIngfMp-edVO2YU3z0xcqVL3TTOE4zRjNXUGXNEyBOW5vXUb1Aeg_5VfuJGtCcqKsR-RN3ptbsUSQ
 
-username=gil
+username=gil2
 
 ###
 PUT http://localhost:8080/users/update
 Content-Type: application/x-www-form-urlencoded
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnaWwiLCJleHAiOjE2MzEwMzYyOTIsImlhdCI6MTYzMTAxODI5Mn0.rJyK421fRFkv6VR3FPGxR_32PpXb_eglmOljbrd1l-6qOzdD8UWbKUHlVBEVRGWUjVQfkkXycQHqj3bywX2spw
+#Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJnaWwiLCJleHAiOjE2MzEwMzYyOTIsImlhdCI6MTYzMTAxODI5Mn0.rJyK421fRFkv6VR3FPGxR_32PpXb_eglmOljbrd1l-6qOzdD8UWbKUHlVBEVRGWUjVQfkkXycQHqj3bywX2spw
 
 username=gil2&password=mypass&email=cphconrad@gmail.com&isPharmacist=true&addressStreet=mystreet&addressHouseNumber=42&addressPostcode=12345
 

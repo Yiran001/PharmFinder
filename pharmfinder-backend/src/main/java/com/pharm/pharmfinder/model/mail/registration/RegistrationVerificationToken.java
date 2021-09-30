@@ -1,4 +1,4 @@
-package com.pharm.pharmfinder.model.mail;
+package com.pharm.pharmfinder.model.mail.registration;
 
 
 import com.pharm.pharmfinder.model.User;
@@ -14,10 +14,10 @@ import java.util.Date;
 @Entity
 @Data
 @RequiredArgsConstructor
-public class VerificationToken {
+public class RegistrationVerificationToken {
     private static final int EXPIRATION = 60 * 24;
 
-    public VerificationToken(String token, User user) {
+    public RegistrationVerificationToken(String token, User user) {
         this.token = token;
         this.user = user;
         this.expiryDate = calculateExpiryDate(EXPIRATION);
