@@ -82,7 +82,7 @@ public class MedicinesController {
         String username = request.getParameter("username");
         String amountString = request.getParameter("amount");
         int amount = Integer.parseInt(amountString);
-        checkAuthorization(request, username);
+        boolean admin = checkAuthorization(request, username);
 
         Pharmacy pharmacy = getPharmacy(username);
         PharmacyMedicine pharmacyMedicine = getPharmacyMedicine(pzn, pharmacy);
@@ -90,10 +90,14 @@ public class MedicinesController {
         if (amount < 0){
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Amount can not be negative");
         }
-        medicine.setFriendlyName(friendlyName);
-        medicine.setMedicineForm(MedicineForm.valueOf(medicineForm));
-        pharmacyMedicine.setAmount(amount);
-        medicineRepository.save(medicine);
+        if (admin){
+            medicine.setFriendlyName(friendlyName);
+            medicine.setMedicineForm(MedicineForm.valueOf(medicineForm));
+            pharmacyMedicine.setAmount(amount);
+            medicineRepository.save(medicine);
+        } else {
+            pharmacyMedicine.setAmount(amount);
+        }
         pharmacyMedicineRepository.save(pharmacyMedicine);
         return "Medicine updated";
     }
@@ -189,13 +193,22 @@ public class MedicinesController {
         return false;
     }
 
-    private void checkAuthorization(HttpServletRequest request, String username){
+    private boolean checkAuthorization(HttpServletRequest request, String username){
         String jwt = request.getHeader("Authorization").substring(7);
         String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
         User manipulatingUser = userRepository.findByUsername(jwtUsername);
-        if (manipulatingUser.getAuthorities().contains("MEDICINE_ADMIN"))
-            return;
-        if (!username.equals(jwtUsername))
+        if (manipulatingUser.getAuthorities().contains("MEDICINE_ADMIN")) {
+            return true;
+        }
+        if (!username.equals(jwtUsername)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Wrong username");
+        }
+        checkPharmacist(manipulatingUser);
+        return false;
+    }
+
+    private void checkPharmacist(User user){
+        if (!user.isPharmacist())
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Not a pharmacist");
     }
 }

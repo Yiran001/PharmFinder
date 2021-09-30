@@ -3,12 +3,11 @@ package com.pharm.pharmfinder.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.pharm.pharmfinder.controller.repositories.AddressRepository;
-import com.pharm.pharmfinder.controller.repositories.MedicineRepository;
-import com.pharm.pharmfinder.controller.repositories.PharmacyRepository;
+import com.pharm.pharmfinder.config.AdminInitializer;
 import com.pharm.pharmfinder.controller.repositories.UserRepository;
 import com.pharm.pharmfinder.jwt.JwtUserDetailsService;
 import com.pharm.pharmfinder.model.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,8 +20,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.nio.charset.Charset;
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -58,12 +55,24 @@ public class MedicineControllerTest {
     String houseNumber2 = "2";
     String postcode2 = "23456";
 
+    //    medicine admin
+    String medicineAdminName = "Dennis_Ritchie";
+    String medicineAdminPassword;
+
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private PharmacyRepository pharmacyRepository;
-    @Autowired
     private JwtUserDetailsService jwtUserDetailsService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private AdminInitializer adminInitializer;
+
+    @BeforeEach
+    void setUp() {
+        userRepository.deleteAll();
+        addAdmins();
+    }
 
     @Test
     void should_save_multiple_medicines_in_one_pharmacy() throws Exception {
@@ -105,7 +114,7 @@ public class MedicineControllerTest {
         addPharmacistUser1();
         String jwt1 = authenticate(username1, password1);
         addMedicine1(username1, jwt1);
-        updateMedicine(pzn1, friendlyName, medicineForm, username1, newAmount, jwt1);
+        updateMedicineAsAdmin(pzn1, friendlyName, medicineForm, username1, newAmount);
         getAndVerifyResponse(username1, String.valueOf(newAmount), jwt1);
         jwtUserDetailsService.deleteUserByUsername(username1);
     }
@@ -116,7 +125,7 @@ public class MedicineControllerTest {
         addPharmacistUser1();
         String jwt1 = authenticate(username1, password1);
         addMedicine1(username1, jwt1);
-        updateMedicine(pzn1, newFriendlyName, medicineForm, username1, 0, jwt1);
+        updateMedicineAsAdmin(pzn1, newFriendlyName, medicineForm, username1, 0);
         getAndVerifyResponse(username1, "\"friendlyName\":\"" + newFriendlyName + "\"", jwt1);
         jwtUserDetailsService.deleteUserByUsername(username1);
     }
@@ -133,6 +142,11 @@ public class MedicineControllerTest {
         getAndVerifyResponse(username2, pzn1, jwt2);
         jwtUserDetailsService.deleteUserByUsername(username1);
         jwtUserDetailsService.deleteUserByUsername(username2);
+    }
+
+    private void addAdmins() {
+        medicineAdminPassword = System.getenv("MEDICINEADMINPW");
+        adminInitializer.initialize();
     }
 
     private void addMedicine1(String username, String jwt) throws Exception {
@@ -214,7 +228,8 @@ public class MedicineControllerTest {
         return rawJwt.substring(1, rawJwt.length()-2);
     }
 
-    private void updateMedicine(String pzn, String friendlyName, MedicineForm medicineForm, String username, int amount, String jwt) throws Exception {
+    private void updateMedicineAsAdmin(String pzn, String friendlyName, MedicineForm medicineForm, String username, int amount) throws Exception {
+        String jwt = authenticate(medicineAdminName, medicineAdminPassword);
         MockHttpServletRequestBuilder builder = buildMedicinePutRequest
                 (pzn, friendlyName, String.valueOf(medicineForm), username, amount)
                 .header("Authorization", generateAuthHeader(jwt));
@@ -268,29 +283,5 @@ public class MedicineControllerTest {
         this.mockMvc.perform(builder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().string(containsString(expectedOutput)));
-    }
-
-    private void savePharmacyMedicineToMedicine(Medicine medicine, PharmacyMedicine pharmacyMedicine) {
-        Set<PharmacyMedicine> pharmacyMedicines = medicine.getPharmacyMedicines();
-        pharmacyMedicines.add(pharmacyMedicine);
-        medicine.setPharmacyMedicines(pharmacyMedicines);
-    }
-
-    private void savePharmacyMedicineToEmptyPharmacy(Pharmacy pharmacy, PharmacyMedicine pharmacyMedicine) {
-        Set<PharmacyMedicine> pharmacyMedicines = new HashSet<>();
-        pharmacyMedicines.add(pharmacyMedicine);
-        pharmacy.setPharmacyMedicines(pharmacyMedicines);
-    }
-
-    private Pharmacy getPharmacy(String name) {
-        Pharmacy pharmacy = null;
-        for (Pharmacy potentialPharmacy : pharmacyRepository.findAll()) {
-            if (potentialPharmacy.getPharmacyName().equals(name)) {
-                pharmacy = potentialPharmacy;
-            }
-        }
-        if (pharmacy == null)
-            throw new IllegalStateException("Pharmacy not found");
-        return pharmacy;
     }
 }
