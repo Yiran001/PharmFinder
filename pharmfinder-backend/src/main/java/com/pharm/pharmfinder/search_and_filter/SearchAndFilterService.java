@@ -165,15 +165,4 @@ public class SearchAndFilterService {
             Collections.reverse(medicines);
         return medicines;
     }
-
-
-//    private Set<PharmacyMedicine> sortByAmount(Set<PharmacyMedicine> pharmacyMedicines){
-//        Collections.sort(pharmacyMedicines, new Comparator<PharmacyMedicine>() {
-//            @Override
-//            public int compare(PharmacyMedicine o1, PharmacyMedicine o2) {
-//                return String.valueOf(o1.getAmount()).compareTo(String.valueOf(o2.getAmount()));
-//            }
-//        });
-//    }
-
 }

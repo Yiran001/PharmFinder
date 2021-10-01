@@ -4,8 +4,6 @@ import com.pharm.pharmfinder.controller.repositories.UserRepository;
 import com.pharm.pharmfinder.model.Role;
 import com.pharm.pharmfinder.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

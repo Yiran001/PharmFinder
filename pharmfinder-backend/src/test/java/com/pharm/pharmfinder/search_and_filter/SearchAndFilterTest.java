@@ -28,7 +28,6 @@ public class SearchAndFilterTest {
     public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
     @Autowired
     private MockMvc mockMvc;
-    private final ObjectMapper objectMapper;
 
     //    User 1
     String baseUsername = "test_name";
@@ -42,11 +41,6 @@ public class SearchAndFilterTest {
     public String friendlyName = "Aspirin";
     public String baseFriendlyName = "Aspirin";
     public MedicineForm medicineForm = MedicineForm.PILL;
-
-    @Autowired
-    public SearchAndFilterTest(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
 
     @Test
     void should_respond_with_medicine_attributes() throws Exception {
