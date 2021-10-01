@@ -133,7 +133,7 @@ public class SearchPharmacyController {
      * @param lng longitude des Users, der Apotheke sucht
      * @return die ggf. 5 nähesten Apotheken werden als Hashmap mit der Entfernung zurückgegeben
      */
-    private HashMap<Pharmacy,Double> searchPharmacies(ArrayList<Pharmacy> pharmacies, double lat,double lng) {
+    public HashMap<Pharmacy,Double> searchPharmacies(ArrayList<Pharmacy> pharmacies, double lat,double lng) {
 
         HashMap<Pharmacy,Double> nearbyPharmacies = new HashMap<Pharmacy, Double>();
         for(Pharmacy p: pharmacies){
