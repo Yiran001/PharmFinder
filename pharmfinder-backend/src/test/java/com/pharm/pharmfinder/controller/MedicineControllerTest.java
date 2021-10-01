@@ -41,14 +41,14 @@ public class MedicineControllerTest {
     public MedicineForm medicineForm2 = MedicineForm.PILL;
 
     //    User 1
-    String username1 = "name";
+    String username1 = "hro";
     String email1 = "email4@mail.com";
     String password1 = "password";
     String street1 = "streetOne";
     String houseNumber1 = "1";
     String postcode1 = "12345";
     //    User 2
-    String username2 = "name2";
+    String username2 = "hro2";
     String email2 = "email5@mail.com";
     String password2 = "password2";
     String street2 = "streetTwo";
