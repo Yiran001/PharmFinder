@@ -7,7 +7,7 @@ export interface DialogData {
   dialogMedicine: Medicine;
 }
 
-interface MedicineForm {
+interface DropdownDict {
   value: string;
   viewValue: string;
 }
@@ -22,10 +22,14 @@ export class MedicinePageComponent implements OnInit {
 
   pharmacy: string = ""
   medicineList: Array<Medicine> = []
-  searchAmount: number = 0;
-  searchName: string = "";
-  searchForm: string = "";
-  searchPzn: string = "";
+  searchParam: string = "";
+  searchCriteriaString: string = "";
+  searchCriteria: DropdownDict[] = [
+    {value: 'PZN', viewValue: 'PZN'},
+    {value: 'NAME', viewValue: 'Name'},
+    {value: 'MEDICINE_FORM', viewValue: 'Darreichungsform'},
+    {value: 'AMOUNT', viewValue: 'Menge'}
+  ];
 
   constructor(private medicineService: MedicineService, private router: Router, private dialog: MatDialog) {
   }
@@ -37,8 +41,11 @@ export class MedicinePageComponent implements OnInit {
   async getMedicines(): Promise<void> {
     this.medicineList = await this.medicineService.getMedicines().toPromise();
 
-    console.log(this.medicineList);
 
+  }
+
+  async getMedicinesFiltered(): Promise<void> {
+    this.medicineList = await this.medicineService.getMedicinesFiltered(this.searchCriteriaString, this.searchParam).toPromise();
   }
 
   openDialog(medicine: Medicine) {
@@ -57,10 +64,6 @@ export class MedicinePageComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       this.getMedicines();
     });
-  }
-
-  initSearch() {
-    console.log(this.searchAmount)
   }
 }
 
@@ -93,7 +96,7 @@ export class MedicineManagementDialog {
 })
 export class NewMedicineDialog {
   public medicine: Medicine;
-  medicineForms: MedicineForm[] = [
+  medicineForms: DropdownDict[] = [
     {value: 'PILL', viewValue: 'Pille'},
     {value: 'SYRUP', viewValue: 'Sirup'},
     {value: 'SOLUTION', viewValue: 'Lösung'},

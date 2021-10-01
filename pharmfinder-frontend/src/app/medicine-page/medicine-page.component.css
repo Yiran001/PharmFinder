@@ -39,6 +39,11 @@ body {
   font-size: 24px;
 }
 
+.mat-select {
+  background: white;
+}
+
+
 .table-title .btn {
   color: #000000;
   float: right;

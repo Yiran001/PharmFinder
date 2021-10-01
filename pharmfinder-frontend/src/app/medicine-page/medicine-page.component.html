@@ -26,35 +26,24 @@
         </div>
         <div class="row top-buffer">
           <div class="col">
-            <div class="md-form mt-0">
-              <label class="form-label">PZN:</label>
-              <input class="form-control mr-sm-2" type="text" placeholder="Suche" [(ngModel)]="searchPzn"
-                     type="text" name="pznSearcher">
-            </div>
+            <mat-form-field appearance="outline">
+              <mat-label>Such-Kategorie:</mat-label>
+              <mat-select [(ngModel)]="searchCriteriaString">
+                <mat-option *ngFor="let actualCriteria of searchCriteria" [value]="actualCriteria.value">
+                  {{actualCriteria.viewValue}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
           </div>
           <div class="col">
             <div class="md-form mt-0">
-              <label class="form-label">Name:</label>
-              <input class="form-control mr-sm-2" type="text" placeholder="Suche" [(ngModel)]="searchName"
+              <label class="form-label">Suche:</label>
+              <input class="form-control mr-sm-2" type="text" placeholder="Suche" [(ngModel)]="searchParam"
                      type="text" name="nameSearcher">
             </div>
           </div>
-          <div class="col">
-            <div class="md-form mt-0">
-              <label class="form-label">Form:</label>
-              <input class="form-control mr-sm-2" type="text" placeholder="Suche" [(ngModel)]="searchForm"
-                     type="text" name="formSearcher">
-            </div>
-          </div>
-          <div class="col">
-            <div class="md-form mt-0">
-              <label class="form-label">Menge:</label>
-              <input class="form-control mr-sm-2" type="text" placeholder="Suche" [(ngModel)]="searchAmount"
-                     type="text" name="amountSearcher">
-            </div>
-          </div>
           <div class="col-1">
-            <button type="button" class="btn btn-primary top-buffer" (click)="initSearch()">Los</button>
+            <button type="button" class="btn btn-primary top-buffer" (click)="getMedicinesFiltered()">Los</button>
           </div>
         </div>
       </div>

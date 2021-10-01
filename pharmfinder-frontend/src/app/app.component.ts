@@ -7,17 +7,19 @@ import {TokenStorageService} from "./services/token-storage.service";
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements AfterViewInit{
+export class AppComponent implements AfterViewInit {
   title = 'Apothekenfinder';
   page1 = 'Suchen';
   page2 = 'Bestand';
 
-  websiteTitel='Apothekenfinder';
+  websiteTitel = 'Apothekenfinder';
   isLoggedIn = false;
+  isPharmacist = false;
 
-  constructor(private elementRef: ElementRef, private titleService: Title,private tokenStorageService: TokenStorageService){
+  constructor(private elementRef: ElementRef, private titleService: Title, private tokenStorageService: TokenStorageService) {
     this.titleService.setTitle(this.websiteTitel);
   }
+
   ngOnInit(): void {
     this.isLoggedIn = !!this.tokenStorageService.getToken();
 
@@ -25,7 +27,8 @@ export class AppComponent implements AfterViewInit{
       const user = this.tokenStorageService.getUser();
     }
   }
-  ngAfterViewInit(){
+
+  ngAfterViewInit() {
     this.elementRef.nativeElement.ownerDocument.body.style.backgroundColor = '';
   }
 
