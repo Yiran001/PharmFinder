@@ -40,10 +40,7 @@ public class JwtUserDetailsService implements UserDetailsService {
             return null;
 
         ArrayList<Role> authorities = new ArrayList<>();
-        String[] authorityStrings = user.getAuthorities().split(",");
-        for (String string : authorityStrings) {
-            authorities.add(new Role(string));
-        }
+        authorities.add(user.getAuthority());
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(), user.getPasswordHash(),
                 authorities);

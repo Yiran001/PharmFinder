@@ -2,6 +2,7 @@ package com.pharm.pharmfinder.controller;
 
 import com.pharm.pharmfinder.controller.repositories.UserRepository;
 import com.pharm.pharmfinder.jwt.JwtTokenUtil;
+import com.pharm.pharmfinder.model.Role;
 import com.pharm.pharmfinder.model.User;
 import com.pharm.pharmfinder.model.search_and_filter.ListResponse;
 import com.pharm.pharmfinder.model.search_and_filter.MedicineView;
@@ -49,7 +50,7 @@ public class SearchAndFilterController {
         String jwt = httpRequest.getHeader("Authorization").substring(7);
         String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
         User manipulatingUser = userRepository.findByUsername(jwtUsername);
-        if (manipulatingUser.getAuthorities().contains("MEDICINE_ADMIN"))
+        if (manipulatingUser.getAuthority() == Role.MEDICINE_ADMIN)
             return;
         if (!username.equals(jwtUsername))
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Wrong username");

@@ -1,6 +1,7 @@
 package com.pharm.pharmfinder.config;
 
 import com.pharm.pharmfinder.controller.repositories.UserRepository;
+import com.pharm.pharmfinder.model.Role;
 import com.pharm.pharmfinder.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,9 +35,9 @@ public class AdminInitializer {
             "ada.lovelace@nix.io",
             "dennis.ritchie@nix.io"
     );
-    private final List<String> roles = List.of(
-            "USER_ADMIN",
-            "MEDICINE_ADMIN"
+    private final List<Role> roles = List.of(
+            Role.USER_ADMIN,
+            Role.MEDICINE_ADMIN
     );
 
     public void initialize() {
@@ -48,7 +49,7 @@ public class AdminInitializer {
             admin.setPharmacist(false);
             admin.setEnabled(true);
             admin.setPasswordHash(bcryptEncoder.encode(passwords.get(i)));
-            admin.setAuthorities(roles.get(i));
+            admin.setAuthority(roles.get(i));
             userRepository.save(admin);
         }
     }
