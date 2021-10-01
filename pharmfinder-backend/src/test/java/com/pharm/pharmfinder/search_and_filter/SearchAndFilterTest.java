@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.pharm.pharmfinder.model.MedicineForm;
-import com.pharm.pharmfinder.model.search_and_filter.SearchAndFilterRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.nio.charset.Charset;
 import java.util.UUID;
 
-import static com.pharm.pharmfinder.model.search_and_filter.mapper.JsonHelper.toJson;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 

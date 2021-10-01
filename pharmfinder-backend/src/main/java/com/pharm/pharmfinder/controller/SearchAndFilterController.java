@@ -4,14 +4,12 @@ import com.pharm.pharmfinder.controller.repositories.UserRepository;
 import com.pharm.pharmfinder.jwt.JwtTokenUtil;
 import com.pharm.pharmfinder.model.Role;
 import com.pharm.pharmfinder.model.User;
-import com.pharm.pharmfinder.model.search_and_filter.ListResponse;
 import com.pharm.pharmfinder.model.search_and_filter.MedicineView;
 import com.pharm.pharmfinder.model.search_and_filter.SearchAndFilterRequest;
-import com.pharm.pharmfinder.model.search_and_filter.service.SearchAndFilterService;
+import com.pharm.pharmfinder.search_and_filter.SearchAndFilterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 

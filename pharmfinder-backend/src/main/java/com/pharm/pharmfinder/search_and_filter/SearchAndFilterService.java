@@ -1,4 +1,4 @@
-package com.pharm.pharmfinder.model.search_and_filter.service;
+package com.pharm.pharmfinder.search_and_filter;
 
 import com.pharm.pharmfinder.controller.repositories.PharmacyRepository;
 import com.pharm.pharmfinder.controller.repositories.UserRepository;
