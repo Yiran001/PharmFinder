@@ -30,7 +30,7 @@ import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class PasswordReset {
+public class PasswordResetTest {
 //    test like in registration
     @Autowired
     private MockMvc mockMvc;
