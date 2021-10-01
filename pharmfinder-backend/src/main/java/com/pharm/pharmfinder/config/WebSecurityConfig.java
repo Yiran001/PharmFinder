@@ -55,8 +55,8 @@ public class  WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
+//                .addFilterBefore(new StatelessCSRFFilter(), CsrfFilter.class)
         httpSecurity.cors().and().csrf().disable()
-                .addFilterBefore(new StatelessCSRFFilter(), CsrfFilter.class)
                 .authorizeRequests().antMatchers("/users/registrationConfirm", "/authenticate", "/users/create",
                         "/users/passwordReset", "/users/passwordResetConfirm").permitAll()
                 .antMatchers("/users/ban").hasAuthority("USER_ADMIN")
