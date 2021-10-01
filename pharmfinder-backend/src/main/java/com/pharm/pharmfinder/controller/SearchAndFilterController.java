@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -30,7 +31,7 @@ public class SearchAndFilterController {
     private JwtTokenUtil jwtTokenUtil;
 
     @GetMapping(path="/get")
-    public @ResponseBody ListResponse<MedicineView> searchAndFilter(HttpServletRequest httpRequest){
+    public @ResponseBody List<MedicineView> searchAndFilter(HttpServletRequest httpRequest){
         String username = httpRequest.getParameter("username");
         SearchAndFilterRequest searchAndFilterRequest = new SearchAndFilterRequest();
         searchAndFilterRequest.setUsername(username);
@@ -42,7 +43,7 @@ public class SearchAndFilterController {
         searchAndFilterRequest.setDescending(Boolean.parseBoolean(httpRequest.getParameter("descending")));
         checkAuthorization(username, httpRequest);
         List<MedicineView> list = searchAndFilterService.getMedicines(searchAndFilterRequest);
-        return new ListResponse<>(list);
+        return new ArrayList<>(list);
     }
 
     private void checkAuthorization(String username, HttpServletRequest httpRequest){
