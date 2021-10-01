@@ -27,8 +27,31 @@
         <div class="row top-buffer">
           <div class="col">
             <mat-form-field appearance="outline">
+              <mat-label>Sortier-Kategorie:</mat-label>
+              <mat-select [(ngModel)]="sortCriteriaString" ngDefaultControl>
+                <mat-option *ngFor="let actualCriteria of searchCriteria" [value]="actualCriteria.value">
+                  {{actualCriteria.viewValue}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field appearance="outline">
+              <mat-label>Sortier-Richtung:</mat-label>
+              <mat-select [(ngModel)]="sortDirectionString" ngDefaultControl>
+                <mat-option *ngFor="let actualCriteria of sortDirections" [value]="actualCriteria.value">
+                  {{actualCriteria.viewValue}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-1">
+            <button type="button" class="btn btn-primary top-buffer" (click)="sortMedicines()">Sortieren</button>
+          </div>
+          <div class="col">
+            <mat-form-field appearance="outline">
               <mat-label>Such-Kategorie:</mat-label>
-              <mat-select [(ngModel)]="searchCriteriaString">
+              <mat-select [(ngModel)]="searchCriteriaString" ngDefaultControl>
                 <mat-option *ngFor="let actualCriteria of searchCriteria" [value]="actualCriteria.value">
                   {{actualCriteria.viewValue}}
                 </mat-option>
@@ -43,7 +66,7 @@
             </div>
           </div>
           <div class="col-1">
-            <button type="button" class="btn btn-primary top-buffer" (click)="getMedicinesFiltered()">Los</button>
+            <button type="button" class="btn btn-primary top-buffer" (click)="getMedicinesFiltered()">Suchen</button>
           </div>
         </div>
       </div>

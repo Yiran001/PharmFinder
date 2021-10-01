@@ -10,6 +10,7 @@ export interface Medicine {
   amount: number;
 }
 
+const DEV_URL_CREATE = 'http://localhost:8080/medicines/create';
 const USER_KEY = 'auth-user';
 
 @Injectable({
@@ -17,6 +18,8 @@ const USER_KEY = 'auth-user';
 })
 
 export class MedicineService {
+  createURL = DEV_URL_CREATE
+
 
   constructor(private http: HttpClient) {
   }
@@ -27,7 +30,7 @@ export class MedicineService {
     return this.http.get<Medicine[]>(environment.baseUrl + "medicines/index?username=" + user);
   }
 
-  getMedicinesFiltered(filterCategory: string, filterData: string): Observable<Medicine[]> {
+  getMedicinesFiltered(filterCategory: string, filterData: string) {
     let user = window.sessionStorage.getItem(USER_KEY)
 
     const httpOptions = {
@@ -36,7 +39,7 @@ export class MedicineService {
       }),
     };
 
-    return this.http.get<Medicine[]>(environment.baseUrl + "search_and_filter/get", httpOptions);
+    return this.http.get<Medicine[]>(environment.baseUrl + "search_and_filter/get?username=" + user + "&" + filterCategory + "=" + filterData);
   }
 
   updateMedicines(medicine: Medicine): Observable<Medicine> | null {

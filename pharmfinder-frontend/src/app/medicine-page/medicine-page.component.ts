@@ -25,10 +25,17 @@ export class MedicinePageComponent implements OnInit {
   searchParam: string = "";
   searchCriteriaString: string = "";
   searchCriteria: DropdownDict[] = [
-    {value: 'PZN', viewValue: 'PZN'},
-    {value: 'NAME', viewValue: 'Name'},
-    {value: 'MEDICINE_FORM', viewValue: 'Darreichungsform'},
-    {value: 'AMOUNT', viewValue: 'Menge'}
+    {value: 'pzn', viewValue: 'PZN'},
+    {value: 'friendlyName', viewValue: 'Name'},
+    {value: 'medicineForm', viewValue: 'Darreichungsform'},
+    {value: 'amount', viewValue: 'Menge'}
+  ];
+  sortCriteriaString: string = "";
+  sortDirectionString: string = "";
+  sortDirections: DropdownDict[] = [
+    {value: 'ascending', viewValue: 'Aufsteigend'},
+    {value: 'descending', viewValue: 'Absteigend'},
+
   ];
 
   constructor(private medicineService: MedicineService, private router: Router, private dialog: MatDialog) {
@@ -40,12 +47,18 @@ export class MedicinePageComponent implements OnInit {
 
   async getMedicines(): Promise<void> {
     this.medicineList = await this.medicineService.getMedicines().toPromise();
-
+    console.log(this.medicineList);
 
   }
 
   async getMedicinesFiltered(): Promise<void> {
-    this.medicineList = await this.medicineService.getMedicinesFiltered(this.searchCriteriaString, this.searchParam).toPromise();
+    console.log(this.searchCriteriaString + "      " + this.searchParam)
+    this.medicineService.getMedicinesFiltered(this.searchCriteriaString, this.searchParam).subscribe(
+      (response: Medicine[]) => {
+        console.log(response);
+        this.medicineList = response
+      });
+
   }
 
   openDialog(medicine: Medicine) {
@@ -64,6 +77,42 @@ export class MedicinePageComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       this.getMedicines();
     });
+  }
+
+  public reload() {
+    window.location.reload();
+  }
+
+  sortMedicines() {
+    switch (this.sortCriteriaString) {
+      case "pzn":
+        if (this.sortDirectionString == "ascending")
+          this.medicineList.sort((a, b) => (a.pzn < b.pzn ? -1 : 1))
+        else
+          this.medicineList.sort((a, b) => (a.pzn > b.pzn ? -1 : 1))
+        break
+      case "friendlyName":
+        if (this.sortDirectionString == "ascending")
+          this.medicineList.sort((a, b) => (a.friendlyName < b.friendlyName ? -1 : 1))
+        else
+          this.medicineList.sort((a, b) => (a.friendlyName > b.friendlyName ? -1 : 1))
+        break
+      case "medicineForm":
+        if (this.sortDirectionString == "ascending")
+          this.medicineList.sort((a, b) => (a.medicineForm < b.medicineForm ? -1 : 1))
+        else
+          this.medicineList.sort((a, b) => (a.medicineForm > b.medicineForm ? -1 : 1))
+        break
+      case "amount":
+        if (this.sortDirectionString == "ascending")
+          this.medicineList.sort((a, b) => (a.amount < b.amount ? -1 : 1))
+        else
+          this.medicineList.sort((a, b) => (a.amount > b.amount ? -1 : 1))
+        break
+      default:
+        break
+    }
+
   }
 }
 

@@ -39,8 +39,8 @@ body {
   font-size: 24px;
 }
 
-.mat-select {
-  background: white;
+.mat-form-field {
+  background-color: white;
 }
 
 
