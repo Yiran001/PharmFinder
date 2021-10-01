@@ -42,6 +42,9 @@
           <div class="form-group text-center btn-block">
             <button class="btn btn-primary btn-block">Apotheken finden</button>
           </div>
+          <div class="alert alert-warning" *ngIf="f.submitted && otherErrorOccurred">
+            Passwort oder Nutzername falsch!<br />{{ errorMessage }}
+          </div>
         </form>
         <div class="form-group text-center btn-block">
           <button class="btn btn-danger btn-block" (click)="findMe()">finde mich</button>

@@ -21,11 +21,12 @@ export interface marker{
 export class SearchPharmaciesComponent implements OnInit {
 
   medicineNotFound=false;
+  otherErrorOccurred=false;
   markers: Array<marker> =[];
   foundPharms: Array<foundPharmacy> = [];
-  foundPharm: foundPharmacy | undefined;
   markerAddress: string='';
   markerDist: string='';
+  errorMessage='Suche des Medikamentes fehlgeschlagen';
 
   center: google.maps.LatLngLiteral = { lat: 52.52, lng: 13.4 };
   mapOptions: google.maps.MapOptions = {
@@ -98,11 +99,10 @@ export class SearchPharmaciesComponent implements OnInit {
           this.medicineNotFound=true;
       }else if(err.status==401){
         this.app.logout();
-      }
+      }else
+        this.otherErrorOccurred=true;
     });
     if(this.foundPharms!=undefined) {
-      // console.log(this.map.getBounds()?.getNorthEast());
-      // console.log(this.map.getBounds()?.getSouthWest());
       this.foundPharms.forEach((element) => {
         this.addMarker(element.latitude, element.longitude, element.street + ' ' + element.houseNumber + ',' + element.postcode, element.dist)
 
