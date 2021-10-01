@@ -80,18 +80,22 @@ public class MedicinesController {
         String username = request.getParameter("username");
         String amountString = request.getParameter("amount");
         int amount = Integer.parseInt(amountString);
-        checkAuthorization(request, username);
+        boolean admin = checkAuthorization(request, username);
 
         Pharmacy pharmacy = getPharmacy(username);
         PharmacyMedicine pharmacyMedicine = getPharmacyMedicine(pzn, pharmacy);
         Medicine medicine = pharmacyMedicine.getMedicine();
-        if (amount < 0) {
+        if (amount < 0){
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Amount can not be negative");
         }
-        medicine.setFriendlyName(friendlyName);
-        medicine.setMedicineForm(MedicineForm.valueOf(medicineForm));
-        pharmacyMedicine.setAmount(amount);
-        medicineRepository.save(medicine);
+        if (admin){
+            medicine.setFriendlyName(friendlyName);
+            medicine.setMedicineForm(MedicineForm.valueOf(medicineForm));
+            pharmacyMedicine.setAmount(amount);
+            medicineRepository.save(medicine);
+        } else {
+            pharmacyMedicine.setAmount(amount);
+        }
         pharmacyMedicineRepository.save(pharmacyMedicine);
         return "Medicine updated";
     }
@@ -143,10 +147,10 @@ public class MedicinesController {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pzn not found");
     }
 
-    private Pharmacy getPharmacy(String name) {
+    private Pharmacy getPharmacy(String name){
         Pharmacy pharmacy = null;
         for (Pharmacy potentialPharmacy : pharmacyRepository.findAll()) {
-            if (potentialPharmacy.getPharmacyName().equals(name)) {
+            if (potentialPharmacy.getPharmacyName().equals(name)){
                 pharmacy = potentialPharmacy;
             }
         }
@@ -155,22 +159,22 @@ public class MedicinesController {
         return pharmacy;
     }
 
-    private void savePharmacyMedicineToMedicine(Medicine medicine, PharmacyMedicine pharmacyMedicine) {
+    private void savePharmacyMedicineToMedicine(Medicine medicine, PharmacyMedicine pharmacyMedicine){
         Set<PharmacyMedicine> pharmacyMedicines = medicine.getPharmacyMedicines();
         pharmacyMedicines.add(pharmacyMedicine);
         medicine.setPharmacyMedicines(pharmacyMedicines);
     }
 
-    private void savePharmacyMedicineToPharmacy(Pharmacy pharmacy, PharmacyMedicine pharmacyMedicine) {
+    private void savePharmacyMedicineToPharmacy(Pharmacy pharmacy, PharmacyMedicine pharmacyMedicine){
         Set<PharmacyMedicine> pharmacyMedicines = pharmacy.getPharmacyMedicines();
         pharmacyMedicines.add(pharmacyMedicine);
         pharmacy.setPharmacyMedicines(pharmacyMedicines);
     }
 
-    private Medicine getOrCreateMedicine(String pzn, String friendlyName, MedicineForm medicineForm) {
+    private Medicine getOrCreateMedicine(String pzn, String friendlyName, MedicineForm medicineForm){
         Medicine result = null;
-        for (Medicine medicine : medicineRepository.findAll()) {
-            if (medicine.getPzn().equals(pzn)) {
+        for(Medicine medicine : medicineRepository.findAll()){
+            if (medicine.getPzn().equals(pzn)){
                 result = medicine;
                 break;
             }
@@ -178,7 +182,7 @@ public class MedicinesController {
         return Objects.requireNonNullElseGet(result, () -> new Medicine(pzn, new HashSet<PharmacyMedicine>(), friendlyName, medicineForm));
     }
 
-    private boolean pharmacyMedicineExists(Pharmacy pharmacy, Medicine medicine) {
+    private boolean pharmacyMedicineExists(Pharmacy pharmacy, Medicine medicine){
         Set<PharmacyMedicine> existing = medicine.getPharmacyMedicines();
         for (PharmacyMedicine pharmacyMedicine : existing) {
             if (pharmacyMedicine.getPharmacy().getPharmacyName().equals(pharmacy.getPharmacyName()))
@@ -187,13 +191,22 @@ public class MedicinesController {
         return false;
     }
 
-    private void checkAuthorization(HttpServletRequest request, String username) {
+    private boolean checkAuthorization(HttpServletRequest request, String username){
         String jwt = request.getHeader("Authorization").substring(7);
         String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
         User manipulatingUser = userRepository.findByUsername(jwtUsername);
-        if (manipulatingUser.getAuthorities().contains("MEDICINE_ADMIN"))
-            return;
-        if (!username.equals(jwtUsername))
+        if (manipulatingUser.getAuthorities().contains("MEDICINE_ADMIN")) {
+            return true;
+        }
+        if (!username.equals(jwtUsername)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Wrong username");
+        }
+        checkPharmacist(manipulatingUser);
+        return false;
+    }
+
+    private void checkPharmacist(User user){
+        if (!user.isPharmacist())
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Not a pharmacist");
     }
 }

@@ -30,15 +30,23 @@ public class SearchAndFilterController {
     private JwtTokenUtil jwtTokenUtil;
 
     @GetMapping(path="/get")
-    public @ResponseBody ListResponse<MedicineView> searchAndFilter(@RequestBody SearchAndFilterRequest searchAndFilterRequest, HttpServletRequest httpRequest){
-        checkAuthorization(searchAndFilterRequest, httpRequest);
+    public @ResponseBody ListResponse<MedicineView> searchAndFilter(HttpServletRequest httpRequest){
+        String username = httpRequest.getParameter("username");
+        SearchAndFilterRequest searchAndFilterRequest = new SearchAndFilterRequest();
+        searchAndFilterRequest.setUsername(username);
+        searchAndFilterRequest.setPzn(httpRequest.getParameter("pzn"));
+        searchAndFilterRequest.setFriendlyName(httpRequest.getParameter("friendlyName"));
+        searchAndFilterRequest.setMedicineForm(httpRequest.getParameter("medicineForm"));
+        searchAndFilterRequest.setAmount(httpRequest.getParameter("amount"));
+        searchAndFilterRequest.setSortBy(httpRequest.getParameter("sortBy"));
+        searchAndFilterRequest.setDescending(Boolean.parseBoolean(httpRequest.getParameter("descending")));
+        checkAuthorization(username, httpRequest);
         List<MedicineView> list = searchAndFilterService.getMedicines(searchAndFilterRequest);
         return new ListResponse<>(list);
     }
 
-    private void checkAuthorization(SearchAndFilterRequest searchAndFilterRequest, HttpServletRequest httpRequest){
+    private void checkAuthorization(String username, HttpServletRequest httpRequest){
         String jwt = httpRequest.getHeader("Authorization").substring(7);
-        String username = searchAndFilterRequest.getUsername();
         String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
         User manipulatingUser = userRepository.findByUsername(jwtUsername);
         if (manipulatingUser.getAuthorities().contains("MEDICINE_ADMIN"))

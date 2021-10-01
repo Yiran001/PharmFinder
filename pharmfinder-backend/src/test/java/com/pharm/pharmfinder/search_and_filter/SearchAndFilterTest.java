@@ -241,14 +241,12 @@ public class SearchAndFilterTest {
         Assertions.assertFalse(result.contains(pzn3));
     }
 
-//    string1 should get returned first, string3 last
+    //    string1 should get returned first, string3 last
     private void checkSorting(String username, String jwt, String sortBy, String string1, String string2, String string3) throws Exception {
-        SearchAndFilterRequest request = new SearchAndFilterRequest();
-        request.setUsername(username);
-        request.setSortBy(sortBy);
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
                 .get("/search_and_filter/get")
-                .content(toJson(objectMapper, request))
+                .param("username", username)
+                .param("sortBy", sortBy)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + jwt);
@@ -265,13 +263,11 @@ public class SearchAndFilterTest {
 
     //    string1 should get returned first, string3 last
     private void checkSortingDescending(String username, String jwt, String sortBy, String string1, String string2, String string3) throws Exception {
-        SearchAndFilterRequest request = new SearchAndFilterRequest();
-        request.setUsername(username);
-        request.setSortBy(sortBy);
-        request.setDescending(true);
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
                 .get("/search_and_filter/get")
-                .content(toJson(objectMapper, request))
+                .param("username", username)
+                .param("sortBy", sortBy)
+                .param("descending", "true")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + jwt);
@@ -288,13 +284,11 @@ public class SearchAndFilterTest {
 
     //    string1 should get returned first, string3 last
     private String searchFriendlyNameAndCheckSorting(String username, String jwt, String searchFor, String sortBy, String string1, String string2, String string3) throws Exception {
-        SearchAndFilterRequest request = new SearchAndFilterRequest();
-        request.setUsername(username);
-        request.setFriendlyName(searchFor);
-        request.setSortBy(sortBy);
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
                 .get("/search_and_filter/get")
-                .content(toJson(objectMapper, request))
+                .param("username", username)
+                .param("friendlyName", friendlyName)
+                .param("sortBy", sortBy)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + jwt);
@@ -312,13 +306,11 @@ public class SearchAndFilterTest {
 
     //    string1 should get returned first, string3 last
     private String searchMedicineFormAndCheckSorting(String username, String jwt, String searchFor, String sortBy, String string1, String string2, String string3) throws Exception {
-        SearchAndFilterRequest request = new SearchAndFilterRequest();
-        request.setUsername(username);
-        request.setMedicineForm(searchFor);
-        request.setSortBy(sortBy);
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
                 .get("/search_and_filter/get")
-                .content(toJson(objectMapper, request))
+                .param("username", username)
+                .param("medicineForm", searchFor)
+                .param("sortBy", sortBy)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + jwt);
@@ -336,14 +328,12 @@ public class SearchAndFilterTest {
 
     //    string1 should get returned first, string3 last
     private String searchMedicineFormAndFriendlyNameAndCheckSorting(String username, String jwt, String medicineForm, String friendlyName, String sortBy, String string1, String string2, String string3) throws Exception {
-        SearchAndFilterRequest request = new SearchAndFilterRequest();
-        request.setUsername(username);
-        request.setMedicineForm(medicineForm);
-        request.setFriendlyName(friendlyName);
-        request.setSortBy(sortBy);
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
                 .get("/search_and_filter/get")
-                .content(toJson(objectMapper, request))
+                .param("username", username)
+                .param("friendlyName", friendlyName)
+                .param("medicineForm", medicineForm)
+                .param("sortBy", sortBy)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + jwt);
@@ -360,12 +350,10 @@ public class SearchAndFilterTest {
     }
 
     private String searchForAmount(String username, String jwt, String amount) throws Exception {
-        SearchAndFilterRequest request = new SearchAndFilterRequest();
-        request.setUsername(username);
-        request.setAmount(amount);
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
                 .get("/search_and_filter/get")
-                .content(toJson(objectMapper, request))
+                .param("username", username)
+                .param("amount", amount)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + jwt);
@@ -376,12 +364,13 @@ public class SearchAndFilterTest {
     }
 
     private void searchInRequest(String username, String jwt, String pzn, String friendlyName, String medicineForm, String amount) throws Exception {
-        SearchAndFilterRequest request = new SearchAndFilterRequest();
-        request.setUsername(username);
-        request.setPzn(pzn);
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
                 .get("/search_and_filter/get")
-                .content(toJson(objectMapper, request))
+                .param("username", username)
+                .param("pzn", pzn)
+                .param("friendlyName", friendlyName)
+                .param("medicineForm", medicineForm)
+                .param("amount", amount)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + jwt);
