@@ -7,7 +7,11 @@
     </div>
     <div class="row">
       <mat-form-field appearance="outline">
-        <input matInput [(ngModel)]="medicine.pzn">
+        <input type="number" matInput [(ngModel)]="medicine.pzn"
+               required
+               minlength="8"
+               maxlength="8">
+        <mat-hint>Eine PZN muss eine Länge von 8 haben und nur aus Zahlen bestehen!</mat-hint>
       </mat-form-field>
     </div>
   </div>
@@ -43,15 +47,31 @@
       <h6 class="mb-0">Menge</h6>
     </div>
     <mat-form-field appearance="outline">
-      <input matInput [(ngModel)]="medicine.amount">
+      <input type="number" matInput [(ngModel)]="medicine.amount">
     </mat-form-field>
   </div>
   <hr>
+  <div class="row">
+    <mat-error *ngIf="pznAlreadyExists== true">
+      PZN existiert bereits
+    </mat-error>
+  </div>
   <div class="row">
     <div class="col-sm-12">
       <button class="btn btn-dark" (click)="handleChanges()">Erstellen</button>
     </div>
   </div>
+  <div class="row">
+    <mat-error *ngIf="pznLengthAcceptable== false && buttonPressed == true">
+      PZN-Länge nicht zulässig
+    </mat-error>
+  </div>
+  <div class="row">
+    <mat-error *ngIf="allFieldsFilled== false && buttonPressed == true">
+      Bitte füllen Sie erst alle Felder aus
+    </mat-error>
+  </div>
+
 </div>
 
 </body>

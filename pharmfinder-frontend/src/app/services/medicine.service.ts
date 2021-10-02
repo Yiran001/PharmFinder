@@ -11,6 +11,10 @@ export interface Medicine {
 }
 
 const DEV_URL_CREATE = 'http://localhost:8080/medicines/create';
+const DEV_URL_GET = 'http://localhost:8080/medicines/index';
+const DEV_URL_DELETE = 'http://localhost:8080/medicines/delete';
+const DEV_URL_UPDATE = 'http://localhost:8080/medicines/update';
+const DEV_URL_SEARCH_AND_FILTER_GET = 'http://localhost:8080/search_and_filter/get';
 const USER_KEY = 'auth-user';
 
 @Injectable({
@@ -18,7 +22,11 @@ const USER_KEY = 'auth-user';
 })
 
 export class MedicineService {
-  createURL = DEV_URL_CREATE
+  createURL = DEV_URL_CREATE;
+  getURL = DEV_URL_GET;
+  deleteURL = DEV_URL_DELETE;
+  updateURL = DEV_URL_UPDATE;
+  searchAndFilterGetURL = DEV_URL_SEARCH_AND_FILTER_GET;
 
 
   constructor(private http: HttpClient) {
@@ -39,7 +47,25 @@ export class MedicineService {
       }),
     };
 
-    return this.http.get<Medicine[]>(environment.baseUrl + "search_and_filter/get?username=" + user + "&" + filterCategory + "=" + filterData);
+    switch (filterCategory) {
+      case "pzn":
+        return this.http.get<Medicine[]>(environment.baseUrl + "search_and_filter/get?username=" + user + "&" + filterCategory + "=" + filterData);
+        break
+      case "friendlyName":
+        return this.http.get<Medicine[]>(environment.baseUrl + "search_and_filter/get?username=" + user + "&" + filterCategory + "=" + filterData);
+        break
+      case "medicineForm":
+        return this.http.get<Medicine[]>(environment.baseUrl + "search_and_filter/get?username=" + user + "&" + filterCategory + "=" + filterData);
+        break
+      case "amount":
+        return this.http.get<Medicine[]>(environment.baseUrl + "search_and_filter/get?username=" + user + "&" + filterCategory + "=" + filterData);
+        break
+      default:
+        return this.http.get<Medicine[]>(environment.baseUrl + "medicines/index?username=" + user);
+        break
+
+
+    }
   }
 
   updateMedicines(medicine: Medicine): Observable<Medicine> | null {
@@ -57,9 +83,7 @@ export class MedicineService {
     let user = window.sessionStorage.getItem(USER_KEY)
     if (!!user) {
       const parameters = new HttpParams().set("pzn", medicine.pzn).set("friendlyName", medicine.friendlyName).set("medicineForm", medicine.medicineForm).set("username", user).set("amount", medicine.amount);
-      const req = this.http.post<Medicine>(environment.baseUrl + "medicines/create", parameters);
-      req.subscribe();
-      return req;
+      return this.http.post<Medicine>(environment.baseUrl + "medicines/create", parameters);
     }
     return null
 
@@ -71,4 +95,6 @@ export class MedicineService {
     req.subscribe();
     return req;
   }
+
+
 }

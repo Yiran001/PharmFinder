@@ -2,6 +2,7 @@ import {Component, Inject, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {Medicine, MedicineService} from "../services/medicine.service";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
+import {HttpErrorResponse} from "@angular/common/http";
 
 export interface DialogData {
   dialogMedicine: Medicine;
@@ -20,22 +21,21 @@ interface DropdownDict {
 })
 export class MedicinePageComponent implements OnInit {
 
-  pharmacy: string = ""
   medicineList: Array<Medicine> = []
   searchParam: string = "";
   searchCriteriaString: string = "";
+  sortCriteriaString: string = "";
+  sortDirectionString: string = "";
+
   searchCriteria: DropdownDict[] = [
     {value: 'pzn', viewValue: 'PZN'},
     {value: 'friendlyName', viewValue: 'Name'},
     {value: 'medicineForm', viewValue: 'Darreichungsform'},
     {value: 'amount', viewValue: 'Menge'}
   ];
-  sortCriteriaString: string = "";
-  sortDirectionString: string = "";
   sortDirections: DropdownDict[] = [
     {value: 'ascending', viewValue: 'Aufsteigend'},
     {value: 'descending', viewValue: 'Absteigend'},
-
   ];
 
   constructor(private medicineService: MedicineService, private router: Router, private dialog: MatDialog) {
@@ -47,40 +47,13 @@ export class MedicinePageComponent implements OnInit {
 
   async getMedicines(): Promise<void> {
     this.medicineList = await this.medicineService.getMedicines().toPromise();
-    console.log(this.medicineList);
-
   }
 
   async getMedicinesFiltered(): Promise<void> {
-    console.log(this.searchCriteriaString + "      " + this.searchParam)
     this.medicineService.getMedicinesFiltered(this.searchCriteriaString, this.searchParam).subscribe(
       (response: Medicine[]) => {
-        console.log(response);
         this.medicineList = response
       });
-
-  }
-
-  openDialog(medicine: Medicine) {
-    const dialogRef = this.dialog.open(MedicineManagementDialog, {
-      data: {
-        dialogMedicine: medicine
-      }
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      this.getMedicines();
-    });
-  }
-
-  openNewMedicineDialog() {
-    const dialogRef = this.dialog.open(NewMedicineDialog);
-    dialogRef.afterClosed().subscribe(result => {
-      this.getMedicines();
-    });
-  }
-
-  public reload() {
-    window.location.reload();
   }
 
   sortMedicines() {
@@ -112,7 +85,24 @@ export class MedicinePageComponent implements OnInit {
       default:
         break
     }
+  }
 
+  openDialog(medicine: Medicine) {
+    const dialogRef = this.dialog.open(MedicineManagementDialog, {
+      data: {
+        dialogMedicine: medicine
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      this.getMedicines();
+    });
+  }
+
+  openNewMedicineDialog() {
+    const dialogRef = this.dialog.open(NewMedicineDialog);
+    dialogRef.afterClosed().subscribe(result => {
+      this.getMedicines();
+    });
   }
 }
 
@@ -122,14 +112,12 @@ export class MedicinePageComponent implements OnInit {
 })
 export class MedicineManagementDialog {
 
-
   constructor(public dialogRef: MatDialogRef<MedicineManagementDialog>, @Inject(MAT_DIALOG_DATA) public data: DialogData, private medicineService: MedicineService) {
   }
 
   handleChanges() {
     this.medicineService.updateMedicines(this.data.dialogMedicine);
     this.dialogRef.close();
-
   }
 
   deleteMedicine() {
@@ -144,7 +132,12 @@ export class MedicineManagementDialog {
   templateUrl: 'new-medicine-dialog.html',
 })
 export class NewMedicineDialog {
-  public medicine: Medicine;
+  medicine: Medicine;
+  pznLengthAcceptable: boolean = false;
+  allFieldsFilled: boolean = false;
+  buttonPressed: boolean = false;
+  pznAlreadyExists: boolean = false;
+  creationFailed: boolean = false;
   medicineForms: DropdownDict[] = [
     {value: 'PILL', viewValue: 'Pille'},
     {value: 'SYRUP', viewValue: 'Sirup'},
@@ -158,7 +151,7 @@ export class NewMedicineDialog {
     {value: 'OTHER', viewValue: 'Andere'}
   ];
 
-  constructor(public dialogRef: MatDialogRef<MedicineManagementDialog>, private medicineService: MedicineService) {
+  constructor(public dialogRef: MatDialogRef<NewMedicineDialog>, private medicineService: MedicineService) {
     this.medicine = {
       pzn: "",
       friendlyName: "",
@@ -168,8 +161,33 @@ export class NewMedicineDialog {
   }
 
   handleChanges() {
-    this.medicineService.createMedicine(this.medicine);
-    this.dialogRef.close();
+    this.buttonPressed = true;
+    this.pznAlreadyExists = false;
+    if (this.medicine.pzn != "" && this.medicine.friendlyName != "" && this.medicine.medicineForm != "" && this.medicine.amount != 0) {
+      this.allFieldsFilled = true;
+      if (this.medicine.pzn.length == 8) {
+        this.pznLengthAcceptable = true;
+        const request = this.medicineService.createMedicine(this.medicine);
+        if (!!request) {
+          request.subscribe(error => {
+            console.error('error' + error);
+
+            if (error instanceof HttpErrorResponse) {
+              if (error.status === 409)
+                this.pznAlreadyExists = true;
+              this.creationFailed = true
+            }
+          });
+          if (!this.creationFailed)
+            this.dialogRef.close();
+        } else {
+          this.pznLengthAcceptable = false;
+        }
+      } else
+        this.allFieldsFilled = false;
+    }
+
+
   }
 }
 
