@@ -1,5 +1,7 @@
 package com.pharm.pharmfinder.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -11,6 +13,7 @@ public class Medicine {
     @Id
     private String pzn;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "medicine", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PharmacyMedicine> pharmacyMedicines = new HashSet<>();
 
@@ -58,16 +61,6 @@ public class Medicine {
 
     public void setMedicineForm(MedicineForm medicineForm) {
         this.medicineForm = medicineForm;
-    }
-
-    @Override
-    public String toString() {
-        return "Medicine{" +
-                "pzn='" + pzn + '\'' +
-                ", pharmacyMedicines=" + pharmacyMedicines +
-                ", friendlyName='" + friendlyName + '\'' +
-                ", medicineForm=" + medicineForm +
-                '}';
     }
 }
 

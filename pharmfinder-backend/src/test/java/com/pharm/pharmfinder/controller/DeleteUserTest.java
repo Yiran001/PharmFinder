@@ -1,10 +1,7 @@
 package com.pharm.pharmfinder.controller;
 
 import com.pharm.pharmfinder.controller.repositories.UserRepository;
-import com.pharm.pharmfinder.controller.repositories.VerificationTokenRepository;
 import com.pharm.pharmfinder.jwt.JwtUserDetailsService;
-import com.pharm.pharmfinder.model.User;
-import com.pharm.pharmfinder.model.mail.VerificationToken;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -29,7 +26,7 @@ public class DeleteUserTest {
     private JwtUserDetailsService jwtUserDetailsService;
 
     //    User data
-    String username = "testUser";
+    String username = "name";
     String email = "PharmacyFinderHTW@gmail.com";
     String password = "password";
     String street = "streetOne";

@@ -1,10 +1,11 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {HttpErrorResponse} from "@angular/common/http";
 import {throwError} from "rxjs";
 import {AuthService} from "../services/auth.service";
 import {TokenStorageService} from "../services/token-storage.service";
 import {Router} from "@angular/router";
-import {NgForm} from "@angular/forms";
+import {User} from "../user";
+import {ProfileService} from "../services/profile.service";
 
 
 @Component({
@@ -25,15 +26,17 @@ export class LoginComponent implements OnInit {
   isSuccessful = false;
   isLoginFailed = false;
   errorMessage = '';
-
+  userList: Array<User> = [];
+  userTemp: User | undefined;
 
   constructor(
     private authService: AuthService,
-    private tokenStorage: TokenStorageService, private router:Router) {
+    private tokenStorage: TokenStorageService, private router: Router, private profileService: ProfileService) {
 
   }
+
   ngOnInit(): void {
-    if(this.tokenStorage.getToken()!=null){
+    if (this.tokenStorage.getToken() != null) {
       this.router.navigate(['/home']).then();
     }
 
@@ -41,11 +44,12 @@ export class LoginComponent implements OnInit {
 
   onSubmit(): void {
 
-    const { username, password } = this.form;
-    this.login(username,password);
+    const {username, password} = this.form;
+    this.login(username, password);
   }
-  public login(username:string,password:string){
-    this.authService.login(username, password ).subscribe(
+
+  public login(username: string, password: string) {
+    this.authService.login(username, password).subscribe(
       data => {
         this.tokenStorage.saveToken(data.token);
         console.log(data);
@@ -55,7 +59,7 @@ export class LoginComponent implements OnInit {
         this.reload();
       },
       error => {
-        console.log('error'+error);
+        console.log('error' + error);
         this.isLoginFailed = true;
 
         if (error instanceof HttpErrorResponse) {
@@ -78,9 +82,13 @@ export class LoginComponent implements OnInit {
         return throwError(error);
       }
     );
-
+    this.profileService.getUsers().subscribe(
+      data => {
+        window.sessionStorage.setItem("IS_PHARMACIST", String(data[0].pharmacist));
+      });
   }
-  public reload(){
+
+  public reload() {
     window.location.reload();
   }
 

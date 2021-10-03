@@ -1,4 +1,4 @@
-package com.pharm.pharmfinder.model.mail;
+package com.pharm.pharmfinder.model.mail.registration;
 
 import com.pharm.pharmfinder.model.User;
 import lombok.Getter;

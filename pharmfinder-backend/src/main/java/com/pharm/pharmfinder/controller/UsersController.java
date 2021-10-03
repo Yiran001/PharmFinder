@@ -7,11 +7,14 @@ import com.pharm.pharmfinder.controller.repositories.PharmacyRepository;
 import com.pharm.pharmfinder.controller.repositories.UserRepository;
 import com.pharm.pharmfinder.jwt.JwtTokenUtil;
 import com.pharm.pharmfinder.jwt.JwtUserDetailsService;
+import com.pharm.pharmfinder.model.Role;
+import com.pharm.pharmfinder.model.mail.password.OnPasswordResetEvent;
+import com.pharm.pharmfinder.model.mail.password.PasswordResetToken;
 import com.pharm.pharmfinder.model.Address;
 import com.pharm.pharmfinder.model.Pharmacy;
 import com.pharm.pharmfinder.model.User;
-import com.pharm.pharmfinder.model.mail.OnRegistrationCompleteEvent;
-import com.pharm.pharmfinder.model.mail.VerificationToken;
+import com.pharm.pharmfinder.model.mail.registration.OnRegistrationCompleteEvent;
+import com.pharm.pharmfinder.model.mail.registration.RegistrationVerificationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
@@ -23,11 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @CrossOrigin
@@ -81,7 +80,7 @@ public class UsersController {
      */
     @PostMapping(path = "/create")
     public @ResponseBody
-    String create(HttpServletRequest request, @RequestParam String username, @RequestParam String email, @RequestParam boolean isPharmacist, @RequestParam String password, @RequestParam String addressStreet, @RequestParam String addressHouseNumber, @RequestParam String addressPostcode, @RequestParam String latitude, @RequestParam String longitude) throws UsernameAlreadyTakenException {
+    String create(HttpServletRequest request, @RequestParam String username, @RequestParam String email, @RequestParam boolean isPharmacist, @RequestParam String password, @RequestParam String addressStreet, @RequestParam String addressHouseNumber, @RequestParam String addressPostcode) throws UsernameAlreadyTakenException {
         String registration_env_var = System.getenv("REGISTRATION_EMAIL");
         boolean no_email_registration = registration_env_var == null || !registration_env_var.equalsIgnoreCase("true");
 
@@ -93,7 +92,7 @@ public class UsersController {
 //        if env var is set, and equals to true, account has to be activated via email
         user.setEnabled(no_email_registration);
         user.setPasswordHash(bcryptEncoder.encode(password));
-        user.setAuthorities("");
+        user.setAuthority(Role.USER);
         userRepository.save(user);
         Address userAddress = new Address(user, addressStreet, addressHouseNumber, addressPostcode);
         addressRepository.save(userAddress);
@@ -118,8 +117,7 @@ public class UsersController {
     }
 
     @PutMapping(path = "/update")
-    public @ResponseBody
-    String
+    public @ResponseBody String
     update(HttpServletRequest request) throws NoSuchUsernameException {
         String originalUsername = request.getParameter("originalUsername");
         String username = request.getParameter("username");
@@ -154,6 +152,7 @@ public class UsersController {
         }
 
         throw new NoSuchUsernameException();
+
     }
 
     @DeleteMapping(path = "/delete")
@@ -166,14 +165,15 @@ public class UsersController {
     }
 
     @GetMapping(path = "/index")
-    public @ResponseBody
-    String index(HttpServletRequest request) {
+    public @ResponseBody String index(HttpServletRequest request) {
         String jwt = request.getHeader("Authorization").substring(7);
         String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
         User manipulatingUser = userRepository.findByUsername(jwtUsername);
-        if (manipulatingUser.getAuthorities().contains("USER_ADMIN"))
-            return userRepository.findAll().toString();
-        return manipulatingUser.toString();
+        if (manipulatingUser.getAuthority() == Role.USER_ADMIN)
+            return userRepository.findAll();
+        ArrayList<User> list = new ArrayList<>();
+        list.add(manipulatingUser);
+        return list;
     }
 
     @PutMapping(path = "/ban")
@@ -197,27 +197,61 @@ public class UsersController {
     }
 
     @GetMapping(path = "/registrationConfirm", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, String>> confirmRegistration(HttpServletRequest request) {
-
+    public ResponseEntity<Map<String, String>> registrationConfirm(HttpServletRequest request) {
         String token = request.getParameter("token");
-        VerificationToken verificationToken = jwtUserDetailsService.getVerificationToken(token);
-        if (verificationToken == null) {
+        RegistrationVerificationToken registrationVerificationToken = jwtUserDetailsService.getVerificationToken(token);
+        if (registrationVerificationToken == null) {
             Map<String, String> jsonResponse = Collections.singletonMap("response", "Invalid token");
             return new ResponseEntity<>(jsonResponse, HttpStatus.FORBIDDEN);
         }
 
-        User user = verificationToken.getUser();
+        User user = registrationVerificationToken.getUser();
         Calendar cal = Calendar.getInstance();
-        if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+        if ((registrationVerificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
             Map<String, String> jsonResponse = Collections.singletonMap("response", "message expired");
             return new ResponseEntity<>(jsonResponse, HttpStatus.FORBIDDEN);
         }
 
         user.setEnabled(true);
         userRepository.save(user);
-        jwtUserDetailsService.deleteVerificationToken(verificationToken);
+        jwtUserDetailsService.deleteVerificationToken(registrationVerificationToken);
 
         Map<String, String> jsonResponse = Collections.singletonMap("response", "user enabled");
+        return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/passwordReset")
+    public @ResponseBody String passwordReset(HttpServletRequest request){
+        String username = request.getParameter("username");
+        String newPassword = request.getParameter("newPassword");
+        User user = userRepository.findByUsername(username);
+        if (user == null)
+            return "Unknown username";
+
+        String appUrl = request.getContextPath();
+        eventPublisher.publishEvent(new OnPasswordResetEvent(appUrl, request.getLocale(), user, newPassword));
+        return "Reset initialized";
+    }
+
+    @GetMapping(path = "/passwordResetConfirm")
+    public ResponseEntity<Map<String, String>> passwordResetConfirm(HttpServletRequest request) {
+        String token = request.getParameter("token");
+        PasswordResetToken passwordResetToken = jwtUserDetailsService.getPasswordResetToken(token);
+        if (passwordResetToken == null) {
+            Map<String, String> jsonResponse = Collections.singletonMap("response", "invalid token");
+            return new ResponseEntity<>(jsonResponse, HttpStatus.FORBIDDEN);
+        }
+
+        User user = passwordResetToken.getUser();
+        Calendar cal = Calendar.getInstance();
+        if ((passwordResetToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+            Map<String, String> jsonResponse = Collections.singletonMap("response", "token expired");
+            return new ResponseEntity<>(jsonResponse, HttpStatus.FORBIDDEN);
+        }
+
+        user.setPasswordHash(bcryptEncoder.encode(passwordResetToken.getNewPassword()));
+        userRepository.save(user);
+        Map<String, String> jsonResponse = Collections.singletonMap("response", "password changed");
         return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
     }
 
@@ -233,7 +267,7 @@ public class UsersController {
         String jwt = request.getHeader("Authorization").substring(7);
         String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
         User manipulatingUser = userRepository.findByUsername(jwtUsername);
-        if (manipulatingUser.getAuthorities().contains("USER_ADMIN"))
+        if (manipulatingUser.getAuthority() == Role.USER_ADMIN)
             return;
         if (!username.equals(jwtUsername))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Wrong username");

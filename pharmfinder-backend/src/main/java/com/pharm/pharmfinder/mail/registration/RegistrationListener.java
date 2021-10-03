@@ -2,7 +2,7 @@ package com.pharm.pharmfinder.mail.registration;
 
 import com.pharm.pharmfinder.jwt.JwtUserDetailsService;
 import com.pharm.pharmfinder.model.User;
-import com.pharm.pharmfinder.model.mail.OnRegistrationCompleteEvent;
+import com.pharm.pharmfinder.model.mail.registration.OnRegistrationCompleteEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.mail.SimpleMailMessage;

@@ -3,7 +3,7 @@ package com.pharm.pharmfinder.mail;
 import com.pharm.pharmfinder.controller.repositories.*;
 import com.pharm.pharmfinder.jwt.JwtUserDetailsService;
 import com.pharm.pharmfinder.model.*;
-import com.pharm.pharmfinder.model.mail.VerificationToken;
+import com.pharm.pharmfinder.model.mail.registration.RegistrationVerificationToken;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith(SpringExtension.class)
-public class Registration {
+public class RegistrationTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -72,9 +72,9 @@ public class Registration {
         addUserViaPostRequest(username);
         assertUserIsDisabled(username);
         User user = userRepository.findByUsername(username);
-        VerificationToken verificationToken = verificationTokenRepository.findByUser(user);
-        verificationToken.setExpiryDate(calculateExpiryDate(50));
-        verificationTokenRepository.save(verificationToken);
+        RegistrationVerificationToken registrationVerificationToken = verificationTokenRepository.findByUser(user);
+        registrationVerificationToken.setExpiryDate(calculateExpiryDate(50));
+        verificationTokenRepository.save(registrationVerificationToken);
         Thread.sleep(51L);
         checkRegistrationConfirmationForbidden(getRegistrationTokenForUsername(username));
         assertUserIsDisabled(username);
@@ -93,8 +93,8 @@ public class Registration {
 
     private String getRegistrationTokenForUsername(String username){
         User user = userRepository.findByUsername(username);
-        VerificationToken verificationToken = verificationTokenRepository.findByUser(user);
-        return verificationToken.getToken();
+        RegistrationVerificationToken registrationVerificationToken = verificationTokenRepository.findByUser(user);
+        return registrationVerificationToken.getToken();
     }
 
     private void checkRegistrationConfirmation(String token) throws Exception {

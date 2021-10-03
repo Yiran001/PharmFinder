@@ -22,7 +22,7 @@ public class MailConfig {
             return new JavaMailSenderImpl();
         }
 
-        mailSender.setUsername("PharmacyFinderHTW@gmail.com");
+        mailSender.setUsername(System.getenv("EMAILADDRESS"));
         mailSender.setPassword(System.getenv("EMAILPW"));
 
         Properties props = mailSender.getJavaMailProperties();

@@ -5,20 +5,17 @@ import com.pharm.pharmfinder.controller.repositories.PharmacyMedicineRepository;
 import com.pharm.pharmfinder.controller.repositories.PharmacyRepository;
 import com.pharm.pharmfinder.controller.repositories.UserRepository;
 import com.pharm.pharmfinder.jwt.JwtTokenUtil;
-import com.pharm.pharmfinder.jwt.JwtUserDetailsService;
 import com.pharm.pharmfinder.model.*;
+import com.pharm.pharmfinder.model.search_and_filter.MedicineView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 @CrossOrigin
@@ -39,7 +36,7 @@ public class MedicinesController {
 
     @PostMapping(path = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
-    String create(HttpServletRequest request){
+    String create(HttpServletRequest request) {
         String pzn = request.getParameter("pzn");
         String friendlyName = request.getParameter("friendlyName");
         String medicineForm = request.getParameter("medicineForm");
@@ -62,24 +59,17 @@ public class MedicinesController {
     }
 
     @GetMapping(path = "/index", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String index(HttpServletRequest request) {
+    public @ResponseBody List<MedicineView> index(HttpServletRequest request) {
         String username = request.getParameter("username");
         checkAuthorization(request, username);
 
         Iterable<PharmacyMedicine> pharmacyMedicines = getPharmacy(username).getPharmacyMedicines();
-        StringBuilder result = new StringBuilder();
+        List<Medicine> medicines = new ArrayList<>();
         for (PharmacyMedicine pharmacyMedicine : pharmacyMedicines) {
-            Medicine medicine = pharmacyMedicine.getMedicine();
-            Pharmacy pharmacy = pharmacyMedicine.getPharmacy();
-            if (pharmacy.getPharmacyName().equals(username)){
-                result.append(medicine.toString());
-                result.append(" Amount: ").append(pharmacyMedicine.getAmount());
-                result.append("\n");
-            }
+            medicines.add(pharmacyMedicine.getMedicine());
         }
-        if (result.toString().equals(""))
-            result.append("No medicines registered");
-        return result.toString();
+        User user = userRepository.findByUsername(username);
+        return map(medicines, user);
     }
 
     @PutMapping(path = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -90,7 +80,7 @@ public class MedicinesController {
         String username = request.getParameter("username");
         String amountString = request.getParameter("amount");
         int amount = Integer.parseInt(amountString);
-        checkAuthorization(request, username);
+        boolean admin = checkAuthorization(request, username);
 
         Pharmacy pharmacy = getPharmacy(username);
         PharmacyMedicine pharmacyMedicine = getPharmacyMedicine(pzn, pharmacy);
@@ -98,13 +88,16 @@ public class MedicinesController {
         if (amount < 0){
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Amount can not be negative");
         }
-        medicine.setFriendlyName(friendlyName);
-        medicine.setMedicineForm(MedicineForm.valueOf(medicineForm));
-        pharmacyMedicine.setAmount(amount);
-        medicineRepository.save(medicine);
+        if (admin){
+            medicine.setFriendlyName(friendlyName);
+            medicine.setMedicineForm(MedicineForm.valueOf(medicineForm));
+            pharmacyMedicine.setAmount(amount);
+            medicineRepository.save(medicine);
+        } else {
+            pharmacyMedicine.setAmount(amount);
+        }
         pharmacyMedicineRepository.save(pharmacyMedicine);
         return "Medicine updated";
-
     }
 
     @DeleteMapping(path = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -122,6 +115,27 @@ public class MedicinesController {
         medicineRepository.save(medicine);
         pharmacyMedicineRepository.delete(pharmacyMedicine);
         return "Removed";
+    }
+
+    private List<MedicineView> map(List<Medicine> medicines, User user){
+        List<MedicineView> medicineViews = new ArrayList<>();
+        for (Medicine medicine : medicines) {
+            MedicineView medicineView = new MedicineView();
+            medicineView.setPzn(medicine.getPzn());
+            medicineView.setFriendlyName(medicine.getFriendlyName());
+            medicineView.setMedicineForm(medicine.getMedicineForm());
+            Pharmacy pharmacy = pharmacyRepository.findByUser(user);
+            for (PharmacyMedicine pharmacyMedicine : medicine.getPharmacyMedicines()) {
+                if (pharmacyMedicine.getPharmacy().getPharmacyID() == pharmacy.getPharmacyID()) {
+                    if (Objects.equals(pharmacyMedicine.getMedicine().getPzn(), medicine.getPzn())) {
+                        medicineView.setAmount(pharmacyMedicine.getAmount());
+                        break;
+                    }
+                }
+            }
+            medicineViews.add(medicineView);
+        }
+        return medicineViews;
     }
 
     private PharmacyMedicine getPharmacyMedicine(String pzn, Pharmacy pharmacy){
@@ -177,13 +191,22 @@ public class MedicinesController {
         return false;
     }
 
-    private void checkAuthorization(HttpServletRequest request, String username){
+    private boolean checkAuthorization(HttpServletRequest request, String username){
         String jwt = request.getHeader("Authorization").substring(7);
         String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
         User manipulatingUser = userRepository.findByUsername(jwtUsername);
-        if (manipulatingUser.getAuthorities().contains("MEDICINE_ADMIN"))
-            return;
-        if (!username.equals(jwtUsername))
+        if (manipulatingUser.getAuthority() == Role.MEDICINE_ADMIN) {
+            return true;
+        }
+        if (!username.equals(jwtUsername)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Wrong username");
+        }
+        checkPharmacist(manipulatingUser);
+        return false;
+    }
+
+    private void checkPharmacist(User user){
+        if (!user.isPharmacist())
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Not a pharmacist");
     }
 }

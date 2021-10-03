@@ -14,11 +14,12 @@ export class AppComponent implements AfterViewInit{
 
   websiteTitel='Apothekenfinder';
   isLoggedIn = false;
+  isPharmacist = false;
 
-  constructor(private elementRef: ElementRef, private titleService: Title,
-              private tokenStorageService: TokenStorageService){
+  constructor(private elementRef: ElementRef, private titleService: Title,private tokenStorageService: TokenStorageService){
     this.titleService.setTitle(this.websiteTitel);
   }
+
   ngOnInit(): void {
     this.isLoggedIn = !!this.tokenStorageService.getToken();
 

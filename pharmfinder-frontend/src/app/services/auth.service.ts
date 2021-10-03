@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {environment} from "../../environments/environment";
+import {ProfileService} from "./profile.service";
 
 const DEV_URL_REGISTER = 'http://localhost:8080/users/create';
 const DEV_URL_LOGIN = 'http://localhost:8080/authenticate';
@@ -10,9 +11,11 @@ const DEV_URL_LOGIN = 'http://localhost:8080/authenticate';
   providedIn: 'root'
 })
 export class AuthService {
-  registerUrl=DEV_URL_REGISTER;
-  loginURL=DEV_URL_LOGIN;
-  constructor(private http: HttpClient) { }
+  registerUrl = DEV_URL_REGISTER;
+  loginURL = DEV_URL_LOGIN;
+
+  constructor(private http: HttpClient, private profileService: ProfileService) {
+  }
 
   /**
    * login as user
@@ -42,7 +45,7 @@ export class AuthService {
    * @param addressHouseNumber
    * @param addressPostcode
    */
-  registerPost(username: string, email: string, isPharmacist: boolean, password: string, addressStreet: string, addressHouseNumber: string, addressPostcode: string, latitude: string, longitude: string): Observable<any> {
+  registerPost(username: string, email: string, isPharmacist: boolean, password: string, addressStreet: string, addressHouseNumber: string, addressPostcode: string): Observable<any> {
 
     const parameters = new HttpParams().set("username",username).set("email", email).set("isPharmacist",isPharmacist).set("password",password).set("addressStreet",addressStreet).set("addressHouseNumber",addressHouseNumber).set("addressPostcode",addressPostcode).set("latitude",latitude).set("longitude",longitude); //Create new HttpParams
 
@@ -61,8 +64,7 @@ export class AuthService {
       params: parameters,
       responseType: 'text'
     };
-    return this.http.post(environment.baseUrl+'users/create', {
-    }, options).pipe(
+    return this.http.post(environment.baseUrl + 'users/create', {}, options).pipe(
     );
   }
 

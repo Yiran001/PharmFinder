@@ -6,6 +6,7 @@ import {DatenschutzerklaerungComponent} from "./datenschutzerklaerung/datenschut
 import {RegisterComponent} from "./register/register.component";
 import {LoginComponent} from "./login/login.component";
 import {ProfilePageComponent} from "./profile-page/profile-page.component";
+import {MedicinePageComponent} from "./medicine-page/medicine-page.component";
 import {SearchPharmaciesComponent} from "./search-pharmacies/search-pharmacies.component";
 
 const routes: Routes = [
@@ -15,8 +16,9 @@ const routes: Routes = [
   { path: 'datenschutzerklaerung', component:DatenschutzerklaerungComponent },
   {path: 'register', component:RegisterComponent},
   {path: 'login', component:LoginComponent},
-  {path: 'suchen', component:SearchPharmaciesComponent},
   { path: 'profile', component:ProfilePageComponent },
+  {path: 'suchen', component:SearchPharmaciesComponent},
+  {path: 'medicine', component: MedicinePageComponent},
 ];
 
 @NgModule({
