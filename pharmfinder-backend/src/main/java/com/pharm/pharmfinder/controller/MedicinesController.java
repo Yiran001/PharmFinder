@@ -36,7 +36,7 @@ public class MedicinesController {
 
     @PostMapping(path = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
-    String create(HttpServletRequest request){
+    String create(HttpServletRequest request) {
         String pzn = request.getParameter("pzn");
         String friendlyName = request.getParameter("friendlyName");
         String medicineForm = request.getParameter("medicineForm");

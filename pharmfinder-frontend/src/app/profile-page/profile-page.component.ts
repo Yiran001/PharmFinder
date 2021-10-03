@@ -14,6 +14,7 @@ export class ProfilePageComponent implements OnInit {
   user: User | undefined;
 
   username = "";
+  usernamelist = [];
   email = "";
   isPharmacist = "";
   addresses: Address[] = [];

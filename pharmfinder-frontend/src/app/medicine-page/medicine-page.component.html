@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bootstrap User Management Data Table</title>
+</head>
+<body>
+<div class="container">
+  <div class="table-responsive">
+    <div class="table-wrapper">
+      <div class="table-title bg-dark">
+        <div class="row">
+          <div class="col">
+            <div class="float-left">
+              <h2>Medizin <b>Management</b></h2>
+            </div>
+          </div>
+          <div class="col">
+            <div class="float-right">
+              <button type="button" class="btn btn-primary" (click)="openNewMedicineDialog()">Neu
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="row top-buffer">
+          <div class="col">
+            <mat-form-field appearance="outline">
+              <mat-label>Sortier-Kategorie:</mat-label>
+              <mat-select [(ngModel)]="sortCriteriaString" ngDefaultControl>
+                <mat-option *ngFor="let actualCriteria of searchCriteria" [value]="actualCriteria.value">
+                  {{actualCriteria.viewValue}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field appearance="outline">
+              <mat-label>Sortier-Richtung:</mat-label>
+              <mat-select [(ngModel)]="sortDirectionString" ngDefaultControl>
+                <mat-option *ngFor="let actualCriteria of sortDirections" [value]="actualCriteria.value">
+                  {{actualCriteria.viewValue}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-1">
+            <button type="button" class="btn btn-primary top-buffer" (click)="sortMedicines()">Sortieren</button>
+          </div>
+          <div class="col">
+            <mat-form-field appearance="outline">
+              <mat-label>Such-Kategorie:</mat-label>
+              <mat-select [(ngModel)]="searchCriteriaString" ngDefaultControl>
+                <mat-option *ngFor="let actualCriteria of searchCriteria" [value]="actualCriteria.value">
+                  {{actualCriteria.viewValue}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <div class="md-form mt-0">
+              <label class="form-label">Suche:</label>
+              <input class="form-control mr-sm-2" type="text" placeholder="Suche" [(ngModel)]="searchParam"
+                     type="text" name="nameSearcher">
+            </div>
+          </div>
+          <div class="col-1">
+            <button type="button" class="btn btn-primary top-buffer" (click)="getMedicinesFiltered()">Suchen</button>
+          </div>
+        </div>
+      </div>
+      <table class="table table-striped table-hover">
+        <thead>
+        <tr>
+          <th>PZN</th>
+          <th>Name</th>
+          <th>Form</th>
+          <th>Menge</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let medicine of medicineList" (click)="openDialog(medicine)">
+          <td>{{medicine.pzn}}</td>
+          <td>{{medicine.friendlyName}}</td>
+          <td>{{medicine.medicineForm}}</td>
+          <td><b>{{medicine.amount}}</b></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

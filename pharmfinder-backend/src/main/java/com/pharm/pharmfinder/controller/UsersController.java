@@ -94,7 +94,7 @@ public class UsersController {
         user.setPasswordHash(bcryptEncoder.encode(password));
         user.setAuthority(Role.USER);
         userRepository.save(user);
-        Address userAddress = new Address(user,addressStreet,addressHouseNumber,addressPostcode);
+        Address userAddress = new Address(user, addressStreet, addressHouseNumber, addressPostcode);
         addressRepository.save(userAddress);
         user.setUserAddress(userAddress);
         userRepository.save(user);
@@ -105,7 +105,7 @@ public class UsersController {
         pharmacyRepository.save(pharmacy);
 
 //            registration confirmation via email, compulsory when activated
-        if (!no_email_registration){
+        if (!no_email_registration) {
             String appUrl = request.getContextPath();
             eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user, request.getLocale(), appUrl));
         }
@@ -260,7 +260,7 @@ public class UsersController {
         }
     }
 
-    private void checkAuthorization(HttpServletRequest request, String username){
+    private void checkAuthorization(HttpServletRequest request, String username) {
         String jwt = request.getHeader("Authorization").substring(7);
         String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
         User manipulatingUser = userRepository.findByUsername(jwtUsername);
