@@ -80,7 +80,7 @@ public class UsersController {
      */
     @PostMapping(path = "/create")
     public @ResponseBody
-    String create(HttpServletRequest request, @RequestParam String username, @RequestParam String email, @RequestParam boolean isPharmacist, @RequestParam String password, @RequestParam String addressStreet, @RequestParam String addressHouseNumber, @RequestParam String addressPostcode) throws UsernameAlreadyTakenException {
+    String create(HttpServletRequest request, @RequestParam String username, @RequestParam String email, @RequestParam boolean isPharmacist, @RequestParam String password, @RequestParam String addressStreet, @RequestParam String addressHouseNumber, @RequestParam String addressPostcode,@RequestParam String latitude,@RequestParam String longitude) throws UsernameAlreadyTakenException {
         String registration_env_var = System.getenv("REGISTRATION_EMAIL");
         boolean no_email_registration = registration_env_var == null || !registration_env_var.equalsIgnoreCase("true");
 
@@ -165,7 +165,8 @@ public class UsersController {
     }
 
     @GetMapping(path = "/index")
-    public @ResponseBody String index(HttpServletRequest request) {
+    public @ResponseBody
+    Iterable<User> index(HttpServletRequest request) {
         String jwt = request.getHeader("Authorization").substring(7);
         String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
         User manipulatingUser = userRepository.findByUsername(jwtUsername);

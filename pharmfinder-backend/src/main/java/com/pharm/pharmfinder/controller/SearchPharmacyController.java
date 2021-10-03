@@ -8,6 +8,7 @@ import com.pharm.pharmfinder.controller.repositories.UserRepository;
 import com.pharm.pharmfinder.jwt.JwtTokenUtil;
 import com.pharm.pharmfinder.model.Pharmacy;
 import com.pharm.pharmfinder.model.PharmacyMedicine;
+import com.pharm.pharmfinder.model.Role;
 import com.pharm.pharmfinder.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -180,7 +181,7 @@ public class SearchPharmacyController {
         String jwt = request.getHeader("Authorization").substring(7);
         String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
         User manipulatingUser = userRepository.findByUsername(jwtUsername);
-        if (manipulatingUser.getAuthorities().contains("USER_ADMIN"))
+        if (manipulatingUser.getAuthority() == Role.USER_ADMIN)
             return;
         if (!username.equals(jwtUsername))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Wrong username");
