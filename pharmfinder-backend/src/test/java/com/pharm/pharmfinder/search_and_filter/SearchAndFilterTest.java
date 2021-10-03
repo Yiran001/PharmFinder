@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.pharm.pharmfinder.model.MedicineForm;
-import com.pharm.pharmfinder.model.search_and_filter.SearchAndFilterRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.nio.charset.Charset;
 import java.util.UUID;
 
-import static com.pharm.pharmfinder.model.search_and_filter.mapper.JsonHelper.toJson;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
@@ -30,7 +28,6 @@ public class SearchAndFilterTest {
     public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
     @Autowired
     private MockMvc mockMvc;
-    private final ObjectMapper objectMapper;
 
     //    User 1
     String baseUsername = "test_name";
@@ -44,11 +41,6 @@ public class SearchAndFilterTest {
     public String friendlyName = "Aspirin";
     public String baseFriendlyName = "Aspirin";
     public MedicineForm medicineForm = MedicineForm.PILL;
-
-    @Autowired
-    public SearchAndFilterTest(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
 
     @Test
     void should_respond_with_medicine_attributes() throws Exception {

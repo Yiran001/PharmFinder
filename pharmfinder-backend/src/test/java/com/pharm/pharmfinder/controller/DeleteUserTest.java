@@ -26,7 +26,7 @@ public class DeleteUserTest {
     private JwtUserDetailsService jwtUserDetailsService;
 
     //    User data
-    String username = "testUser";
+    String username = "name";
     String email = "PharmacyFinderHTW@gmail.com";
     String password = "password";
     String street = "streetOne";

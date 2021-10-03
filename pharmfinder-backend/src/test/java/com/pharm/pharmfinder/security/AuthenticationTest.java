@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.pharm.pharmfinder.jwt.jwt_model.JwtRequest;
 import com.pharm.pharmfinder.model.*;
-import org.junit.ClassRule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,7 +15,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-//import org.junit.contrib.java.lang.system;
 
 import java.nio.charset.Charset;
 
@@ -26,10 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class AuthenticationTest {
-
-//    @ClassRule
-//    public final EnvironmentVariables environmentVariables = new EnvironmentVariables().set("name", "value");
-//https://stefanbirkner.github.io/system-rules/apidocs/org/junit/contrib/java/lang/system/EnvironmentVariables.html
 
     public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 

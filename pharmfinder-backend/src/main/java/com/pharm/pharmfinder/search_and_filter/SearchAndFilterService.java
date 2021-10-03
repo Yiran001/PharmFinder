@@ -1,4 +1,4 @@
-package com.pharm.pharmfinder.model.search_and_filter.service;
+package com.pharm.pharmfinder.search_and_filter;
 
 import com.pharm.pharmfinder.controller.repositories.PharmacyRepository;
 import com.pharm.pharmfinder.controller.repositories.UserRepository;
@@ -165,15 +165,4 @@ public class SearchAndFilterService {
             Collections.reverse(medicines);
         return medicines;
     }
-
-
-//    private Set<PharmacyMedicine> sortByAmount(Set<PharmacyMedicine> pharmacyMedicines){
-//        Collections.sort(pharmacyMedicines, new Comparator<PharmacyMedicine>() {
-//            @Override
-//            public int compare(PharmacyMedicine o1, PharmacyMedicine o2) {
-//                return String.valueOf(o1.getAmount()).compareTo(String.valueOf(o2.getAmount()));
-//            }
-//        });
-//    }
-
 }

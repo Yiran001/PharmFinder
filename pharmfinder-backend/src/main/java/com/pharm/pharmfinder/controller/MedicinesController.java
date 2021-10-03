@@ -195,7 +195,7 @@ public class MedicinesController {
         String jwt = request.getHeader("Authorization").substring(7);
         String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
         User manipulatingUser = userRepository.findByUsername(jwtUsername);
-        if (manipulatingUser.getAuthorities().contains("MEDICINE_ADMIN")) {
+        if (manipulatingUser.getAuthority() == Role.MEDICINE_ADMIN) {
             return true;
         }
         if (!username.equals(jwtUsername)) {

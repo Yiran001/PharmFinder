@@ -5,7 +5,6 @@ import com.pharm.pharmfinder.jwt.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -58,7 +57,7 @@ public class  WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .addFilterBefore(new StatelessCSRFFilter(), CsrfFilter.class)
         httpSecurity.cors().and().csrf().disable()
                 .authorizeRequests().antMatchers("/users/registrationConfirm", "/authenticate", "/users/create",
-                        "/users/passwordReset", "/users/passwordResetConfirm").permitAll()
+        "/users/passwordReset", "/users/passwordResetConfirm").permitAll()
                 .antMatchers("/users/ban").hasAuthority("USER_ADMIN")
                 .antMatchers("/users/unban").hasAuthority("USER_ADMIN")
                 .anyRequest().authenticated()
