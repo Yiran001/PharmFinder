@@ -57,9 +57,7 @@ public class PasswordResetTest {
 
     @Test
     void should_request_password_reset() throws Exception {
-        String username = baseUsername + "0";
         addUserViaPostRequest(baseUsername);
-//        String token = getPasswordResetTokenForUsername(username1);
         checkPasswordResetRequest(baseUsername, newPassword);
         jwtUserDetailsService.deleteUserByUsername(baseUsername);
     }

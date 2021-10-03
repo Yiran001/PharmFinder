@@ -24,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class AuthenticationTest {
+
     public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
     //    Medicine 1
@@ -240,7 +241,7 @@ public class AuthenticationTest {
                 .param("username", username)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", generateAuthHeader(jwtAdmin));
+                .header("Authorization", "Bearer " + jwtAdmin);
         this.mockMvc.perform(builder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(content().string(containsString("Unbanned")));

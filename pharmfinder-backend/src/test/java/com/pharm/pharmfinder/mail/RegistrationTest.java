@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith(SpringExtension.class)
-public class Registration {
+public class RegistrationTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired

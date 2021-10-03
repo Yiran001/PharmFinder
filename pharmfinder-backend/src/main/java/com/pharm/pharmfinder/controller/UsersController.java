@@ -7,6 +7,7 @@ import com.pharm.pharmfinder.controller.repositories.PharmacyRepository;
 import com.pharm.pharmfinder.controller.repositories.UserRepository;
 import com.pharm.pharmfinder.jwt.JwtTokenUtil;
 import com.pharm.pharmfinder.jwt.JwtUserDetailsService;
+import com.pharm.pharmfinder.model.Role;
 import com.pharm.pharmfinder.model.mail.password.OnPasswordResetEvent;
 import com.pharm.pharmfinder.model.mail.password.PasswordResetToken;
 import com.pharm.pharmfinder.model.Address;
@@ -25,11 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @CrossOrigin
@@ -95,7 +92,7 @@ public class UsersController {
 //        if env var is set, and equals to true, account has to be activated via email
         user.setEnabled(no_email_registration);
         user.setPasswordHash(bcryptEncoder.encode(password));
-        user.setAuthorities("");
+        user.setAuthority(Role.USER);
         userRepository.save(user);
         Address userAddress = new Address(user,addressStreet,addressHouseNumber,addressPostcode);
         addressRepository.save(userAddress);
@@ -164,13 +161,16 @@ public class UsersController {
     }
 
     @GetMapping(path = "/index")
-    public @ResponseBody String index(HttpServletRequest request) {
+    public @ResponseBody
+    Iterable<User> index(HttpServletRequest request) {
         String jwt = request.getHeader("Authorization").substring(7);
         String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
         User manipulatingUser = userRepository.findByUsername(jwtUsername);
-        if (manipulatingUser.getAuthorities().contains("USER_ADMIN"))
-            return userRepository.findAll().toString();
-        return manipulatingUser.toString();
+        if (manipulatingUser.getAuthority() == Role.USER_ADMIN)
+            return userRepository.findAll();
+        ArrayList<User> list = new ArrayList<>();
+        list.add(manipulatingUser);
+        return list;
     }
 
     @PutMapping(path = "/ban")
@@ -264,7 +264,7 @@ public class UsersController {
         String jwt = request.getHeader("Authorization").substring(7);
         String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
         User manipulatingUser = userRepository.findByUsername(jwtUsername);
-        if (manipulatingUser.getAuthorities().contains("USER_ADMIN"))
+        if (manipulatingUser.getAuthority() == Role.USER_ADMIN)
             return;
         if (!username.equals(jwtUsername))
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Wrong username");
