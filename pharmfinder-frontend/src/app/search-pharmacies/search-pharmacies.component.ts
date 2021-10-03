@@ -94,7 +94,9 @@ export class SearchPharmaciesComponent implements OnInit {
 
   async search(pzn: number, location: google.maps.LatLngLiteral): Promise<void> {
     this.markers=[];
-    this.foundPharms=await this.searchPharmService.searchPharmacy(pzn.toString(),location.lat.toString(),location.lng.toString()).toPromise().catch((err: HttpErrorResponse)=>{
+    this.foundPharms=await this.searchPharmService.searchPharmacy
+    (pzn.toString(),location.lat.toString(),location.lng.toString()).toPromise()
+      .catch((err: HttpErrorResponse)=>{
       if(err.status==404){
           this.medicineNotFound=true;
       }else if(err.status==401){
@@ -104,7 +106,8 @@ export class SearchPharmaciesComponent implements OnInit {
     });
     if(this.foundPharms!=undefined) {
       this.foundPharms.forEach((element) => {
-        this.addMarker(element.latitude, element.longitude, element.street + ' ' + element.houseNumber + ',' + element.postcode, element.dist)
+        this.addMarker(element.latitude, element.longitude, element.street
+          + ' ' + element.houseNumber + ',' + element.postcode, element.dist)
 
 
       });

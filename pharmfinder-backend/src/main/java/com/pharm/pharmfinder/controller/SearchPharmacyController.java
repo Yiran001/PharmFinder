@@ -53,7 +53,8 @@ public class SearchPharmacyController {
         private String postcode;
         private String dist;
 
-        public frontendPharmacy(String pharmacyname, String latitude, String longitude, String username, String street, String houseNumber, String postcode,String dist) {
+        public frontendPharmacy(String pharmacyname, String latitude, String longitude,
+                                String username, String street, String houseNumber, String postcode,String dist) {
             this.pharmacyname = pharmacyname;
             this.latitude = latitude;
             this.longitude = longitude;
@@ -99,12 +100,13 @@ public class SearchPharmacyController {
 
     @GetMapping(path = "/pharmacy", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
-    List<frontendPharmacy> search(HttpServletRequest request, @RequestParam String pzn, @RequestParam String latitude, @RequestParam String longitude) throws MedicineNotFoundException {
+    List<frontendPharmacy> search(HttpServletRequest request,
+                                  @RequestParam String pzn, @RequestParam String latitude,
+                                  @RequestParam String longitude) throws MedicineNotFoundException {
 
         ArrayList<Pharmacy> pharmacies = new ArrayList<>();
         HashMap<Pharmacy, Double> nearbyPharmacies;
         List<frontendPharmacy> pharList = new ArrayList<>();
-        StringBuilder result = new StringBuilder();
 
         Iterable<PharmacyMedicine> pharmacyMedicines = pharmacyMedicineRepository.findAll();
         for(PharmacyMedicine p : pharmacyMedicines){
@@ -119,8 +121,10 @@ public class SearchPharmacyController {
 
         }
         for(Pharmacy p: nearbyPharmacies.keySet()){
-            result.append("Pharmacy: ").append(p.getPharmacyID()).append(" Latitude: ").append(p.getLat()).append(" Longitude: ").append(p.getLng()).append(" Distance: ").append(nearbyPharmacies.get(p));
-            frontendPharmacy fP = new frontendPharmacy(p.getPharmacyName(),p.getLat(),p.getLng(),p.getUser().getUsername(),p.getPharmacyAddress().getStreet(),p.getPharmacyAddress().getHouseNumber(),p.getPharmacyAddress().getPostcode(),String.valueOf(nearbyPharmacies.get(p)));
+            frontendPharmacy fP = new frontendPharmacy(p.getPharmacyName(),p.getLat(),
+                    p.getLng(),p.getUser().getUsername(),p.getPharmacyAddress().getStreet(),
+                    p.getPharmacyAddress().getHouseNumber(),p.getPharmacyAddress().getPostcode(),
+                    String.valueOf(nearbyPharmacies.get(p)));
             pharList.add(fP);
         }
         return pharList;
@@ -138,7 +142,8 @@ public class SearchPharmacyController {
         HashMap<Pharmacy,Double> nearbyPharmacies = new HashMap<Pharmacy, Double>();
         for(Pharmacy p: pharmacies){
 
-            //annahme dass apotheke nicht zu weit entfernt ist + kürzere rechenzeit, deshalb satz des pythagoras angewendet
+            //annahme dass apotheke nicht zu weit entfernt ist
+            // und kürzere rechenzeit, deshalb satz des pythagoras angewendet
             double pharLng=Double.parseDouble(p.getLng());
             double pharLat=Double.parseDouble(p.getLat());
             double latD = (lat + pharLat) / 2 * 0.01745;

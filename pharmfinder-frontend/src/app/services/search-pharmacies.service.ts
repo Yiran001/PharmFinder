@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {Observable} from "rxjs";
@@ -13,26 +13,29 @@ var map;
 })
 
 export class SearchPharmaciesService {
-  geocoder = new google.maps.Geocoder() ;
-  constructor(private http: HttpClient) { }
+  geocoder = new google.maps.Geocoder();
 
-
-  geocodeAddress(address: string,callbackLng: any,callbackLat:any,callbackStatus: any){
-    var result;
-    this.geocoder.geocode({ 'address': address},function(results, status){
-      if (status == 'OK') {
-        result=results[0].geometry.location;
-        callbackLng(results[0].geometry.location.lng());
-        callbackLat(results[0].geometry.location.lat());
-      } else {
-          callbackStatus(status)
-      }
-    });
+  constructor(private http: HttpClient) {
   }
 
-  searchPharmacy(pzn: String, lat: String, lng: String): Observable<any>  {
+
+  geocodeAddress(address: string, callbackLng: any, callbackLat: any, callbackStatus: any) {
+    var result;
+    this.geocoder.geocode({'address': address},
+      function (results, status) {
+        if (status == 'OK') {
+          result = results[0].geometry.location;
+          callbackLng(results[0].geometry.location.lng());
+          callbackLat(results[0].geometry.location.lat());
+        } else {
+          callbackStatus(status)
+        }
+      });
+  }
+
+  searchPharmacy(pzn: String, lat: String, lng: String): Observable<any> {
     // @ts-ignore
-    const parameters = new HttpParams().set("pzn",pzn).set("latitude", lat).set("longitude",lng); //Create new HttpParams
+    const parameters = new HttpParams().set("pzn", pzn).set("latitude", lat).set("longitude", lng); //Create new HttpParams
 
     const options: {
       headers?: HttpHeaders,
@@ -44,6 +47,6 @@ export class SearchPharmaciesService {
       }),
       params: parameters,
     };
-    return this.http.get<foundPharmacy[]>(environment.baseUrl+'search/pharmacy', options, );
+    return this.http.get<foundPharmacy[]>(environment.baseUrl + 'search/pharmacy', options,);
   }
 }

@@ -95,11 +95,11 @@ public class UsersController {
         user.setPasswordHash(bcryptEncoder.encode(password));
         user.setAuthorities("");
         userRepository.save(user);
-        Address userAddress = new Address(user,addressStreet,addressHouseNumber,addressPostcode);
+        Address userAddress = new Address(user, addressStreet, addressHouseNumber, addressPostcode);
         addressRepository.save(userAddress);
         user.setUserAddress(userAddress);
         userRepository.save(user);
-        if(isPharmacist) {
+        if (isPharmacist) {
             Pharmacy pharmacy = new Pharmacy();
             pharmacy.setPharmacyAddress(userAddress);
             pharmacy.setPharmacyName(username);
@@ -110,7 +110,7 @@ public class UsersController {
         }
 
 //            registration confirmation via email, compulsory when activated
-        if (!no_email_registration){
+        if (!no_email_registration) {
             String appUrl = request.getContextPath();
             eventPublisher.publishEvent(new OnRegistrationCompleteEvent(user, request.getLocale(), appUrl));
         }
@@ -118,7 +118,8 @@ public class UsersController {
     }
 
     @PutMapping(path = "/update")
-    public @ResponseBody String
+    public @ResponseBody
+    String
     update(HttpServletRequest request) throws NoSuchUsernameException {
         String originalUsername = request.getParameter("originalUsername");
         String username = request.getParameter("username");
@@ -165,7 +166,8 @@ public class UsersController {
     }
 
     @GetMapping(path = "/index")
-    public @ResponseBody String index(HttpServletRequest request) {
+    public @ResponseBody
+    String index(HttpServletRequest request) {
         String jwt = request.getHeader("Authorization").substring(7);
         String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
         User manipulatingUser = userRepository.findByUsername(jwtUsername);
@@ -227,7 +229,7 @@ public class UsersController {
         }
     }
 
-    private void checkAuthorization(HttpServletRequest request, String username){
+    private void checkAuthorization(HttpServletRequest request, String username) {
         String jwt = request.getHeader("Authorization").substring(7);
         String jwtUsername = jwtTokenUtil.getUsernameFromToken(jwt);
         User manipulatingUser = userRepository.findByUsername(jwtUsername);

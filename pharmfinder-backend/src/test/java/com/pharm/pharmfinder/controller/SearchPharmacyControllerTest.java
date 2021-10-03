@@ -154,11 +154,16 @@ public class SearchPharmacyControllerTest {
     @Test
     public void testCalcFunctionEdge01() throws Exception {
         addUserViaPostRequest(username1,emailU1,isPU1,passwordU1,streetU1,houseNumberU1,postcodeU1,lat,lng);
-        addUserViaPostRequest(username1+"2",emailU1,isPU1,passwordU1,streetU1,houseNumberU1,postcodeU1,lat,lng);
-        addUserViaPostRequest(username1+"3",emailU1,isPU1,passwordU1,streetU1,houseNumberU1,postcodeU1,lat,lng);
-        addUserViaPostRequest(username1+"4",emailU1,isPU1,passwordU1,streetU1,houseNumberU1,postcodeU1,lat,lng);
-        addUserViaPostRequest(username1+"5",emailU1,isPU1,passwordU1,streetU1,houseNumberU1,postcodeU1,lat,lng);
-        addUserViaPostRequest(username1+"6",emailU1,isPU1,passwordU1,streetU1,houseNumberU1,postcodeU1,"0","0");
+        addUserViaPostRequest(username1+"2",emailU1,isPU1,passwordU1,
+                streetU1,houseNumberU1,postcodeU1,lat,lng);
+        addUserViaPostRequest(username1+"3",emailU1,isPU1,passwordU1,
+                streetU1,houseNumberU1,postcodeU1,lat,lng);
+        addUserViaPostRequest(username1+"4",emailU1,isPU1,passwordU1,
+                streetU1,houseNumberU1,postcodeU1,lat,lng);
+        addUserViaPostRequest(username1+"5",emailU1,isPU1,passwordU1,
+                streetU1,houseNumberU1,postcodeU1,lat,lng);
+        addUserViaPostRequest(username1+"6",emailU1,isPU1,passwordU1,
+                streetU1,houseNumberU1,postcodeU1,"0","0");
         //pharmacist01
         String jwtU1 = authenticate(username1, passwordU1);
         addMedicine1(username1, jwtU1);
@@ -199,7 +204,9 @@ public class SearchPharmacyControllerTest {
      */
     @Test
     public void searchForPharmacyGood01() throws Exception {
-        String expectedString="\"pharmacyname\":\""+username1+"\",\"latitude\":\""+lat+"\",\"longitude\":\""+lng+"\",\"username\":\""+username1+"\",\"street\":\""+streetU1+"\",\"houseNumber\":\""+houseNumberU1+"\",\"postcode\":\""+postcodeU1+"\",\"dist\":\"";
+        String expectedString="\"pharmacyname\":\""+username1+"\",\"latitude\":\""+lat+"\",\"longitude\":\""+
+                lng+"\",\"username\":\""+username1+"\",\"street\":\""+streetU1+
+                "\",\"houseNumber\":\""+houseNumberU1+"\",\"postcode\":\""+postcodeU1+"\",\"dist\":\"";
         addUserViaPostRequest(username1,emailU1,isPU1,passwordU1,streetU1,houseNumberU1,postcodeU1,lat,lng);
         String jwtU1 = authenticate(username1, passwordU1);
         addMedicine1(username1, jwtU1);
@@ -207,7 +214,8 @@ public class SearchPharmacyControllerTest {
         String jwtU2 = authenticate(username1, passwordU1);
         MockHttpServletRequestBuilder builder =searchForPharmacy(pznM1,lat2,lng2,jwtU2);
         this.mockMvc.perform(builder)
-                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(content().string(containsString(expectedString+String.valueOf(this.calDist(lat,lng,lat2,lng2)))));
+                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(content().
+                string(containsString(expectedString+String.valueOf(this.calDist(lat,lng,lat2,lng2)))));
 
     }
 
@@ -217,8 +225,6 @@ public class SearchPharmacyControllerTest {
      */
     @Test
     public void searchForPharmaciesGood02() throws Exception {
-        String expectedStringP1="\"pharmacyname\":\""+username1+"\",\"latitude\":\""+lat+"\",\"longitude\":\""+lng+"\",\"username\":\""+username1+"\",\"street\":\""+streetU1+"\",\"houseNumber\":\""+houseNumberU1+"\",\"postcode\":\""+postcodeU1+"\",\"dist\":\"";
-        String expectedStringP2="\"pharmacyname\":\""+usernameP2+"\",\"latitude\":\""+latP2+"\",\"longitude\":\""+lngP2+"\",\"username\":\""+usernameP2+"\",\"street\":\""+streetP2+"\",\"houseNumber\":\""+houseNumberP2 +"\",\"postcode\":\""+postcodeP2+"\",\"dist\":\"";
         addUserViaPostRequest(username1,emailU1,isPU1,passwordU1,streetU1,houseNumberU1,postcodeU1,lat,lng);
         String jwtU1 = authenticate(username1, passwordU1);
         addMedicine1(username1, jwtU1);
@@ -249,7 +255,9 @@ public class SearchPharmacyControllerTest {
     }
 
 
-    private void addUserViaPostRequest(String username, String email, boolean isPharmacist, String password, String street, String housenumber, String postcode, String latitude, String longitude) throws Exception {
+    private void addUserViaPostRequest(String username, String email, boolean isPharmacist,
+                                       String password, String street, String housenumber,
+                                       String postcode, String latitude, String longitude) throws Exception {
         MockHttpServletRequestBuilder builder = buildUserPostRequest
                 (username, email, isPharmacist, password, street, housenumber, postcode,latitude,longitude);
         this.mockMvc.perform(builder)
@@ -288,7 +296,8 @@ public class SearchPharmacyControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON_VALUE);
     }
-    private MockHttpServletRequestBuilder buildSearchPharmacyPostRequest(String pzn,String latitude,String longitude){
+    private MockHttpServletRequestBuilder buildSearchPharmacyPostRequest
+            (String pzn, String latitude,String longitude){
         return MockMvcRequestBuilders
                 .get("/search/pharmacy")
                 .param("pzn", pzn)
