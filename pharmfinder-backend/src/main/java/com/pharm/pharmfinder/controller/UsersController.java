@@ -80,7 +80,7 @@ public class UsersController {
      */
     @PostMapping(path = "/create")
     public @ResponseBody
-    String create(HttpServletRequest request, @RequestParam String username, @RequestParam String email, @RequestParam boolean isPharmacist, @RequestParam String password, @RequestParam String addressStreet, @RequestParam String addressHouseNumber, @RequestParam String addressPostcode) throws UsernameAlreadyTakenException {
+    String create(HttpServletRequest request, @RequestParam String username, @RequestParam String email, @RequestParam boolean isPharmacist, @RequestParam String password, @RequestParam String addressStreet, @RequestParam String addressHouseNumber, @RequestParam String addressPostcode,@RequestParam String latitude,@RequestParam String longitude) throws UsernameAlreadyTakenException {
         String registration_env_var = System.getenv("REGISTRATION_EMAIL");
         boolean no_email_registration = registration_env_var == null || !registration_env_var.equalsIgnoreCase("true");
 
@@ -98,11 +98,15 @@ public class UsersController {
         addressRepository.save(userAddress);
         user.setUserAddress(userAddress);
         userRepository.save(user);
-        Pharmacy pharmacy = new Pharmacy();
-        pharmacy.setPharmacyAddress(userAddress);
-        pharmacy.setPharmacyName(username);
-        pharmacy.setUser(user);
-        pharmacyRepository.save(pharmacy);
+        if (isPharmacist) {
+            Pharmacy pharmacy = new Pharmacy();
+            pharmacy.setPharmacyAddress(userAddress);
+            pharmacy.setPharmacyName(username);
+            pharmacy.setUser(user);
+            pharmacy.setLat(latitude);
+            pharmacy.setLng(longitude);
+            pharmacyRepository.save(pharmacy);
+        }
 
 //            registration confirmation via email, compulsory when activated
         if (!no_email_registration) {

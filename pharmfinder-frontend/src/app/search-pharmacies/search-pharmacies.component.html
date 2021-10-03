@@ -1,0 +1,82 @@
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+    </div>
+      <div class="col">
+        <form
+          *ngIf="!isSuccessful"
+          name="form"
+          (ngSubmit)="f.form.valid && onSubmit()"
+          #f="ngForm"
+          novalidate
+        >
+          <div class="form-group col">
+            <label [htmlFor]="pzn"> </label>
+            <input
+              placeholder="Pharmazentralnummer"
+              type="text"
+              class="form-control"
+              name="pzn"
+              [(ngModel)]="form.pzn"
+              minlength="8"
+              maxlength="8"
+              required
+              pattern="^\d+$"
+              #pzn="ngModel"
+            />
+            <div class="alert-danger" *ngIf="pzn.errors && f.submitted">
+              <div *ngIf="pzn.errors.required">PZN angeben</div>
+              <div *ngIf="pzn.errors.pattern">positive Ziffernfolge angeben</div>
+              <div *ngIf="pzn.errors.maxlength">
+                PZN muss aus 8 Ziffern bestehen
+              </div>
+              <div *ngIf="pzn.errors.minlength">
+                PZN muss aus 8 Ziffern bestehen
+              </div>
+            </div>
+            <div class="alert-danger" *ngIf="medicineNotFound">
+              <div>Medikament ist derzeit nirgendwo auf Lager</div>
+            </div>
+          </div>
+          <div class="form-group text-center btn-block">
+            <button class="btn btn-primary btn-block">Apotheken finden</button>
+          </div>
+          <div class="alert alert-warning" *ngIf="f.submitted && otherErrorOccurred">
+            Passwort oder Nutzername falsch!<br />{{ errorMessage }}
+          </div>
+        </form>
+        <div class="form-group text-center btn-block">
+          <button class="btn btn-danger btn-block" (click)="findMe()">finde mich</button>
+        </div>
+        <google-map
+          [options]="mapOptions"
+          [center]="center">
+          <map-marker
+            #markerLoc="mapMarker"
+            *ngIf="foundMe"
+            [label]="currentLocMarker.label"
+            [position]="currentLocMarker.position"
+            [title]='titleS'
+            (mapClick)="openInfoCurrentLocation(markerLoc)"
+            >
+          </map-marker>
+          <map-marker
+            #markerElem="mapMarker"
+            *ngFor="let marker of markers"
+             [position]="marker.position"
+             [label]="marker.label"
+             [title]="marker.title"
+              (mapClick)="openInfo(markerElem,marker.address,marker.dist)"
+          >
+          </map-marker>
+          <map-info-window>
+            {{markerAddress}}
+            {{markerDist}}
+          </map-info-window>
+        </google-map>
+      </div>
+    <div class="col">
+    </div>
+  </div>
+</div>
