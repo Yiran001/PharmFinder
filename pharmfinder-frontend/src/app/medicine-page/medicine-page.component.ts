@@ -165,7 +165,6 @@ export class NewMedicineDialog {
     this.pznAlreadyExists = false;
     if (this.medicine.pzn != "" && this.medicine.friendlyName != "" && this.medicine.medicineForm != "" && this.medicine.amount != 0) {
       this.allFieldsFilled = true;
-      if (this.medicine.pzn.length == 8) {
         this.pznLengthAcceptable = true;
         const request = this.medicineService.createMedicine(this.medicine);
         if (!!request) {
@@ -180,9 +179,7 @@ export class NewMedicineDialog {
           });
           if (!this.creationFailed)
             this.dialogRef.close();
-        } else {
-          this.pznLengthAcceptable = false;
-        }
+
       } else
         this.allFieldsFilled = false;
     }
