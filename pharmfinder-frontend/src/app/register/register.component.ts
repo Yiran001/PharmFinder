@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, NgZone, OnInit, ViewChild} from '@angular/core';
 import {AuthService} from '../services/auth.service';
 import {Observable, throwError} from "rxjs";
 import {HttpErrorResponse} from "@angular/common/http";
@@ -45,7 +45,7 @@ export class RegisterComponent implements OnInit {
   lng = -200;
   status = 'ok';
 
-  constructor(private authService: AuthService, private router: Router, private searchPharmaciesService: SearchPharmaciesService) {
+  constructor(private authService: AuthService, private router: Router, private searchPharmaciesService: SearchPharmaciesService,private _ngZone: NgZone) {
   }
 
 
@@ -70,7 +70,8 @@ export class RegisterComponent implements OnInit {
             console.log(data);
             this.isSuccessful = true;
             this.isSignUpFailed = false;
-            this.router.navigate(['/login']).then();
+            console.log('hallo?');
+            this._ngZone.run(()=>{this.router.navigate(['/login']).then();})
 
           },
           error => {
